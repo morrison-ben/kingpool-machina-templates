@@ -1,0 +1,62 @@
+workflow:
+  name: "exchange-mappings"
+  title: "Exchange - Mappings"
+  description: "Workflow to mapping odds."
+  outputs:
+    document: "$.get('document')"
+    workflow-status: "'executed'"
+  tasks:
+
+    # fetch-mappings
+    - type: "connector"
+      name: "fetch-mappings"
+      description: "Get Mappings from Exchange"
+      connector:
+        name: "exchange"
+        command: "fetch_mappings"
+      outputs:
+        mappings: "$"
+
+    # update-mappings
+    - type: "document"
+      name: "update-mappings"
+      description: "Update the mappings document."
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        exchange-mappings: |
+          {
+            'title': 'Last Exchange Mappings',
+            'execution': datetime.utcnow(),
+            'mappings': $.get('mappings'),
+            'status': 'active'
+          }
+      metadata:
+        document_type: "'exchange-mappings'"
+
+    # bulk-save-mappings
+    - type: "document"
+      name: "bulk-save-mappings"
+      description: "Bulk save the mappings."
+      config:
+        action: "bulk-update"
+        embed-vector: false
+        force-update: true
+      document_name: "exchange-map"
+      documents:
+        items: "$.get('parsed')"
+      inputs:
+        parsed: |
+          [
+            {
+              **c,
+              'title': f"{c.get('eventIdSportRadar')} - {c.get('eventIdMbook')}",
+              'metadata': {
+                'market_id': c.get('eventIdMbook'),
+                'event_code': c.get('eventIdSportRadar'),
+              }
+            }
+            for c in $.get('mappings')
+          ]

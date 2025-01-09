@@ -1,0 +1,11 @@
+datasets:
+  - type: "workflow"
+    path: "../dazn-moderator/workflow-documents.yml"
+  - type: "connector"
+    path: "exchange.yml"
+  - type: "workflow"
+    path: "mappings.yml"
+  - type: "workflow"
+    path: "markets.yml"
+  - type: "workflow"
+    path: "runners.yml" 

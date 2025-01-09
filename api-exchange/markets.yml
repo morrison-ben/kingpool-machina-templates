@@ -1,0 +1,89 @@
+workflow:
+  name: "exchange-markets"
+  title: "Exchange - Markets"
+  description: "Workflow to fetch markets from Exchange."
+  inputs:
+    event_code: "$.get('event_code', None)"
+    param_code: "$.get('item', {}).get('event', {}).get('value', {}).get('sport_event', {}).get('id', None)"
+  outputs:
+    document: "$.get('document')"
+    workflow-status: "'executed'"
+  tasks:
+
+    # load-exchange-map  
+    - type: "document"
+      name: "load-exchange-map"
+      description: "Search for exchange map in the database."
+      condition: "$.get('event_code') is not None or $.get('param_code') is not None"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      inputs:
+        name: "'exchange-map'"
+      filters:
+        value.eventIdSportRadar: "$.get('event_code') or $.get('param_code')"
+      outputs:
+        exchange-map: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        exchange-map-exists: "len($.get('documents')) > 0"
+
+    # fetch-markets
+    - type: "connector"
+      name: "fetch-markets"
+      description: "Get Markets from Exchange"
+      condition: "$.get('exchange-map-exists') is True"
+      connector:
+        name: "exchange"
+        command: "fetch_markets"
+      inputs:
+        event_id: "$.get('exchange-map').get('eventIdMbook')"
+      outputs:
+        catalogue: "$"
+        catalogue_name: "$.get('name')"
+        markets: |
+          [
+            {
+              **c,
+              'title': f"$.(catalogue_name) - {c.get('name')} {c.get('handicap', '')}".strip(),
+              'metadata': {
+                'market_id': c.get('id'),
+                'event_id': c.get('event-id'),
+                'event_code': '$.(event_code)',
+              }
+            }
+            for c in $.get('markets')
+          ]
+
+    # update-markets
+    - type: "document"
+      name: "update-markets"
+      description: "Update the markets document."
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        exchange-markets: |
+          {
+            'title': f"{$.get('catalogue').get('name')} - Market Catalogue",
+            'execution': datetime.utcnow(),
+            'catalogue': $.get('catalogue'),
+            'status': 'active'
+          }
+      metadata:
+        document_type: "'exchange-markets'"
+        event_code: "$.get('event_code') or $.get('param_code')"
+
+    # bulk-save-markets
+    - type: "document"
+      name: "bulk-save-markets"
+      description: "Bulk save the markets."
+      config:
+        action: "bulk-update"
+        embed-vector: false
+        force-update: true
+      document_name: "exchange-market"
+      documents:
+        items: "$.get('parsed')"
+      inputs:
+        parsed: "$.get('markets')"
