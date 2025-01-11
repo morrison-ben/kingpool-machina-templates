@@ -1,0 +1,194 @@
+workflow:
+  name: "workflow-producer-quizzes"
+  title: "Producer Quizzes"
+  description: "Workflow to produce quizzes"
+  context-variables:
+    sdk-openai:
+      api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
+  inputs:
+    event_code: "$.get('event_code')"
+  outputs:
+    event-status: "$.get('event-status')"
+    quiz-content: "$.get('quiz-content')"
+    team-away: "$.get('team-away')"
+    team-home: "$.get('team-home')"
+  tasks:
+    # load-event
+    - type: "document"
+      name: "load-event"
+      description: "Load the event."
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      filters:
+        metadata.event_code: "$.get('event_code')"
+      inputs:
+        name: "'event-summary'"
+      outputs:
+        event: "$.get('documents')[0].get('value') if $.get('documents') else None"
+        event-exists: "len($.get('documents')) > 0"
+        event-summary: "$.get('documents')[0].get('value').get('event-summary') if $.get('documents') else None"
+        event-lineups: "$.get('documents')[0].get('value').get('event-lineups') if $.get('documents') else None"
+        event-timeline: "$.get('documents')[0].get('value').get('event-timeline') if $.get('documents') else None"
+        event-title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+        event-status: "$.get('documents')[0].get('value').get('event-status') if $.get('documents') else None"
+        match-status: "$.get('documents')[0].get('value').get('match-status') if $.get('documents') else None"
+        team-away: "$.get('documents')[0].get('value').get('team-away') if $.get('documents') else None"
+        team-home: "$.get('documents')[0].get('value').get('team-home') if $.get('documents') else None"
+
+    # load-event-quizzes
+    - type: "document"
+      name: "load-event-quizzes"
+      description: "Load the event quizzes."
+      condition: "$.get('event-exists') is True"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      filters:
+        metadata.event_code: "$.get('event_code')"
+      inputs:
+        name: "'quiz-content'"
+      outputs:
+        existing-quizzes: "$.get('documents')[0].get('value') if $.get('documents') else None"
+
+    # load-blog-briefing
+    - type: "document"
+      name: "load-blog-briefing"
+      description: "Load the blog briefing."
+      condition: "$.get('event-exists') is True"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      filters:
+        metadata.event_code: "$.get('event_code')"
+      inputs:
+        name: "'blog-briefing'"
+      outputs:
+        blog-briefing: "$.get('documents')[0].get('value') if $.get('documents') else None"
+
+    # load-blog-lineup-home
+    - type: "document"
+      name: "load-blog-lineup-home"
+      description: "Load the blog lineup home."
+      condition: "$.get('event-exists') is True"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      filters:
+        metadata.event_code: "$.get('event_code')"
+      inputs:
+        name: "'blog-lineup-home'"
+      outputs:
+        blog-lineup-home: "$.get('documents')[0].get('value') if $.get('documents') else None"
+
+    # load-blog-lineup-away
+    - type: "document"
+      name: "load-blog-lineup-away"
+      description: "Load the blog lineup away."
+      condition: "$.get('event-exists') is True"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      filters:
+        metadata.event_code: "$.get('event_code')"
+      inputs:
+        name: "'blog-lineup-away'"
+      outputs:
+        blog-lineup-away: "$.get('documents')[0].get('value') if $.get('documents') else None"
+
+    # load-blog-timeline
+    - type: "document"
+      name: "load-blog-timeline"
+      description: "Load the blog timeline."
+      condition: "$.get('event-exists') is True"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      filters:
+        metadata.event_code: "$.get('event_code')"
+      inputs:
+        name: "'blog-timeline'"
+      outputs:
+        blog-timeline: "$.get('documents')[0].get('value') if $.get('documents') else None"
+
+    # prompt-content-quiz
+    - type: "prompt"
+      name: "prompt-content-quiz"
+      condition: "$.get('event-exists') is True"
+      description: "Generate a quiz post."
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        briefing: |
+          {
+            **$.get('blog-briefing'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away'),
+            "lineup-home": $.get('blog-lineup-home'),
+            "lineup-away": $.get('blog-lineup-away'),
+            "timeline": $.get('blog-timeline')
+          }
+        event-context: "$.get('event-summary').get('sport_event')"
+        event-status: "$.get('event-summary').get('sport_event_status')"
+        existing-questions: "$.get('existing-quizzes', {}).get('questions', [])"
+      outputs:
+        quiz-content: "$"
+
+    # document-update
+    - type: "document"
+      name: "document-update"
+      condition: "$.get('event-exists') is True"
+      config:
+        action: "update"
+        embed-vector: true
+        force-update: true
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      documents:
+        quiz-content: |
+          {
+            **$.get('quiz-content'),
+            "questions": [
+              *$.get('existing-questions', []),
+              *$.get('quiz-content', {}).get('questions', [])
+            ],
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+      metadata:
+        event_code: "$.get('event_code')"

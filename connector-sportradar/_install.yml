@@ -1,0 +1,5 @@
+datasets:
+  - type: "connector"
+    path: "api-sr-rugby-union.yml"
+  - type: "connector"
+    path: "api-sr-soccer-v4.yml"

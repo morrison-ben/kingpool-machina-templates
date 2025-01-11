@@ -1,0 +1,249 @@
+workflow:
+  name: "workflow-update-schedule"
+  title: "Update Schedule"
+  description: "Workflow to update schedule."
+  outputs:
+    events: "$.get('events')"
+    workflow-status: "$.get('workflow-status', 'skipped')"
+  tasks:
+    # load-events-48hrs
+    - type: "document"
+      name: "load-events-48hrs"
+      description: "Search for events in the database."
+      config:
+        action: "search"
+        search-limit: 10
+        search-vector: false
+      filters:
+        value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
+        value.version_control.pre_event_status: "'idle'"
+        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=72)}"
+        value.processing: "{'$ne': True}"
+      inputs:
+        name: "'schedule'"
+      outputs:
+        event-docs: "$.get('documents')"
+        event-doc-exists: "len($.get('documents', [])) > 0"
+        workflow-status: "len($.get('documents', [])) > 0 and 'executed' or $.get('workflow-status')"
+
+    # update-events-48hrs
+    - type: "document"
+      name: "update-events-48hrs"
+      description: "Update the events document schedule."
+      condition: "$.get('event-doc-exists') is True"
+      config:
+        action: "bulk-update"
+        embed-vector: false
+        force-update: true
+      document_name: "schedule"
+      documents:
+        items: "$.get('items')"
+      inputs:
+        items: |
+          [
+            {
+              **c.get('value', {}),
+              'metadata': {
+                'event_code': c.get('value', {}).get('sport_event', {}).get('id'),
+              },
+              'version_control': {
+                **c.get('value', {}).get('version_control', {}),
+                'pre_event_status': 'pending',
+              }
+            }
+            for c in $.get('event-docs', [])
+          ]
+    
+    # load-events-polls
+    - type: "document"
+      name: "load-events-polls"
+      description: "Search for events in the database."
+      config:
+        action: "search"
+        search-limit: 10
+        search-vector: false
+      filters:
+        value.sport_event_status.status: "{'$in': ['not_started']}"
+        value.version_control.polls_status: "{'$ne': 'processed'}"
+        value.version_control.pre_event_status: "'processed'"
+        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=72)}"
+        value.processing: "{'$ne': True}"
+      inputs:
+        name: "'schedule'"
+      outputs:
+        poll-docs: "$.get('documents')"
+        poll-doc-exists: "len($.get('documents', [])) > 0"
+        workflow-status: "len($.get('documents', [])) > 0 and 'executed' or $.get('workflow-status')"
+
+    # update-events-polls
+    - type: "document"
+      name: "update-events-polls"
+      description: "Update the events document schedule."
+      condition: "$.get('poll-doc-exists') is True"
+      config:
+        action: "bulk-update"
+        embed-vector: false
+        force-update: true
+      document_name: "schedule"
+      documents:
+        items: "$.get('items')"
+      inputs:
+        items: |
+          [
+            {
+              **c.get('value', {}),
+              'metadata': {
+                'event_code': c.get('value', {}).get('sport_event', {}).get('id'),
+              },
+              'version_control': {
+                **c.get('value', {}).get('version_control', {}),
+                'polls_status': 'pending',
+              }
+            }
+            for c in $.get('poll-docs', [])
+          ]
+
+    # load-events-quizzes
+    - type: "document"
+      name: "load-events-quizzes"
+      description: "Search for events in the database."
+      config:
+        action: "search"
+        search-limit: 10
+        search-vector: false
+      filters:
+        value.sport_event_status.status: "{'$in': ['not_started']}"
+        value.version_control.quizzes_status: "{'$ne': 'processed'}"
+        value.version_control.pre_event_status: "'processed'"
+        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=72)}"
+        value.processing: "{'$ne': True}"
+      inputs:
+        name: "'schedule'"
+      outputs:
+        quiz-docs: "$.get('documents')"
+        quiz-doc-exists: "len($.get('documents', [])) > 0"
+        workflow-status: "len($.get('documents', [])) > 0 and 'executed' or $.get('workflow-status')"
+
+    # update-events-quizzes
+    - type: "document"
+      name: "update-events-quizzes"
+      description: "Update the events document schedule."
+      condition: "$.get('quiz-doc-exists') is True"
+      config:
+        action: "bulk-update"
+        embed-vector: false
+        force-update: true
+      document_name: "schedule"
+      documents:
+        items: "$.get('items')"
+      inputs:
+        items: |
+          [
+            {
+              **c.get('value', {}),
+              'metadata': {
+                'event_code': c.get('value', {}).get('sport_event', {}).get('id'),
+              },
+              'version_control': {
+                **c.get('value', {}).get('version_control', {}),
+                'quizzes_status': 'pending',
+              }
+            }
+            for c in $.get('quiz-docs', [])
+          ]
+
+    # load-events-prelive
+    - type: "document"
+      name: "load-events-prelive"
+      description: "Search for events in the database."
+      config:
+        action: "search"
+        search-limit: 10
+        search-vector: false
+      filters:
+        value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
+        value.version_control.pre_event_status: "'processed'"
+        value.version_control.pre_live_status: "'idle'"
+        value.start_time: "{'$lt': datetime.utcnow() + timedelta(minutes=15)}"
+        value.processing: "{'$ne': True}"
+      inputs:
+        name: "'schedule'"
+      outputs:
+        prelive-docs: "$.get('documents')"
+        prelive-doc-exists: "len($.get('documents', [])) > 0"
+        workflow-status: "len($.get('documents', [])) > 0 and 'executed' or $.get('workflow-status')"
+
+    # update-events-prelive
+    - type: "document"
+      name: "update-events-prelive"
+      description: "Update the events document schedule."
+      condition: "$.get('prelive-doc-exists') is True"
+      config:
+        action: "bulk-update"
+        embed-vector: false
+        force-update: true
+      document_name: "schedule"
+      documents:
+        items: "$.get('items')"
+      inputs:
+        items: |
+          [
+            {
+              **c.get('value', {}),
+              'metadata': {
+                'event_code': c.get('value', {}).get('sport_event', {}).get('id'),
+              },
+              'version_control': {
+                **c.get('value', {}).get('version_control', {}),
+                'pre_live_status': 'pending'
+              }
+            }
+            for c in $.get('prelive-docs', [])
+          ]
+
+    # load-events-live
+    - type: "document"
+      name: "load-events-live"
+      description: "Search for events in the database."
+      config:
+        action: "search"
+        search-limit: 10
+        search-vector: false
+      filters:
+        value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
+        value.start_time: "{'$lt': datetime.utcnow() - timedelta(minutes=1)}"
+        value.processing: "{'$ne': True}"
+      inputs:
+        name: "'schedule'"
+      outputs:
+        live-docs: "$.get('documents')"
+        live-doc-exists: "len($.get('documents', [])) > 0"
+        workflow-status: "len($.get('documents', [])) > 0 and 'executed' or $.get('workflow-status')"
+
+    # update-events-live
+    - type: "document"
+      name: "update-events-live"
+      description: "Update the events document schedule."
+      condition: "$.get('live-doc-exists') is True"
+      config:
+        action: "bulk-update"
+        embed-vector: false
+        force-update: true
+      document_name: "schedule"
+      documents:
+        items: "$.get('items')"
+      inputs:
+        items: |
+          [
+            {
+              **c.get('value', {}),
+              'metadata': {
+                'event_code': c.get('value', {}).get('sport_event', {}).get('id'),
+              },
+              'version_control': {
+                **c.get('value', {}).get('version_control', {}),
+                'live_status': 'pending'
+              }
+            }
+            for c in $.get('live-docs', [])
+          ]

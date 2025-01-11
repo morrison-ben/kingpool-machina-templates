@@ -1,0 +1,701 @@
+workflow:
+  name: "workflow-producer"
+  title: "Producer"
+  description: "Workflow to produce content"
+  context-variables:
+    api-perplexity:
+      basicAuth: "$TEMP_CONTEXT_VARIABLE_PERPLEXITY_API_KEY"
+    sdk-openai:
+      api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
+  inputs:
+    event_code: "$.get('event_code')"
+    system_message: "'Generate comprehensive match information including historical head-to-head data, key statistics from previous encounters, notable matches between these teams, significant records, and interesting facts that could be used to create engaging quiz questions. Include details about memorable goals, dramatic moments, and unique achievements from past meetings between these teams.'"
+    system_message_team_home: "'Please provide relevant facts, historical data, and key statistics about the home team, including recent performance, notable achievements, and significant player milestones'"
+    system_message_team_away: "'Please provide relevant facts, historical data, and key statistics about the away team, including recent performance, notable achievements, and significant player milestones'"
+    system_message_facts_home: "'Please provide interesting historical facts, fun trivia, and unique statistics about the home team, including memorable matches, record-breaking moments, fan traditions, and curious stories from their history'"
+    system_message_facts_away: "'Please provide interesting historical facts, fun trivia, and unique statistics about the away team, including memorable matches, record-breaking moments, fan traditions, and curious stories from their history'"
+  outputs:
+    team-away: "$.get('team-away')"
+    team-home: "$.get('team-home')"
+  tasks:
+    # load-event
+    - type: "document"
+      name: "load-event"
+      description: "Load the event."
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      filters:
+        metadata.event_code: "$.get('event_code')"
+      inputs:
+        name: "'event-summary'"
+      outputs:
+        event: "$.get('documents')[0].get('value') if $.get('documents') else None"
+        event-exists: "len($.get('documents')) > 0"
+        event-summary: "$.get('documents')[0].get('value').get('event-summary') if $.get('documents') else None"
+        event-lineups: "$.get('documents')[0].get('value').get('event-lineups') if $.get('documents') else None"
+        event-timeline: "$.get('documents')[0].get('value').get('event-timeline') if $.get('documents') else None"
+        event-title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+        event-status: "$.get('documents')[0].get('value').get('event-status') if $.get('documents') else None"
+        match-status: "$.get('documents')[0].get('value').get('match-status') if $.get('documents') else None"
+        probabilities: "$.get('documents')[0].get('value').get('probabilities') if $.get('documents') else None"
+        standings: "$.get('documents')[0].get('value').get('standings') if $.get('documents') else None"
+        team-away: "$.get('documents')[0].get('value').get('team-away') if $.get('documents') else None"
+        team-home: "$.get('documents')[0].get('value').get('team-home') if $.get('documents') else None"
+        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+
+    # fetch-perplexity-api
+    - type: "connector"
+      name: "fetch-perplexity-api"
+      connector:
+        name: "api-perplexity"
+        command: "post-chat/completions"
+      inputs:
+        body: |
+          {
+            'model': $.get('model', 'llama-3.1-sonar-large-128k-online'),
+            'messages': [
+              {
+                'role': 'system',
+                'content': $.get('system_message')
+              },{
+                'role': 'user',
+                'content': $.get('title')
+              }
+            ],
+            'max_tokens': $.get('max_tokens', 5000),
+            'temperature': $.get('temperature', 0.5),
+            'top_p': $.get('top_p', 0.9),
+            'return_citations': $.get('return_citations', True),
+            'return_images': $.get('return_images', False),
+            'return_related_questions': $.get('return_related_questions', True),
+            'search_recency_filter': $.get('search_recency_filter', 'week'),
+            'top_k': $.get('top_k', 0),
+            'stream': $.get('stream', False),
+            'presence_penalty': $.get('presence_penalty', 0),
+            'frequency_penalty': $.get('frequency_penalty', 1)
+          }
+      outputs:
+        search-results: "$.get('choices')[0].get('message').get('content')"
+
+    # fetch-perplexity-api (team-home)
+    - type: "connector"
+      name: "fetch-perplexity-team-home"
+      connector:
+        name: "api-perplexity"
+        command: "post-chat/completions"
+      inputs:
+        body: |
+          {
+            'model': $.get('model', 'llama-3.1-sonar-large-128k-online'),
+            'messages': [
+              {
+                'role': 'system',
+                'content': $.get('system_message_team_home')
+              },{
+                'role': 'user',
+                'content': $.get('team-home').get('name')
+              }
+            ],
+            'max_tokens': $.get('max_tokens', 5000),
+            'temperature': $.get('temperature', 0.5),
+            'top_p': $.get('top_p', 0.9),
+            'return_citations': $.get('return_citations', True),
+            'return_images': $.get('return_images', False),
+            'return_related_questions': $.get('return_related_questions', True),
+            'search_recency_filter': $.get('search_recency_filter', 'week'),
+            'top_k': $.get('top_k', 0),
+            'stream': $.get('stream', False),
+            'presence_penalty': $.get('presence_penalty', 0),
+            'frequency_penalty': $.get('frequency_penalty', 1)
+          }
+      outputs:
+        search-team-home: "$.get('choices')[0].get('message').get('content')"
+
+    # fetch-perplexity-api (team-away)
+    - type: "connector"
+      name: "fetch-perplexity-team-away"
+      connector:
+        name: "api-perplexity"
+        command: "post-chat/completions"
+      inputs:
+        body: |
+          {
+            'model': $.get('model', 'llama-3.1-sonar-large-128k-online'),
+            'messages': [
+              {
+                'role': 'system',
+                'content': $.get('system_message_team_away')
+              },{
+                'role': 'user',
+                'content': $.get('team-away').get('name')
+              }
+            ],
+            'max_tokens': $.get('max_tokens', 5000),
+            'temperature': $.get('temperature', 0.5),
+            'top_p': $.get('top_p', 0.9),
+            'return_citations': $.get('return_citations', True),
+            'return_images': $.get('return_images', False),
+            'return_related_questions': $.get('return_related_questions', True),
+            'search_recency_filter': $.get('search_recency_filter', 'week'),
+            'top_k': $.get('top_k', 0),
+            'stream': $.get('stream', False),
+            'presence_penalty': $.get('presence_penalty', 0),
+            'frequency_penalty': $.get('frequency_penalty', 1)
+          }
+      outputs:
+        search-team-away: "$.get('choices')[0].get('message').get('content')"
+
+    # fetch-perplexity-api (facts-home)
+    - type: "connector"
+      name: "fetch-perplexity-facts-home"
+      connector:
+        name: "api-perplexity"
+        command: "post-chat/completions"
+      inputs:
+        body: |
+          {
+            'model': $.get('model', 'llama-3.1-sonar-large-128k-online'),
+            'messages': [
+              {
+                'role': 'system',
+                'content': $.get('system_message_facts_home')
+              },{
+                'role': 'user',
+                'content': $.get('team-home').get('name')
+              }
+            ],
+            'max_tokens': $.get('max_tokens', 5000),
+            'temperature': $.get('temperature', 0.5),
+            'top_p': $.get('top_p', 0.9),
+            'return_citations': $.get('return_citations', True),
+            'return_images': $.get('return_images', False),
+            'return_related_questions': $.get('return_related_questions', True),
+            'search_recency_filter': $.get('search_recency_filter', 'week'),
+            'top_k': $.get('top_k', 0),
+            'stream': $.get('stream', False),
+            'presence_penalty': $.get('presence_penalty', 0),
+            'frequency_penalty': $.get('frequency_penalty', 1)
+          }
+      outputs:
+        search-facts-home: "$.get('choices')[0].get('message').get('content')"
+
+    # fetch-perplexity-api (facts-away)
+    - type: "connector"
+      name: "fetch-perplexity-facts-away"
+      connector:
+        name: "api-perplexity"
+        command: "post-chat/completions"
+      inputs:
+        body: |
+          {
+            'model': $.get('model', 'llama-3.1-sonar-large-128k-online'),
+            'messages': [
+              {
+                'role': 'system',
+                'content': $.get('system_message_facts_away')
+              },{
+                'role': 'user',
+                'content': $.get('team-away').get('name')
+              }
+            ],
+            'max_tokens': $.get('max_tokens', 5000),
+            'temperature': $.get('temperature', 0.5),
+            'top_p': $.get('top_p', 0.9),
+            'return_citations': $.get('return_citations', True),
+            'return_images': $.get('return_images', False),
+            'return_related_questions': $.get('return_related_questions', True),
+            'search_recency_filter': $.get('search_recency_filter', 'week'),
+            'top_k': $.get('top_k', 0),
+            'stream': $.get('stream', False),
+            'presence_penalty': $.get('presence_penalty', 0),
+            'frequency_penalty': $.get('frequency_penalty', 1)
+          }
+      outputs:
+        search-facts-away: "$.get('choices')[0].get('message').get('content')"
+
+    # prompt-content-briefing
+    - type: "prompt"
+      name: "prompt-content-briefing"
+      description: "Summarize the Event Details."
+      condition: "$.get('event-exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        event-summary: "$.get('event-summary')"
+      outputs:
+        blog-briefing: "$"
+
+    # prompt-content-lineups (home)
+    - type: "prompt"
+      name: "prompt-content-lineups"
+      description: "Summarize the Event Lineups (home)."
+      condition: "$.get('event-exists') is True and $.get('match-status') != 'not_started'"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        lineup: "$.get('event-lineups', {}).get('competitors', [{}])[0]"
+      outputs:
+        blog-lineup-home: "$"
+
+    # prompt-content-lineups (away)
+    - type: "prompt"
+      name: "prompt-content-lineups"
+      description: "Summarize the Event Lineups (away)."
+      condition: "$.get('event-exists') is True and $.get('match-status') != 'not_started'"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        lineup: "$.get('event-lineups', {}).get('competitors', [{}])[1]"
+      outputs:
+        blog-lineup-away: "$"
+
+    # prompt-content-timeline
+    - type: "prompt"
+      name: "prompt-content-timeline"
+      description: "Summarize the Event Timeline."
+      condition: "$.get('event-exists') is True and $.get('match-status') != 'not_started'"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        timeline: "$.get('event-timeline')"
+      outputs:
+        blog-timeline: "$"
+
+    # prompt-content-standings
+    - type: "prompt"
+      name: "prompt-content-standings"
+      description: "Summarize the Standings for the teams"
+      condition: "$.get('event-exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        standings: "$.get('standings')"
+        team-home: "$.get('team-home')"
+        team-away: "$.get('team-away')"
+      outputs:
+        blog-standings: "$"
+
+    # prompt-content-blog
+    - type: "prompt"
+      name: "prompt-content-blog"
+      condition: "$.get('event-exists') is True"
+      description: "Generate a blog post."
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        briefing: |
+          {
+            **$.get('blog-briefing'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away'),
+            "lineup-home": $.get('blog-lineup-home'),
+            "lineup-away": $.get('blog-lineup-away'),
+            "timeline": $.get('blog-timeline'),
+          }
+        event-context: "$.get('event-summary').get('sport_event')"
+        event-status: "$.get('event-summary').get('sport_event_status')"
+      outputs:
+        blog-content: "$"
+
+    # prompt-content-polls (match)
+    - type: "prompt"
+      name: "prompt-content-poll"
+      condition: "$.get('event-exists') is True"
+      description: "Generate a polls post (match)."
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        briefing: |
+          {
+            **$.get('blog-briefing'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away'),
+            "lineup-home": $.get('blog-lineup-home'),
+            "lineup-away": $.get('blog-lineup-away'),
+            "probabilities": $.get('probabilities'),
+            "standings": $.get('blog-standings'),
+            "timeline": $.get('blog-timeline'),
+          }
+        event-context: "$.get('event-summary').get('sport_event')"
+        event-status: "$.get('event-summary').get('sport_event_status')"
+        search-results: "$.get('search-results')"
+      outputs:
+        polls-content-0: "$"  
+
+    # prompt-content-polls (team-home)
+    - type: "prompt"
+      name: "prompt-content-poll"
+      condition: "$.get('event-exists') is True"
+      description: "Generate a polls post (team-home)."
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        event-context: "$.get('event-summary').get('sport_event')"
+        event-status: "$.get('event-summary').get('sport_event_status')"
+        search-team-home: "$.get('search-team-home')"
+      outputs:
+        polls-content-1: "$"  
+
+    # prompt-content-polls (team-away)
+    - type: "prompt"
+      name: "prompt-content-poll"
+      condition: "$.get('event-exists') is True"
+      description: "Generate a polls post (team-away)."
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        event-context: "$.get('event-summary').get('sport_event')"
+        event-status: "$.get('event-summary').get('sport_event_status')"
+        search-team-away: "$.get('search-team-away')"
+      outputs:
+        polls-content-2: "$"  
+
+    # prompt-content-polls (facts-home)
+    - type: "prompt"
+      name: "prompt-content-poll"
+      condition: "$.get('event-exists') is True"
+      description: "Generate a polls post (facts-home)."
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        event-context: "$.get('event-summary').get('sport_event')"
+        event-status: "$.get('event-summary').get('sport_event_status')"
+        search-facts-home: "$.get('search-facts-home')"
+      outputs:
+        polls-content-3: "$"  
+
+    # prompt-content-polls (facts-away)
+    - type: "prompt"
+      name: "prompt-content-poll"
+      condition: "$.get('event-exists') is True"
+      description: "Generate a polls post (facts-away)."
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        event-context: "$.get('event-summary').get('sport_event')"
+        event-status: "$.get('event-summary').get('sport_event_status')"
+        search-facts-away: "$.get('search-facts-away')"
+      outputs:
+        polls-content-4: "$"  
+
+    # prompt-content-quiz (match)
+    - type: "prompt"
+      name: "prompt-content-quiz"
+      condition: "$.get('event-exists') is True"
+      description: "Generate a quiz post (match)."
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        briefing: |
+          {
+            **$.get('blog-briefing'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away'),
+            "lineup-home": $.get('blog-lineup-home'),
+            "lineup-away": $.get('blog-lineup-away'),
+            "probabilities": $.get('probabilities'),
+            "standings": $.get('blog-standings'),
+            "timeline": $.get('blog-timeline')
+          }
+        event-context: "$.get('event-summary').get('sport_event')"
+        event-status: "$.get('event-summary').get('sport_event_status')"
+        search-results: "$.get('search-results')"
+      outputs:
+        quiz-content-0: "$"
+
+    # prompt-content-quiz (team-home)
+    - type: "prompt"
+      name: "prompt-content-quiz"
+      condition: "$.get('event-exists') is True"
+      description: "Generate a quiz post (team-home)."
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        event-context: "$.get('event-summary').get('sport_event')"
+        event-status: "$.get('event-summary').get('sport_event_status')"
+        search-team-home: "$.get('search-team-home')"
+      outputs:
+        quiz-content-1: "$"
+
+    # prompt-content-quiz (team-away)
+    - type: "prompt"
+      name: "prompt-content-quiz"
+      condition: "$.get('event-exists') is True"
+      description: "Generate a quiz post (team-away)."
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        event-context: "$.get('event-summary').get('sport_event')"
+        event-status: "$.get('event-summary').get('sport_event_status')"
+        search-team-away: "$.get('search-team-away')"
+      outputs:
+        quiz-content-2: "$"
+
+    # prompt-content-quiz (facts-home)
+    - type: "prompt"
+      name: "prompt-content-quiz"
+      condition: "$.get('event-exists') is True"
+      description: "Generate a quiz post (facts-home)."
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        event-context: "$.get('event-summary').get('sport_event')"
+        event-status: "$.get('event-summary').get('sport_event_status')"
+        search-facts-home: "$.get('search-facts-home')"
+      outputs:
+        quiz-content-3: "$"
+
+    # prompt-content-quiz (facts-away)
+    - type: "prompt"
+      name: "prompt-content-quiz"
+      condition: "$.get('event-exists') is True"
+      description: "Generate a quiz post (facts-away)."
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        event-context: "$.get('event-summary').get('sport_event')"
+        event-status: "$.get('event-summary').get('sport_event_status')"
+        search-facts-away: "$.get('search-facts-away')"
+      outputs:
+        quiz-content-4: "$"
+
+    # document-update (closed)
+    - type: "document"
+      name: "document-update"
+      condition: "$.get('event-exists') is True and $.get('match-status') != 'not_started'"
+      config:
+        action: "update"
+        embed-vector: true
+        force-update: true
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      documents:
+        blog-briefing: |
+          {
+            **$.get('blog-briefing'),
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+        blog-content: |
+          {
+            **$.get('blog-content'),
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+        blog-lineup-home: |
+          {
+            **$.get('blog-lineup-home'),
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+        blog-lineup-away: |
+          {
+            **$.get('blog-lineup-away'),
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+        blog-standings: |
+          {
+            **$.get('blog-standings'),
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+        blog-timeline: |
+          {
+            **$.get('blog-timeline'),
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+        polls-content: |
+          {
+            "questions": [
+              *$.get('polls-content-0').get('questions', []),
+              *$.get('polls-content-1').get('questions', []),
+              *$.get('polls-content-2').get('questions', []),
+              *$.get('polls-content-3').get('questions', []),
+              *$.get('polls-content-4').get('questions', [])
+            ],
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+        quiz-content: |
+          {
+            "questions": [
+              *$.get('quiz-content-0').get('questions', []),
+              *$.get('quiz-content-1').get('questions', []),
+              *$.get('quiz-content-2').get('questions', []),
+              *$.get('quiz-content-3').get('questions', []),
+              *$.get('quiz-content-4').get('questions', [])
+            ],
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+        web-search-results: |
+          {
+            "results": [
+              {
+                "title": "Match Preview",
+                "content": $.get('search-results')
+              },
+              {
+                "title": "Match Preview - Home Team",
+                "content": $.get('search-team-home')
+              },
+              {
+                "title": "Match Preview - Away Team",
+                "content": $.get('search-team-away')
+              },
+              {
+                "title": "Facts - Home Team",
+                "content": $.get('search-facts-home')
+              },
+              {
+                "title": "Facts - Away Team",
+                "content": $.get('search-facts-away')
+              }
+            ],
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+
+    # document-update (not started)
+    - type: "document"
+      name: "document-update"
+      condition: "$.get('event-exists') is True and $.get('match-status') == 'not_started'"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      documents:
+        blog-briefing: |
+          {
+            **$.get('blog-briefing'),
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+        blog-content: |
+          {
+            **$.get('blog-content'),
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+        blog-standings: |
+          {
+            **$.get('blog-standings'),
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+        polls-content: |
+          {
+            "questions": [
+              *$.get('polls-content-0').get('questions', []),
+              *$.get('polls-content-1').get('questions', []),
+              *$.get('polls-content-2').get('questions', []),
+              *$.get('polls-content-3').get('questions', []),
+              *$.get('polls-content-4').get('questions', [])
+            ],
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+        quiz-content: |
+          {
+            "questions": [
+              *$.get('quiz-content-0').get('questions', []),
+              *$.get('quiz-content-1').get('questions', []),
+              *$.get('quiz-content-2').get('questions', []),
+              *$.get('quiz-content-3').get('questions', []),
+              *$.get('quiz-content-4').get('questions', [])
+            ],
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+        web-search-results: |
+          {
+            "results": [
+              {
+                "title": "Match Preview",
+                "content": $.get('search-results')
+              },
+              {
+                "title": "Match Preview - Home Team",
+                "content": $.get('search-team-home')
+              },
+              {
+                "title": "Match Preview - Away Team",
+                "content": $.get('search-team-away')
+              },
+              {
+                "title": "Facts - Home Team",
+                "content": $.get('search-facts-home')
+              },
+              {
+                "title": "Facts - Away Team",
+                "content": $.get('search-facts-away')
+              }
+            ],
+            "title": $.get('event-title'),
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
+          }
+      metadata:
+        event_code: "$.get('event_code')"

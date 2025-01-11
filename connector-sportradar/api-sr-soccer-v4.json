@@ -1,0 +1,132 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API-SportRadar - Soccer v4",
+    "description": "This API allows you to retrieve information about football.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.sportradar.com/soccer/trial/v4/en"
+    }
+  ],
+  "paths": {
+    "/competitions.json": {
+      "get": {
+        "summary": "Get information about competitions",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api_key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/competitions/{competition_id}/seasons.json": {
+      "get": {
+        "summary": "Get seasons information for a specific competition",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "competition_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the competition (e.g. sr:competition:325)"
+          },
+          {
+            "in": "query",
+            "name": "api_key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/seasons/{season_id}/{data_type}": {
+      "get": {
+        "summary": "Get a season data",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "season_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the season (e.g. sr:season:123456)"
+          },
+          {
+            "in": "query",
+            "name": "api_key",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/sport_events/{event_code}/{data_type}": {
+      "get": {
+        "summary": "Get information about lineups from an event",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api_key",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKey": {
+        "type": "params",
+        "in": "query",
+        "name": "api_key"
+      }
+    }
+  }
+}

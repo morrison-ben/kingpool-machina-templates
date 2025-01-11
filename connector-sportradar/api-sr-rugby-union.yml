@@ -1,0 +1,5 @@
+connector:
+  name: "api-sr-rugby-union"
+  description: "SportRadar API - Rugby Union v3"
+  filename: "api-sr-rugby-union.json"
+  filetype: "restapi"

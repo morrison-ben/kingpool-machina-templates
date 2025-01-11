@@ -1,0 +1,37 @@
+agent:
+  name: agent-producer  
+  title: "Agent Producer"
+  description: "Agent to produce content"
+  context:
+    config-frequency: 1
+  workflows:
+
+    - name: "workflow-update-schedule"
+      description: "Update schedule"
+      outputs:
+        schedule: "$.get('events')"
+
+    - name: "workflow-update-preevent"
+      description: "Update pre-event"
+      outputs:
+        preevent: "$.get('events')"
+
+    - name: "workflow-update-prelive"
+      description: "Update pre-live"
+      outputs:
+        prelive: "$.get('events')"
+
+    - name: "workflow-update-live"
+      description: "Update live"
+      outputs:
+        live: "$.get('events')"
+
+    - name: "workflow-update-polls"
+      description: "Update polls"
+      outputs:
+        polls: "$.get('events')"
+
+    - name: "workflow-update-quizzes"
+      description: "Update quizzes"
+      outputs:
+        quizzes: "$.get('events')"

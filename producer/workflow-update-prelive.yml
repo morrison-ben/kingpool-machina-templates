@@ -1,0 +1,242 @@
+workflow:
+  name: "workflow-update-prelive"
+  title: "Update Pré-Live (15min)"
+  description: "Workflow to update prelive."
+  context-variables:
+    api-sr-soccer-v4:
+      sportradar_api_key: "$TEMP_CONTEXT_VARIABLE_SPORTRADAR_SOCCER_V4_API_KEY"
+    sdk-openai:
+      api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
+  inputs:
+    event_code: "$.get('event_code') or None"
+  outputs:
+    events: "$.get('events')"
+    workflow-status: "$.get('event-exists') is True and 'executed' or 'skipped'"
+  tasks:
+    # 0 load-event-by-code
+    - type: "document"
+      name: "load-event-by-code"
+      description: "Search for events in the database."
+      condition: "$.get('event_code') is not None"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+        search-sorters: ["updated", 1]
+      filters:
+        value.sport_event.id: "$.get('event_code')"
+      outputs:
+        event-exists: "len($.get('documents', [])) > 0"
+        event-selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        pre_live_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('pre_live_count', 0) if $.get('documents') else None"
+        season_code: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('sport_event_context', {}).get('season', {}).get('id', '') if $.get('documents') else None"
+        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+    # 1 load-event
+    - type: "document"
+      name: "load-event-prelive"
+      description: "Search for events in the database."
+      condition: "$.get('event-exists') is not True"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+        search-sorters: ["updated", 1]
+      filters:
+        value.sport_event_status.status: "{'$in': ['not_started']}"
+        value.version_control.pre_live_status: "{'$in': ['pending', 'processed']}"
+        value.version_control.updated: "{'$lt': datetime.utcnow() - timedelta(minutes=1)}"
+        value.processing: "{'$ne': True}"
+      inputs:
+        name: "'schedule'"
+      outputs:
+        event_code: "$.get('documents')[0].get('value').get('sport_event', {}).get('id') if $.get('documents') else None"
+        event-exists: "len($.get('documents', [])) > 0"
+        event-selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        pre_live_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('pre_live_count', 0) if $.get('documents') else None"
+        season_code: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('sport_event_context', {}).get('season', {}).get('id', '') if $.get('documents') else None"
+        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+    # 1 update-event-prelive
+    - type: "document"
+      name: "update-event-prelive-start"
+      description: "Update the events document prelive."
+      condition: "$.get('event-exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        schedule: |
+          {
+            **$.get('event-selected'),
+            'processing': True,
+            'version_control': {
+              **$.get('event-selected').get('version_control', {}),
+              'pre_live_status': 'processing'
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+    # 2 load-event-summary-en-us
+    - type: "document"
+      name: "load-event-summary-en-us"
+      description: "Load the events document summary."
+      condition: "$.get('event-exists') is True"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      filters:
+        metadata: |
+          {
+            'document_type': 'event-summary',
+            'event_code': $.get('event_code'),
+            'season_code': $.get('season_code'),
+            'language': 'en-us'
+          }
+      inputs:
+        name: "'event-summary'"
+      outputs:
+        event-summary-en-us: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+    # 2 load-event-summary-it-it
+    - type: "document"
+      name: "load-event-summary-it-it"
+      description: "Load the events document summary."
+      condition: "$.get('event-exists') is True"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      filters:
+        metadata: |
+          {
+            'document_type': 'event-summary',
+            'event_code': $.get('event_code'),
+            'season_code': $.get('season_code'),
+            'language': 'it-it'
+          }
+      inputs:
+        name: "'event-summary'"
+      outputs:
+        event-summary-it-it: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+    # 3 fetch-event-summary
+    - type: "connector"
+      name: "fetch-event-summary"
+      description: "Get Sport_Events/Summary from SportRadar"
+      condition: "$.get('event-exists') is True"
+      connector:
+        name: "api-sr-soccer-v4"
+        command: "get-sport_events/{event_code}/{data_type}"
+        command_attribute:
+          data_type: "'summary.json'"
+          event_code: "$.get('event_code')"
+      inputs:
+        api_key: "$.get('sportradar_api_key')"
+      outputs:
+        event-summary: "$"
+        event-status: "$.get('sport_event_status', {}).get('status', '')"
+        match-status: "$.get('sport_event_status', {}).get('match_status', '')"
+        round-title: f"{$.get('sport_event', {}).get('sport_event_context', {}).get('category', {}).get('name', '')} {$.get('sport_event', {}).get('sport_event_context', {}).get('season', {}).get('name', '')}"
+        round-number: "$.get('sport_event', {}).get('sport_event_context', {}).get('round', {}).get('number', '')"
+        team-away: "next(item for item in $.get('sport_event').get('competitors') if item['qualifier'] == 'away')"
+        team-home: "next(item for item in $.get('sport_event').get('competitors') if item['qualifier'] == 'home')"
+    # 3 fetch-event-lineups
+    - type: "connector"
+      name: "fetch-event-lineups"
+      description: "Get Sport_Events/Lineups from SportRadar"
+      condition: "$.get('event-exists') is True"
+      connector:
+        name: "api-sr-soccer-v4"
+        command: "get-sport_events/{event_code}/{data_type}"
+        command_attribute:
+          data_type: "'lineups.json'"
+          event_code: "$.get('event_code')"
+      inputs:
+        api_key: "$.get('sportradar_api_key')"
+      outputs:
+        event-lineups: "$.get('lineups')"
+    # 5 update-event-summary-en-us
+    - type: "document"
+      name: "update-event-summary-en-us"
+      description: "Update the events document."
+      condition: "$.get('event-exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        event-summary: |
+          {
+            **$.get('event-summary-en-us', {}),
+            'execution': datetime.utcnow(),
+            'event-lineups': $.get('event-lineups'),
+            'event-summary': $.get('event-summary'),
+            'event-status': $.get('event-status'),
+            'match-status': $.get('match-status'),
+            'team-away': $.get('team-away'),
+            'team-home': $.get('team-home'),
+            'processed': False,
+            'title': $.get('title'),
+            'status': 'active'
+          }
+      metadata:
+        document_type: "'event-summary'"
+        event_code: "$.get('event_code')"
+        season_code: "$.get('season_code')"
+        language: "'en-us'"
+    # 5 update-event-summary-it-it
+    - type: "document"
+      name: "update-event-summary-it-it"
+      description: "Update the events document."
+      condition: "$.get('event-exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        event-summary: |
+          {
+            **$.get('event-summary-it-it', {}),
+            'execution': datetime.utcnow(),
+            'event-lineups': $.get('event-lineups'),
+            'event-summary': $.get('event-summary'),
+            'event-status': $.get('event-status'),
+            'match-status': $.get('match-status'),
+            'team-away': $.get('team-away'),
+            'team-home': $.get('team-home'),
+            'processed': False,
+            'title': $.get('title'),
+            'status': 'active'
+          }
+      metadata:
+        document_type: "'event-summary'"
+        event_code: "$.get('event_code')"
+        season_code: "$.get('season_code')"
+        language: "'it-it'"
+
+    # 6 update-event-prelive
+    - type: "document"
+      name: "update-event-prelive-end"
+      description: "Update the events document prelive."
+      condition: "$.get('event-exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        schedule: |
+          {
+            **$.get('event-selected'),
+            'processing': False,
+            'sport_event_status': {
+              'status': $.get('event-status'),
+              'match_status': $.get('match-status')
+            },
+            'version_control': {
+              **$.get('event-selected').get('version_control', {}),
+              'pre_live_count': $.get('pre_live_count', 0) + 1,
+              'pre_live_status': 'processed',
+              'updated': datetime.utcnow()
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"
