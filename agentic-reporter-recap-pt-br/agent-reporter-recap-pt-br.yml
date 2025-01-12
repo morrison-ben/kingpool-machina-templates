@@ -1,0 +1,13 @@
+agent:
+  name: agent-reporter-recap-pt-br  
+  title: "Agent Reporter Recap PT-BR"
+  description: "Agent to produce content recap for sportsblog in Portuguese (BR)"
+  metadata:
+    language: "pt-br"
+  context:
+    config-frequency: 1
+  workflows:
+    - name: "workflow-reporter-recap-pt-br"
+      description: "Reporter recap workflow"
+      outputs:
+        recap: "$.get('events')"

@@ -1,0 +1,13 @@
+agent:
+  name: "agent-reporter-preview-pt-br"
+  title: "Reporter Preview PT-BR"
+  description: "Agent responsible for generating preview content in Brazilian Portuguese."
+  metadata:
+    language: "pt-br"
+  context:
+    config-frequency: 1
+  workflows:
+    - name: "workflow-reporter-preview-pt-br"
+      description: "Reporter preview workflow"
+      outputs:
+        preview: "$.get('events')"

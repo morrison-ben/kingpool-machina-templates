@@ -1,6 +1,6 @@
 datasets:
   - type: "workflow"
-    path: "../producer/workflow-documents.yml"
+    path: "../template-moderator/workflow-documents.yml"
   - type: "connector"
     path: "exchange.yml"
   - type: "workflow"

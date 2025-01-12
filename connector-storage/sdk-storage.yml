@@ -1,0 +1,8 @@
+connector:
+  name: "sdk-storage"
+  description: "This connector is the Storage SDK"
+  filename: "sdk-storage.py"
+  filetype: "pyscript"
+  commands:
+    - name: "store_image"
+      value: "store_image"

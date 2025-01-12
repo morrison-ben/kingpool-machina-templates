@@ -1,3 +1,3 @@
 datasets:
   - type: "connector"
-    path: "api-perplexity.yml"
+    path: "sdk-stability.yml"

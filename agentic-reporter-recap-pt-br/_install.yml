@@ -1,0 +1,8 @@
+datasets:
+  - type: "agent"
+    path: "agent-reporter-recap-pt-br.yml"
+  - type: "prompts"
+    path: "prompt-reporter-recap-pt-br.yml"
+  - type: "workflow"
+    path: "workflow-reporter-recap-pt-br.yml"
+  - type: "workflow"
