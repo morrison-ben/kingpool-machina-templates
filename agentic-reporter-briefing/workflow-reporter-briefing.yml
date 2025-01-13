@@ -126,27 +126,6 @@ workflow:
         name: "'event-summary'"
       outputs:
         event-summary-en-us: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-    # 3 load-event-summary-it-it
-    - type: "document"
-      name: "load-event-summary-it-it"
-      description: "Load the events document summary."
-      condition: "$.get('event-exists') is True"
-      config:
-        action: "search"
-        search-limit: 1
-        search-vector: false
-      filters:
-        metadata: |
-          {
-            'document_type': 'event-summary',
-            'event_code': $.get('event_code'),
-            'season_code': $.get('season_code'),
-            'language': 'it-it'
-          }
-      inputs:
-        name: "'event-summary'"
-      outputs:
-        event-summary-it-it: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
     # 4 fetch-event-summary
     - type: "connector"
       name: "fetch-event-summary"
@@ -234,7 +213,6 @@ workflow:
             }
           ]
         content-standings-en-us: "$"
-    # 5 prompt-probabilities-en-us
     # 6 fetch-perplexity-api
     - type: "connector"
       name: "fetch-perplexity-api"
