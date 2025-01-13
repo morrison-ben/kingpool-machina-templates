@@ -1,0 +1,13 @@
+agent:
+  name: "agent-reporter-preview-es-mx"
+  title: "Blog Reporter Previa del Partido"
+  description: "Este agente genera contenido en español mexicano para previas de partidos."
+  metadata:
+    language: "es-mx"
+  context:
+    config-frequency: 1
+  workflows:
+    - name: "workflow-reporter-preview-es-mx"
+      description: "Reporter preview workflow"
+      outputs:
+        preview: "$.get('events')"

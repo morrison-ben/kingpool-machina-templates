@@ -1,0 +1,13 @@
+name: "agentic-reporter-preview-es-mx"
+title: "Reporter Preview ES-MX"
+description: "Instala el agente que genera contenido en español mexicano para previas de partidos."
+version: "1.0.0"
+author: "Machina"
+license: "MIT" 
+datasets:
+  - type: "agent"
+    path: "agent-reporter-preview-es-mx.yml"
+  - type: "prompts"
+    path: "prompt-reporter-preview-es-mx.yml"
+  - type: "workflow"
+    path: "workflow-reporter-preview-es-mx.yml"
