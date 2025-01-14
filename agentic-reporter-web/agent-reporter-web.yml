@@ -1,13 +1,13 @@
 agent:
-  name: agent-reporter-briefing  
-  title: "Agent Reporter Briefing"
-  description: "Agent to produce content briefing for sportsblog"
+  name: agent-reporter-web  
+  title: "Agent Reporter Web"
+  description: "Agent to produce web content for sportsblog"
   metadata:
     language: "en-us"
   context:
     config-frequency: 1
   workflows:
-    - name: "workflow-reporter-briefing"
-      description: "Reporter briefing workflow"
+    - name: "workflow-reporter-web"
+      description: "Reporter web workflow"
       outputs:
-        briefing: "$.get('events')"
+        reporter-web: "$.get('events')"

@@ -1,8 +1,5 @@
 datasets:
   - type: "agent"
     path: "agent-reporter-web.yml"
-  - type: "prompts"
-    path: "prompt-reporter-web.yml"
   - type: "workflow"
     path: "workflow-reporter-web.yml"
-  - type: "workflow"

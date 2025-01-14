@@ -1,0 +1,73 @@
+prompts:
+
+  # prompt-content-match-briefing-es
+  - type: "prompt"
+    title: "Prompt Contenido Informe Previo"
+    name: "prompt-content-match-briefing-es"
+    description: "Este prompt genera un informe previo completo, cubriendo detalles esenciales del partido, contexto de la competición e información del estadio."
+    schema:
+      title: "ContenidoInformePrevio"
+      description: "Este esquema define la estructura para generar múltiples secciones informativas sobre los detalles y el contexto del próximo partido."
+      type: "object"
+      properties:
+        sections:
+          type: "array"
+          description: "Una serie de secciones detalladas que cubren diferentes aspectos del informe previo. Debe incluir información esencial sobre el contexto de la competición, horario del partido, detalles del estadio y oficiales del partido."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "Un título de categoría específico para esta sección (ej., 'Contexto de la Competición', 'Horario del Partido', 'Información del Estadio', 'Oficiales del Partido')"
+              content:
+                type: "string"
+                description: "Descripción narrativa detallada específica de esta categoría, incorporando detalles relevantes como:
+                  - Nombre de la competición y temporada actual
+                  - Ronda o fase de la competición
+                  - Fecha y hora del partido
+                  - Nombre y ubicación del estadio
+                  - Equipos participantes
+                  - Árbitro y oficiales
+                  - Condiciones meteorológicas y estado del campo
+                  El contenido debe estar escrito en un tono profesional y atractivo, adecuado para la transmisión deportiva."
+
+  # prompt-content-news-es
+  - type: "prompt"
+    title: "Prompt Contenido Noticias"
+    name: "prompt-content-news-es"
+    description: "Este prompt genera múltiples fragmentos que cubren diferentes aspectos del próximo partido, incluyendo noticias del equipo, enfrentamientos históricos, información del estadio y forma reciente."
+    schema:
+      title: "ContenidoNoticias"
+      description: "Este esquema define la estructura para generar múltiples fragmentos informativos sobre diferentes aspectos del próximo partido."
+      type: "object"
+      properties:
+        results:
+          type: "array"
+          description: "Una serie de fragmentos diversos que cubren diferentes aspectos del próximo partido. Debe incluir al menos 4-5 fragmentos diferentes sobre: noticias del equipo (lesiones/suspensiones), estadísticas históricas de enfrentamientos directos, información del estadio, forma reciente y estadísticas de jugadores clave."
+          minItems: 4
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "Un título de categoría específico para este fragmento (ej., 'Noticias del Equipo', 'Historial de Enfrentamientos', 'Información del Estadio', 'Forma Reciente', 'Estadísticas de Jugadores Clave')"
+              content:
+                type: "string"
+                description: "Información detallada específica de esta categoría sobre el próximo partido"
+
+  # prompt-content-standings-es
+  - type: "prompt"
+    title: "Prompt Contenido Clasificación"
+    name: "prompt-content-standings-es"
+    description: "Este prompt genera un resumen de la clasificación para ambos equipos"
+    schema:
+      title: "ContenidoClasificación"
+      description: "Este esquema define la estructura para generar el resumen de la clasificación de ambos equipos"
+      type: "object"
+      properties:
+        standings-home:
+          type: "string"
+          description: "Proporciona un resumen narrativo de la clasificación actual del equipo local, incluyendo su posición en la liga, rendimiento reciente y cualquier logro o desafío notable."
+        standings-away:
+          type: "string"
+          description: "Proporciona un resumen narrativo de la clasificación actual del equipo visitante, incluyendo su posición en la liga, rendimiento reciente y cualquier logro o desafío notable."

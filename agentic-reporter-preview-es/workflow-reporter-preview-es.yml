@@ -1,7 +1,7 @@
 workflow:
-  name: "workflow-reporter-preview-es-mx"
-  title: "Update preview ES-MX"
-  description: "Workflow to update preview in Mexican Spanish."
+  name: "workflow-reporter-preview-es"
+  title: "Update preview es"
+  description: "Workflow to update preview in Spanish."
   context-variables:
     sdk-openai:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
@@ -74,9 +74,9 @@ workflow:
           }
       metadata:
         event_code: "$.get('event_code')"
-    # 2 load-content-snippet-es-mx
+    # 2 load-content-snippet-es
     - type: "document"
-      name: "load-content-snippet-es-mx"
+      name: "load-content-snippet-es"
       description: "Load the content snippet."
       condition: "$.get('event-exists') is True"
       config:
@@ -92,10 +92,10 @@ workflow:
       inputs:
         name: "'content-snippet'"
       outputs:
-        content-snippets-es-mx: "[{**d.get('value', {}), 'language': 'es-mx'} for d in $.get('documents', [])]"
-    # 3 prompt-reporter-preview-es-mx
+        content-snippets-es: "[{**d.get('value', {}), 'language': 'es'} for d in $.get('documents', [])]"
+    # 3 prompt-reporter-preview-es
     - type: "prompt"
-      name: "prompt-reporter-preview-es-mx"
+      name: "prompt-reporter-preview-es"
       description: "Generate a preview for the upcoming game"
       condition: "$.get('event-exists') is True"
       connector:
@@ -103,13 +103,13 @@ workflow:
         command: "invoke_prompt"
         model: "gpt-4o"
       inputs:
-        content-snippets-es-mx: "$.get('content-snippets-es-mx')"
+        content-snippets-es: "$.get('content-snippets-es')"
         promo_link: "'markup-promo-link'"
       outputs:
-        content-preview-es-mx: "$"
-    # 4 update-event-preview-es-mx
+        content-preview-es: "$"
+    # 4 update-event-preview-es
     - type: "document"
-      name: "update-event-preview-es-mx"
+      name: "update-event-preview-es"
       description: "Update the document."
       condition: "$.get('event-exists') is True"
       config:
@@ -119,7 +119,7 @@ workflow:
       documents:
         content-preview: |
           {
-            **$.get('content-preview-es-mx', {}),
+            **$.get('content-preview-es', {}),
             'execution': datetime.utcnow(),
             'status': 'active'
           }
@@ -127,7 +127,7 @@ workflow:
         document_type: "'content-preview'"
         event_code: "$.get('event_code')"
         season_code: "$.get('season_code')"
-        language: "'es-mx'"
+        language: "'es'"
     # 5 update-event-preevent
     - type: "document"
       name: "update-event-preevent-end"

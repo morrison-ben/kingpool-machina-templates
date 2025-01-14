@@ -1,0 +1,13 @@
+agent:
+  name: agent-reporter-summary  
+  title: "Agent Reporter Summary"
+  description: "Agent to produce summary content for sportsblog"
+  metadata:
+    language: "en-us"
+  context:
+    config-frequency: 1
+  workflows:
+    - name: "workflow-reporter-summary"
+      description: "Reporter summary workflow"
+      outputs:
+        reporter-summary: "$.get('events')"
