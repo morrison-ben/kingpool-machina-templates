@@ -1,0 +1,13 @@
+agent:
+  name: agent-reporter-briefing-en
+  title: "Agent Reporter Briefing English"
+  description: "Agent to produce content briefing for sportsblog in English"
+  metadata:
+    language: "en"
+  context:
+    config-frequency: 1
+  workflows:
+    - name: "workflow-reporter-briefing-en"
+      description: "Reporter briefing workflow in English"
+      outputs:
+        briefing: "$.get('events')"

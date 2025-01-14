@@ -1,7 +1,7 @@
 workflow:
-  name: "workflow-reporter-briefing-es"
-  title: "Reporter Briefing Spanish"
-  description: "Workflow to produce briefing in Spanish."
+  name: "workflow-reporter-briefing-en"
+  title: "Reporter Briefing English"
+  description: "Workflow to produce briefing in English."
   context-variables:
     sdk-openai:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
@@ -40,7 +40,7 @@ workflow:
         search-vector: false
       filters:
         value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
-        value.version_control.reporter_briefing_es_status: "{'$exists': False}"
+        value.version_control.reporter_briefing_en_status: "{'$exists': False}"
         value.version_control.reporter_summary_status: "'processed'"
         value.version_control.reporter_web_status: "'processed'"
         value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=72)}"
@@ -54,7 +54,7 @@ workflow:
         reporter_briefing_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_briefing_count', 0) if $.get('documents') else None"
         season_code: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('sport_event_context', {}).get('season', {}).get('id', '') if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
-    # 1 update-event-status
+    # 2 update-event-status
     - type: "document"
       name: "update-event-preevent-start"
       description: "Update the events document preevent."
@@ -70,12 +70,12 @@ workflow:
             'processing': True,
             'version_control': {
               **$.get('event-selected').get('version_control', {}),
-              'reporter_briefing_es_status': 'processing'
+              'reporter_briefing_en_status': 'processing'
             }
           }
       metadata:
         event_code: "$.get('event_code')"
-    # 2 load-standings
+    # 3 load-standings
     - type: "document"
       name: "load-season-standings"
       description: "Load for the season standings"
@@ -91,9 +91,9 @@ workflow:
       outputs:
         standings: "[d.get('standings') for d in [group for group in $.get('documents', [{}])[0].get('value', {}).get('data', [])[0].get('groups', [])]][0]"
         standings-exist: "len($.get('documents')) > 0"
-    # 3 load-event-summary-en-us
+    # 4 load-event-summary
     - type: "document"
-      name: "load-event-summary-en-us"
+      name: "load-event-summary"
       description: "Load the events document summary."
       condition: "$.get('event-exists') is True"
       config:
@@ -106,17 +106,40 @@ workflow:
             'document_type': 'event-summary',
             'event_code': $.get('event_code'),
             'season_code': $.get('season_code'),
-            'language': 'en-us'
+            'language': 'en'
           }
       inputs:
         name: "'event-summary'"
       outputs:
-        event-summary-en-us: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-    # 5 prompt-briefing-en-us
-    - type: "prompt"
-      name: "prompt-content-match-briefing-en-us"
-      description: "Summarize the Briefing for the upcoming game"
+        event-summary: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        event-summary-exists: "len($.get('documents')) > 0"
+    # 5 load-websearch-result
+    - type: "document"
+      name: "load-websearch-result"
+      description: "Load the websearch result."
       condition: "$.get('event-exists') is True"
+      config:
+        action: "search"
+        search-limit: 10
+        search-vector: false
+      filters:
+        metadata: |
+          {
+            'document_type': 'websearch-result',
+            'event_code': $.get('event_code'),
+            'season_code': $.get('season_code'),
+            'language': 'en'
+          }
+      inputs:
+        name: "'websearch-result'"
+      outputs:
+        websearch-result: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        websearch-result-exists: "len($.get('documents')) > 0"
+    # 6 prompt-briefing-en
+    - type: "prompt"
+      name: "prompt-content-match-briefing-en"
+      description: "Summarize the Briefing for the upcoming game"
+      condition: "$.get('event-exists') is True and $.get('event-summary-exists') is True"
       connector:
         name: "sdk-openai"
         command: "invoke_prompt"
@@ -128,7 +151,7 @@ workflow:
         start_time: "$.get('event-summary').get('sport_event').get('start_time')"
         venue: "$.get('event-summary').get('sport_event').get('venue')"
       outputs:
-        bulk-briefing-en-us: |
+        bulk-briefing-en: |
           [
             {
               'subject': c.get('title', ''),
@@ -136,17 +159,17 @@ workflow:
               'title': f"$.(title) - {c.get('title', '')}",
               'metadata': {
                 'event_code': '$.(event_code)',
-                'language': 'en-us'
+                'language': 'en'
               }
             }
             for c in $.get('sections')
           ]
-        content-briefing-en-us: "$"
-    # 5 prompt-standings-en-us
+        content-briefing-en: "$"
+    # 7 prompt-standings-en
     - type: "prompt"
-      name: "prompt-content-standings"
+      name: "prompt-content-standings-en"
       description: "Summarize the Standings for the teams"
-      condition: "$.get('event-exists') is True"
+      condition: "$.get('event-exists') is True and $.get('standings-exist') is True"
       connector:
         name: "sdk-openai"
         command: "invoke_prompt"
@@ -156,7 +179,7 @@ workflow:
         team-home: "$.get('team-home')"
         team-away: "$.get('team-away')"
       outputs:
-        bulk-standings-en-us: |
+        bulk-standings-en: |
           [
             {
               'subject': 'Standings Home',
@@ -164,7 +187,7 @@ workflow:
               'title': f"$.(title) - Standings Home",
               'metadata': {
                 'event_code': '$.(event_code)',
-                'language': 'en-us'
+                'language': 'en'
               }
             },
             {
@@ -173,35 +196,24 @@ workflow:
               'title': f"$.(title) - Standings Away",
               'metadata': {
                 'event_code': '$.(event_code)',
-                'language': 'en-us'
+                'language': 'en'
               }
             }
           ]
-        content-standings-en-us: "$"
-    # 7 prompt-content-web-search
+        content-standings-en: "$"
+    # 8 prompt-content-news-en
     - type: "prompt"
-      name: "prompt-content-web-search"
-      condition: "$.get('event-exists') is True and $.get('enable-websearch') is True"
+      name: "prompt-content-news-en"
+      condition: "$.get('event-exists') is True and $.get('websearch-result-exists') is True"
       description: "Generate a web search summary for a upcoming game."
       connector:
         name: "sdk-openai"
         command: "invoke_prompt"
         model: "gpt-4o"
       inputs:
-        web-search-results: |
-          {
-            "results": [
-              {
-                "title": "Match Preview",
-                "content": $.get('search-results', None)
-              }
-            ],
-            "title": $.get('title'),
-            "team-home": $.get('team-home'),
-            "team-away": $.get('team-away')
-          }
+        websearch-context: "$.get('websearch-result', {}).get('results', None)"
       outputs:
-        bulk-web-search-en-us: |
+        bulk-news-en: |
           [
             {
               'subject': c.get('title', ''),
@@ -209,15 +221,15 @@ workflow:
               'title': f"$.(title) - {c.get('title', '')}",
               'metadata': {
                 'event_code': '$.(event_code)',
-                'language': 'en-us'
+                'language': 'en'
               }
             }
             for c in $.get('results', [])
           ]
-        web-search-snippets: "$"
-    # 8 document-update-en-us
+        content-news-en: "$"
+    # 9 document-update-en
     - type: "document"
-      name: "document-update-en-us"
+      name: "document-update-en"
       condition: "$.get('event-exists') is True"
       config:
         action: "update"
@@ -226,29 +238,29 @@ workflow:
       documents:
         content-briefing: |
           {
-            **$.get('content-briefing-en-us'),
-            'title': $.get('title'),
+            **$.get('content-briefing-en'),
+            'title': f"$.(title) - Briefing",
             'team-home': $.get('team-home'),
             'team-away': $.get('team-away')
           }
         content-news: |
           {
-            **$.get('web-search-snippets'),
-            "title": $.get('title'),
+            **$.get('content-news-en'),
+            "title": f"$.(title) - News",
             "team-home": $.get('team-home'),
             "team-away": $.get('team-away')
           }
         content-standings: |
           {
-            **$.get('content-standings-en-us'),
-            'title': $.get('title'),
-            'team-home': $.get('team-home'),
-            'team-away': $.get('team-away')
+            **$.get('content-standings-en'),
+            "title": f"$.(title) - Standings",
+            "team-home": $.get('team-home'),
+            "team-away": $.get('team-away')
           }
       metadata:
         event_code: "$.get('event_code')"
-        language: "'en-us'"
-    # 8 bulk-save-snippets
+        language: "'en'"
+    # 10 bulk-save-snippets
     - type: "document"
       name: "bulk-save-snippets"
       condition: "$.get('event-exists') is True"
@@ -267,40 +279,11 @@ workflow:
       inputs:
         parsed-items: |
           [
-            *$.get('bulk-briefing-en-us', []),
-            *$.get('bulk-standings-en-us', []),
-            *$.get('bulk-web-search-en-us', []),
+            *$.get('bulk-briefing-en', []),
+            *$.get('bulk-standings-en', []),
+            *$.get('bulk-news-en', []),
           ]
-    # 9 update-event-summary (en-us)
-    - type: "document"
-      name: "update-event-summary-en-us"
-      description: "Update the events document."
-      condition: "$.get('event-exists') is True"
-      config:
-        action: "update"
-        embed-vector: false
-        force-update: true
-      documents:
-        event-summary: |
-          {
-            **$.get('event-summary-en-us', {}),
-            'execution': datetime.utcnow(),
-            'event-summary': $.get('event-summary'),
-            'event-status': $.get('event-status'),
-            'match-status': $.get('match-status'),
-            'standings': $.get('content-standings-en-us'),
-            'team-away': $.get('team-away'),
-            'team-home': $.get('team-home'),
-            'processed': False,
-            'title': $.get('title'),
-            'status': 'active'
-          }
-      metadata:
-        document_type: "'event-summary'"
-        event_code: "$.get('event_code')"
-        season_code: "$.get('season_code')"
-        language: "'en-us'"
-    # 10 update-event-preevent
+    # 11 update-event-preevent
     - type: "document"
       name: "update-event-preevent-end"
       description: "Update the events document preevent."
@@ -317,7 +300,7 @@ workflow:
             'version_control': {
               **$.get('event-selected').get('version_control', {}),
               'reporter_briefing_count': $.get('reporter_briefing_count', 0) + 1,
-              'reporter_briefing_es_status': 'processed',
+              'reporter_briefing_en_status': 'processed',
               'updated': datetime.utcnow()
             }
           }

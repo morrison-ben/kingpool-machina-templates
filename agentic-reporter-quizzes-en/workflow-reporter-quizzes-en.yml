@@ -1,22 +1,12 @@
 workflow:
-  name: "workflow-reporter-web"
-  title: "Reporter Web"
-  description: "Workflow to produce web content."
+  name: "workflow-reporter-quizzes-en"
+  title: "Reporter Quizzes English"
+  description: "Workflow to produce quizzes in English."
   context-variables:
-    api-perplexity:
-      basicAuth: "$TEMP_CONTEXT_VARIABLE_PERPLEXITY_API_KEY"
+    sdk-openai:
+      api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
   inputs:
     event_code: "$.get('event_code') or None"
-    perplexity_model: "$.get('perplexity_model', 'llama-3.1-sonar-small-128k-online')"
-    perplexity_max_tokens: "$.get('perplexity_max_tokens', 10000)"
-    perplexity_top_p: "$.get('perplexity_top_p', 0.9)"
-    perplexity_temperature: "$.get('perplexity_temperature', 0.5)"
-    system_message: |
-      I already have match officials, agenda, team information and standings from my structured data API. 
-      Please focus only on additional context like historical head-to-head data, key statistics from previous encounters,
-      notable matches between these teams, significant records, and interesting facts that could be used to create a news article.
-      Include details about memorable goals, dramatic moments, and unique achievements from past meetings between these teams.
-      Do not repeat information I already have about current team standings, match officials, or basic match details.
   outputs:
     events: "$.get('events')"
     workflow-status: "$.get('event-exists') is not True and 'skipped' or 'executed'"
@@ -36,7 +26,7 @@ workflow:
       outputs:
         event-exists: "len($.get('documents', [])) > 0"
         event-selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        reporter_web_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_web_count', 0) if $.get('documents') else None"
+        reporter_quizzes_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_quizzes_count', 0) if $.get('documents') else None"
         season_code: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('sport_event_context', {}).get('season', {}).get('id', '') if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
     # 1 load-event
@@ -50,7 +40,8 @@ workflow:
         search-vector: false
       filters:
         value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
-        value.version_control.reporter_web_status: "{'$exists': False}"
+        value.version_control.reporter_quizzes_en_status: "{'$exists': False}"
+        value.version_control.reporter_briefing_en_status: "'processed'"
         value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=72)}"
         value.processing: "{'$ne': True}"
       inputs:
@@ -59,10 +50,10 @@ workflow:
         event_code: "$.get('documents')[0].get('value').get('sport_event', {}).get('id') if $.get('documents') else None"
         event-exists: "len($.get('documents', [])) > 0"
         event-selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        reporter_web_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_web_count', 0) if $.get('documents') else None"
+        reporter_quizzes_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_quizzes_count', 0) if $.get('documents') else None"
         season_code: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('sport_event_context', {}).get('season', {}).get('id', '') if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
-    # 1 update-event-status
+    # 2 update-event-status
     - type: "document"
       name: "update-event-preevent-start"
       description: "Update the events document preevent."
@@ -78,67 +69,74 @@ workflow:
             'processing': True,
             'version_control': {
               **$.get('event-selected').get('version_control', {}),
-              'reporter_web_status': 'processing'
+              'reporter_quizzes_en_status': 'processing'
             }
           }
       metadata:
         event_code: "$.get('event_code')"
-    # 2 fetch-perplexity-api
-    - type: "connector"
-      name: "fetch-perplexity-api"
-      condition: "$.get('event-exists') is True"
-      connector:
-        name: "api-perplexity"
-        command: "post-chat/completions"
-      inputs:
-        body: |
-          {
-            'model': $.get('perplexity_model'),
-            'messages': [
-              {
-                'role': 'system',
-                'content': $.get('system_message')
-              },{
-                'role': 'user',
-                'content': $.get('title')
-              }
-            ],
-            'max_tokens': $.get('perplexity_max_tokens'),
-            'temperature': $.get('perplexity_temperature'),
-            'top_p': $.get('perplexity_top_p'),
-            'return_citations': $.get('return_citations', True),
-            'return_images': $.get('return_images', False),
-            'return_related_questions': $.get('return_related_questions', True),
-            'search_recency_filter': $.get('search_recency_filter', 'week'),
-            'top_k': $.get('top_k', 0),
-            'stream': $.get('stream', False),
-            'presence_penalty': $.get('presence_penalty', 0),
-            'frequency_penalty': $.get('frequency_penalty', 1)
-          }
-      outputs:
-        search-results: "$.get('choices')[0].get('message').get('content')"
-    # 3 save search results
+    # 3 load-content-snippet-en
     - type: "document"
-      name: "save-search-results"
-      description: "Save the search results."
+      name: "load-content-snippet-en"
+      description: "Load the content snippet."
       condition: "$.get('event-exists') is True"
       config:
-        action: "save"
-        embed-vector: false
-      documents:
-        websearch-result: |
+        action: "search"
+        search-limit: 25
+        search-vector: false
+      filters:
+        metadata: |
           {
-            "results": $.get('search-results', {}),
-            "title": f"{$.get('title')} - Web Search",
-            "execution": datetime.utcnow(),
-            "status": 'active'
+            'event_code': $.get('event_code'),
+            'language': 'en'
           }
-      metadata:
-        document_type: "'websearch-result'"
-        event_code: "$.get('event_code')"
-        season_code: "$.get('season_code')"
-        language: "'en'"
-    # 4 update-event-preevent
+      inputs:
+        name: "'content-snippet'"
+      outputs:
+        content-snippets: "[{**d.get('value', {})} for d in $.get('documents', [])]"
+    # 4 prompt-content-quiz-en
+    - type: "prompt"
+      name: "prompt-reporter-quizzes-en"
+      description: "Generate a quiz for the upcoming game"
+      condition: "$.get('event-exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        content-snippets: "$.get('content-snippets')"
+      outputs:
+        bulk-quiz-en: |
+          [
+            {
+              **c,
+              'title': f"$.(title) - {c.get('question', '')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'language': 'en'
+              }
+            }
+            for c in $.get('questions', [])
+          ]
+        content-quizzes: "$"
+    # 5 bulk-save-quizzes
+    - type: "document"
+      name: "bulk-save-quizzes"
+      description: "Bulk save the quizzes."
+      config:
+        action: "bulk-save"
+        embed-vector: true
+        force-update: true
+      condition: "$.get('event-exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      document_name: "content-quiz"
+      documents:
+        items: "$.get('parsed-items')"
+      inputs:
+        parsed-items: $.get('bulk-quiz-en', [])
+    # 6 update-event-preevent
     - type: "document"
       name: "update-event-preevent-end"
       description: "Update the events document preevent."
@@ -154,8 +152,8 @@ workflow:
             'processing': False,
             'version_control': {
               **$.get('event-selected').get('version_control', {}),
-              'reporter_web_count': $.get('reporter_web_count', 0) + 1,
-              'reporter_web_status': 'processed',
+              'reporter_quizzes_count': $.get('reporter_quizzes_count', 0) + 1,
+              'reporter_quizzes_en_status': 'processed',
               'updated': datetime.utcnow()
             }
           }

@@ -1,0 +1,13 @@
+agent:
+  name: agent-reporter-quizzes-en
+  title: "Agent Reporter Quizzes English"
+  description: "Agent to produce content quizzes for sportsblog in English"
+  metadata:
+    language: "en"
+  context:
+    config-frequency: 1
+  workflows:
+    - name: "workflow-reporter-quizzes-en"
+      description: "Reporter quizzes workflow in English"
+      outputs:
+        quizzes: "$.get('events')"

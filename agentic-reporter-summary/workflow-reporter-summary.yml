@@ -96,9 +96,9 @@ workflow:
         round-number: "$.get('sport_event', {}).get('sport_event_context', {}).get('round', {}).get('number', '')"
         team-away: "next(item for item in $.get('sport_event').get('competitors') if item['qualifier'] == 'away')"
         team-home: "next(item for item in $.get('sport_event').get('competitors') if item['qualifier'] == 'home')"
-    # 3 save search results
+    # 4 save search results
     - type: "document"
-      name: "update-event-summary-en-us"
+      name: "update-event-summary"
       description: "Update the events document."
       condition: "$.get('event-exists') is True"
       config:
@@ -121,8 +121,8 @@ workflow:
         document_type: "'event-summary'"
         event_code: "$.get('event_code')"
         season_code: "$.get('season_code')"
-        language: "'en-us'"
-    # 4 update-event-preevent
+        language: "'en'"
+    # 5 update-event-preevent
     - type: "document"
       name: "update-event-preevent-end"
       description: "Update the events document preevent."
