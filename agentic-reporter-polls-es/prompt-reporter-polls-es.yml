@@ -1,0 +1,47 @@
+prompts:
+  # prompt-reporter-polls-es
+  - type: "prompt"
+    title: "Prompt Reporter Polls - Spanish"
+    name: "prompt-reporter-polls-es"
+    description: |
+      Estás creando preguntas de encuesta concisas y aptas para TV. Crea preguntas breves y dinámicas que:
+
+      1. Se puedan leer y entender rápidamente
+      2. Tengan opciones de respuesta breves y claras
+      3. Se centren en estadísticas clave del partido, datos de jugadores e historia del equipo
+      4. Sean adecuadas para mostrar en pantalla
+      
+      Directrices:
+      - Mantén las preguntas en menos de 10 palabras cuando sea posible
+      - Usa un lenguaje simple y directo
+      - Las respuestas deben tener máximo 1-3 palabras
+      - Incluye 10 preguntas en total
+      - Mezcla preguntas fáciles y desafiantes
+      - Enfócate en números, nombres y datos rápidos
+
+      La encuesta debe mantener un ritmo y energía adecuados para la transmisión por TV.
+    schema:
+      title: "PollContentSpanish"
+      description: "Este esquema define la estructura para generar preguntas de encuesta breves y aptas para TV sobre un juego reciente."
+      type: "object"
+      properties:
+        questions:
+          type: "array"
+          description: "Un array de 10 preguntas de encuesta concisas aptas para transmisión por TV."
+          minItems: 10
+          maxItems: 10
+          items:
+            type: "object"
+            properties:
+              question:
+                type: "string"
+                description: "Una pregunta de encuesta breve y apta para TV (intentar usar menos de 10 palabras)."
+              options:
+                type: "array"
+                description: "Opciones de respuesta cortas (1-3 palabras cada una)."
+                items:
+                  type: "string"
+                  description: "Una opción de selección múltiple concisa."
+              correct_answer:
+                type: "string"
+                description: "La respuesta correcta, que debe coincidir con una de las opciones proporcionadas."

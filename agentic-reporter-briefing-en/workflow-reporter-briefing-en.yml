@@ -111,7 +111,7 @@ workflow:
       inputs:
         name: "'event-summary'"
       outputs:
-        event-summary: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        event-summary: "$.get('documents')[0].get('value', {}).get('event-summary', {}) if $.get('documents') else None"
         event-summary-exists: "len($.get('documents')) > 0"
     # 5 load-websearch-result
     - type: "document"

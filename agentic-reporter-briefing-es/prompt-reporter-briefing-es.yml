@@ -2,72 +2,72 @@ prompts:
 
   # prompt-content-match-briefing-es
   - type: "prompt"
-    title: "Prompt Contenido Informe Previo"
+    title: "Prompt Content Match Briefing - Spanish"
     name: "prompt-content-match-briefing-es"
-    description: "Este prompt genera un informe previo completo, cubriendo detalles esenciales del partido, contexto de la competición e información del estadio."
+    description: "This prompt generates a comprehensive pre-match briefing in Spanish, covering essential match details, competition context, and venue information."
     schema:
-      title: "ContenidoInformePrevio"
-      description: "Este esquema define la estructura para generar múltiples secciones informativas sobre los detalles y el contexto del próximo partido."
+      title: "MatchBriefingContent"
+      description: "This schema defines the structure for generating multiple informative sections about the upcoming match details and context. All content must be generated in Spanish."
       type: "object"
       properties:
         sections:
           type: "array"
-          description: "Una serie de secciones detalladas que cubren diferentes aspectos del informe previo. Debe incluir información esencial sobre el contexto de la competición, horario del partido, detalles del estadio y oficiales del partido."
+          description: "An array of detailed sections covering different aspects of the match briefing. Should include essential information about the competition context, match timing, venue details, and match officials. All content must be written in Spanish."
           items:
             type: "object"
             properties:
               title:
                 type: "string"
-                description: "Un título de categoría específico para esta sección (ej., 'Contexto de la Competición', 'Horario del Partido', 'Información del Estadio', 'Oficiales del Partido')"
+                description: "A specific category title in Spanish (e.g., 'Contexto de la Competición', 'Horario del Partido', 'Información del Estadio', 'Oficiales del Partido')"
               content:
                 type: "string"
-                description: "Descripción narrativa detallada específica de esta categoría, incorporando detalles relevantes como:
-                  - Nombre de la competición y temporada actual
-                  - Ronda o fase de la competición
-                  - Fecha y hora del partido
-                  - Nombre y ubicación del estadio
-                  - Equipos participantes
-                  - Árbitro y oficiales
-                  - Condiciones meteorológicas y estado del campo
-                  El contenido debe estar escrito en un tono profesional y atractivo, adecuado para la transmisión deportiva."
+                description: "Detailed narrative description in Spanish specific to this category, incorporating relevant details such as:
+                  - Competition name and current season
+                  - Round or stage of the competition
+                  - Match date and kickoff time
+                  - Stadium name and location
+                  - Teams involved
+                  - Referee and officials
+                  - Weather conditions and pitch status
+                  The content must be written in Spanish with an engaging, professional tone suitable for sports broadcasting."
 
   # prompt-content-news-es
   - type: "prompt"
-    title: "Prompt Contenido Noticias"
+    title: "Prompt Content Web Search - Spanish"
     name: "prompt-content-news-es"
-    description: "Este prompt genera múltiples fragmentos que cubren diferentes aspectos del próximo partido, incluyendo noticias del equipo, enfrentamientos históricos, información del estadio y forma reciente."
+    description: "This prompt generates multiple snippets in Spanish covering different aspects of the upcoming game, including team news, historical matchups, venue information, and recent form."
     schema:
-      title: "ContenidoNoticias"
-      description: "Este esquema define la estructura para generar múltiples fragmentos informativos sobre diferentes aspectos del próximo partido."
+      title: "WebSearchContent"
+      description: "This schema defines the structure for generating multiple informative snippets about different aspects of the upcoming game. All content must be in Spanish."
       type: "object"
       properties:
         results:
           type: "array"
-          description: "Una serie de fragmentos diversos que cubren diferentes aspectos del próximo partido. Debe incluir al menos 4-5 fragmentos diferentes sobre: noticias del equipo (lesiones/suspensiones), estadísticas históricas de enfrentamientos directos, información del estadio, forma reciente y estadísticas de jugadores clave."
+          description: "An array of diverse snippets covering different aspects of the upcoming game. Should include at least 4-5 different snippets about: team news (injuries/suspensions), historical head-to-head statistics, venue information, recent form, and key player statistics. All content must be generated in Spanish."
           minItems: 4
           items:
             type: "object"
             properties:
               title:
                 type: "string"
-                description: "Un título de categoría específico para este fragmento (ej., 'Noticias del Equipo', 'Historial de Enfrentamientos', 'Información del Estadio', 'Forma Reciente', 'Estadísticas de Jugadores Clave')"
+                description: "A specific category title in Spanish (e.g., 'Noticias del Equipo', 'Historial de Enfrentamientos', 'Información del Estadio', 'Forma Reciente', 'Estadísticas de Jugadores Clave')"
               content:
                 type: "string"
-                description: "Información detallada específica de esta categoría sobre el próximo partido"
+                description: "Detailed information specific to this category about the upcoming game, written in Spanish"
 
   # prompt-content-standings-es
   - type: "prompt"
-    title: "Prompt Contenido Clasificación"
+    title: "Prompt Content Standings - Spanish"
     name: "prompt-content-standings-es"
-    description: "Este prompt genera un resumen de la clasificación para ambos equipos"
+    description: "This prompt generates standings summary for both teams in Spanish"
     schema:
-      title: "ContenidoClasificación"
-      description: "Este esquema define la estructura para generar el resumen de la clasificación de ambos equipos"
+      title: "StandingsContent"
+      description: "This schema defines the structure for generating standings summary for both teams. All content must be in Spanish."
       type: "object"
       properties:
         standings-home:
           type: "string"
-          description: "Proporciona un resumen narrativo de la clasificación actual del equipo local, incluyendo su posición en la liga, rendimiento reciente y cualquier logro o desafío notable."
+          description: "Provide a narrative summary in Spanish of the home team's current standings, including their position in the league, recent performance, and any notable achievements or challenges."
         standings-away:
           type: "string"
-          description: "Proporciona un resumen narrativo de la clasificación actual del equipo visitante, incluyendo su posición en la liga, rendimiento reciente y cualquier logro o desafío notable."
+          description: "Provide a narrative summary in Spanish of the away team's current standings, including their position in the league, recent performance, and any notable achievements or challenges."
