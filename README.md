@@ -10,6 +10,6 @@ Agentics Systems for Machina Sports
 
 3 - Install agentic-reporter-image
 
-4 - Install agentic-reporter-preview-pt-br
+4 - Install agentic-reporter-preview-br
 
-5 - Install agentic-reporter-recap-pt-br
+5 - Install agentic-reporter-recap-br

@@ -1,0 +1,22 @@
+prompts:
+  - type: "prompt"
+    title: "Blog Reporter Prévia da Partida"
+    name: "prompt-reporter-preview-br"
+    description: "Este prompt gera o título, subtítulo e slug para um post do blog em português brasileiro sobre uma partida que ainda não ocorreu."
+    schema:
+      title: "PostBlogPreviaConteudo"
+      description: "Este schema define a estrutura para gerar os elementos do título de um post do blog em português brasileiro sobre uma partida que ainda não ocorreu."
+      type: "object"
+      properties:
+        title:
+          type: "string"
+          description: "Crie um título SEO-friendly e atraente em português brasileiro, incorporando palavras-chave como 'Palpite do Dia', 'Dicas Libertadores' ou 'Palpites para Amanhã'."
+        subtitle:
+          type: "string"
+          description: "Gere um subtítulo que complemente o título com informações relevantes, como estatísticas dos times, contexto da competição e possíveis destaques do jogo."
+        slug:
+          type: "string"
+          description: "Crie um slug técnico e otimizado para SEO usando hífens e palavras-chave relacionadas à partida e ao campeonato."
+        content:
+          type: "string"
+          description: "Produza um texto jornalístico detalhado e direto em português brasileiro sobre a partida. Use dados, estatísticas e análises técnicas para estruturar o texto, organizando-o em seções com emojis para engajamento, como ⚽ **Time 1** e 🥅 **Média de Gols**. Inclua 2-3 CTAs com links promocionais usando o formato: '<p><a href=\"[promo_link]\" class=\"promo_link\">Faça sua aposta para [time] x [time]</a></p>' ou '<p><a href=\"[promo_link]\" class=\"promo_link\">Aposte em [time] x [time]</a></p>', sempre usando a classe 'promo_link' para tracking no frontend." 

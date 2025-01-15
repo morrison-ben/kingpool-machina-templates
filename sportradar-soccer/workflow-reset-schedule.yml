@@ -42,9 +42,6 @@ workflow:
             'processing': False,
             'version_control': {
               **$.get('event-selected').get('version_control', {}),
-              'pre_event_status': 'idle',
-              'pre_live_status': 'idle',
-              'live_status': 'idle',
               'updated': datetime.utcnow()
             }
           }

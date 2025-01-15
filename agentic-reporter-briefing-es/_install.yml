@@ -1,8 +1,0 @@
-datasets:
-  - type: "agent"
-    path: "agent-reporter-briefing-es.yml"
-  - type: "prompts"
-    path: "prompt-reporter-briefing-es.yml"
-  - type: "workflow"
-    path: "workflow-reporter-briefing-es.yml"
-  - type: "workflow"

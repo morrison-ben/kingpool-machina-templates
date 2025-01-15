@@ -1,0 +1,53 @@
+datasets:
+  # reporter-web
+  - type: "agent"
+    path: "../reporter-web/agent-reporter-web.yml"
+  - type: "workflow"
+    path: "../reporter-web/workflow-reporter-web.yml"
+  # reporter-summary
+  - type: "agent"
+    path: "../reporter-summary/agent-reporter-summary.yml"
+  - type: "workflow"
+    path: "../reporter-summary/workflow-reporter-summary.yml"
+  # reporter-briefing-en
+  - type: "agent"
+    path: "../reporter-briefing-en/agent-reporter-briefing-en.yml"
+  - type: "prompts"
+    path: "../reporter-briefing-en/prompt-reporter-briefing-en.yml"
+  - type: "workflow"
+    path: "../reporter-briefing-en/workflow-reporter-briefing-en.yml"
+  # reporter-briefing-es
+  - type: "agent"
+    path: "../reporter-briefing-es/agent-reporter-briefing-es.yml"
+  - type: "prompts"
+    path: "../reporter-briefing-es/prompt-reporter-briefing-es.yml"
+  - type: "workflow"
+    path: "../reporter-briefing-es/workflow-reporter-briefing-es.yml"
+  # reporter-polls-en
+  - type: "agent"
+    path: "../reporter-polls-en/agent-reporter-polls-en.yml"
+  - type: "prompts"
+    path: "../reporter-polls-en/prompt-reporter-polls-en.yml"
+  - type: "workflow"
+    path: "../reporter-polls-en/workflow-reporter-polls-en.yml"
+  # reporter-polls-es
+  - type: "agent"
+    path: "../reporter-polls-es/agent-reporter-polls-es.yml"
+  - type: "prompts"
+    path: "../reporter-polls-es/prompt-reporter-polls-es.yml"
+  - type: "workflow"
+    path: "../reporter-polls-es/workflow-reporter-polls-es.yml"
+  # reporter-quizzes-en
+  - type: "agent"
+    path: "../reporter-quizzes-en/agent-reporter-quizzes-en.yml"
+  - type: "prompts"
+    path: "../reporter-quizzes-en/prompt-reporter-quizzes-en.yml"
+  - type: "workflow"
+    path: "../reporter-quizzes-en/workflow-reporter-quizzes-en.yml"
+  # reporter-quizzes-es
+  - type: "agent"
+    path: "../reporter-quizzes-es/agent-reporter-quizzes-es.yml"
+  - type: "prompts"
+    path: "../reporter-quizzes-es/prompt-reporter-quizzes-es.yml"
+  - type: "workflow"
+    path: "../reporter-quizzes-es/workflow-reporter-quizzes-es.yml"

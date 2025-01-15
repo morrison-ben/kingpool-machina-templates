@@ -1,0 +1,3 @@
+datasets:
+  - type: "workflow"
+    path: "workflow-reporter-summary.yml"

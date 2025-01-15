@@ -77,9 +77,6 @@ workflow:
               },
               'version_control': {
                 **c.get('value', {}).get('version_control', {}),
-                'pre_event_status': 'idle',
-                'pre_live_status': 'idle',
-                'live_status': 'idle',
                 'updated': datetime.utcnow()
               },
               'start_time': datetime.fromisoformat(c.get('sport_event', {}).get('start_time', '')),

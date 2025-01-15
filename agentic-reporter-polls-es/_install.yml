@@ -1,7 +1,0 @@
-datasets:
-  - type: "agent"
-    path: "agent-reporter-polls-es.yml"
-  - type: "prompts"
-    path: "prompt-reporter-polls-es.yml"
-  - type: "workflow"
-    path: "workflow-reporter-polls-es.yml"

@@ -1,5 +1,0 @@
-datasets:
-  - type: "agent"
-    path: "agent-reporter-summary.yml"
-  - type: "workflow"
-    path: "workflow-reporter-summary.yml"
