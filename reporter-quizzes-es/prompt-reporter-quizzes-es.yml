@@ -1,7 +1,7 @@
 prompts:
   # prompt-reporter-quizzes-es
   - type: "prompt"
-    title: "Prompt Reporter Quizzes - Spanish"
+    title: "Reporter Quizzes - Spanish"
     name: "prompt-reporter-quizzes-es"
     description: |
       Estás creando preguntas de trivia concisas y aptas para TV. Crea preguntas breves y dinámicas que:

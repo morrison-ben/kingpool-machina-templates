@@ -115,7 +115,7 @@ workflow:
                 'language': 'es'
               }
             }
-            for c in $.get('questions', [])
+            for c in $.get('polls', [])
           ]
         content-polls: "$"
     # 5 bulk-save-polls

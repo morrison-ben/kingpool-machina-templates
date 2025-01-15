@@ -1,7 +1,7 @@
 prompts:
   # prompt-reporter-quizzes-en
   - type: "prompt"
-    title: "Prompt Reporter Quizzes - English"
+    title: "Reporter Quizzes - English"
     name: "prompt-reporter-quizzes-en"
     description: |
       You are creating concise, TV-friendly quiz questions. Create short, punchy questions that:

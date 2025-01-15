@@ -1,0 +1,166 @@
+workflow:
+  name: "workflow-chat-completion"
+  title: "Workflow Chat Completion"
+  description: "Workflow to chat completion"
+  context-variables:
+    sdk-openai:
+      api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
+  inputs:
+    event_type: "$.get('event_type', 'blog-briefing')"
+    prompt_name: "$.get('prompt_name', 'prompt-thread-completion')"
+    input_status: "$.get('input_status', 'waiting')"
+    output_status: "$.get('output_status', 'idle')"
+  outputs:
+    content: "$.get('content')"
+    documents: "$.get('documents')"
+    document_id: "$.get('document_id')"
+    document_data: "$.get('document_data')"
+    messages: "$.get('messages')"
+    workflow-status: "$.get('document_id') is not None and 'executed' or 'skipped'"
+  tasks:
+
+    # Load pending thread
+    - type: "document"
+      name: "load-pending-thread"
+      description: "Load pending thread"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      filters:
+        name: "'thread'"
+        value.status: "$.get('input_status')"
+      outputs:
+        document_id: "$.get('documents')[0]['_id'] if len($.get('documents', [])) > 0 else None"
+        document_data: "$.get('documents')[0] if len($.get('documents', [])) > 0 else None"
+        messages: "$.get('documents')[0].get('value', {}).get('messages', []) if len($.get('documents', [])) > 0 else None"
+        question: "$.get('documents')[0].get('value', {}).get('messages', [])[-1].get('content', '') if len($.get('documents', [])) > 0 else None"
+
+    # Update thread status
+    - type: "document"
+      name: "update-thread-status"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      condition: "$.get('document_id') is not None"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      documents:
+        thread: |
+          {
+            **$.get('document_data', {}).get('value', {}),
+            'status': 'processing'
+          }
+      filters:
+        document_id: "$.get('document_id')"
+
+    # Load similar documents
+    - type: "document"
+      name: "load-similar-documents"
+      description: "Load similar documents"
+      config:
+        action: "search"
+        threshold-docs: 2
+        threshold-similarity: 0.01
+        search-limit: 1000
+        search-vector: true
+      condition: "$.get('document_id') is not None"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      inputs:
+        name: "$.get('event_type')"
+        search-limit: "'2'"
+        search-query: "$.get('question')"
+      outputs:
+        documents: "$.get('documents')"
+
+    # Prompt chat completion
+    - type: "prompt"
+      name: "prompt-chat-completion"
+      description: "Chat Completion."
+      condition: "$.get('document_id') is not None and $.get('prompt_name') == 'prompt-thread-completion'"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        documents: "$.get('documents')"
+        messages: "$.get('messages')"
+        question: "$.get('question')"
+      outputs:
+        content: "$"
+
+    # Prompt bet confirmation
+    - type: "prompt"
+      name: "prompt-bet-confirmation"
+      description: "Bet Confirmation."
+      condition: "$.get('document_id') is not None and $.get('prompt_name') == 'prompt-bet-confirmation'"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        documents: "$.get('documents')"
+        messages: "$.get('messages')"
+        question: "$.get('question')"
+      outputs:
+        content: "$"
+
+    # Load thread document
+    - type: "document"
+      name: "load-thread-document"
+      description: "Load thread document"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      condition: "$.get('document_id') is not None"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      filters:
+        _id: "$.get('document_id')"
+      inputs:
+        name: "'thread'"
+      outputs:
+        document_data: "$.get('documents')[0]"
+        messages: "$.get('documents')[0].get('value', {}).get('messages', [])"
+
+    # Update thread document
+    - type: "document"
+      name: "update-thread-document"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      condition: "$.get('document_id') is not None"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      documents:
+        thread: |
+          {
+            **$.get('document_data').get('value', {}),
+            'messages': [
+              *$.get('messages'),
+              {
+                'role': 'assistant',
+                'content': $.get('content'),
+                'date': datetime.now().isoformat()
+              }
+            ],
+            'status': $.get('output_status')
+          }
+      filters:
+        document_id: "$.get('document_id')"

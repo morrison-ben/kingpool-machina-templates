@@ -64,10 +64,18 @@ datasets:
   - type: "workflow"
     path: "../reporter-quizzes-en/workflow-reporter-quizzes-en.yml"
 
+  # chat-completion
+  - type: "prompts"
+    path: "../chat-completion/prompt-chat-completion.yml"
+  - type: "workflow"
+    path: "../chat-completion/workflow-chat-completion.yml"
+
   # documents setup
   - type: "workflow"
     path: "folders.yml"
   - type: "agent"
     path: "setup1.yml"
+  - type: "agent"
+    path: "completion.yml"
   - type: "agent"
     path: "scheduler.yml"

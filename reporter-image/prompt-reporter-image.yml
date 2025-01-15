@@ -2,7 +2,7 @@ prompts:
 
   # prompt-image-briefing
   - type: "prompt"
-    title: "Image Briefing"
+    title: "Reporter Image - Briefing"
     name: "prompt-image-briefing"
     description: "This schema defines the structure to generate a detailed image briefing for a soccer match."
     schema:
@@ -16,7 +16,7 @@ prompts:
 
   # prompt-image-briefing-stadium
   - type: "prompt"
-    title: "Image Briefing Stadium"
+    title: "Reporter Image - Stadium"
     name: "prompt-image-briefing-stadium"
     description: "This schema defines the structure to generate a detailed image briefing for a soccer match stadium."
     schema:
@@ -30,7 +30,7 @@ prompts:
 
   # prompt-image-briefing-referee
   - type: "prompt"
-    title: "Image Briefing Referee"
+    title: "Reporter Image - Referee"
     name: "prompt-image-briefing-referee"
     description: "This schema defines the structure to generate a detailed image briefing for a soccer match referee."
     schema:

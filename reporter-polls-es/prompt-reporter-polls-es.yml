@@ -1,7 +1,7 @@
 prompts:
   # prompt-reporter-polls-es
   - type: "prompt"
-    title: "Prompt Reporter Polls - Spanish"
+    title: "Reporter Polls - Spanish"
     name: "prompt-reporter-polls-es"
     description: |
       You are creating engaging TV audience polls in Spanish. Create clear, impactful poll questions that:

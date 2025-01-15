@@ -1,0 +1,5 @@
+datasets:
+  - type: "prompts"
+    path: "prompt-chat-completion.yml"
+  - type: "workflow"
+    path: "workflow-chat-completion.yml"

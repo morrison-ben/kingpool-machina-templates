@@ -1,7 +1,7 @@
 prompts:
   # prompt-reporter-polls-en
   - type: "prompt"
-    title: "Prompt Reporter Polls - English"
+    title: "Reporter Polls - English"
     name: "prompt-reporter-polls-en"
     description: |
       You are creating engaging TV audience polls. Create clear, impactful poll questions that:

@@ -2,7 +2,7 @@ prompts:
 
   # prompt-content-match-briefing-en
   - type: "prompt"
-    title: "Prompt Content Match Briefing - English"
+    title: "Reporter Briefing - English"
     name: "prompt-content-match-briefing-en"
     description: "This prompt generates a comprehensive pre-match briefing, covering essential match details, competition context, and venue information."
     schema:
@@ -33,7 +33,7 @@ prompts:
 
   # prompt-content-news-en
   - type: "prompt"
-    title: "Prompt Content Web Search - English"
+    title: "Reporter Web Search - English"
     name: "prompt-content-news-en"
     description: "This prompt generates multiple snippets covering different aspects of the upcoming game, including team news, historical matchups, venue information, and recent form."
     schema:
@@ -57,7 +57,7 @@ prompts:
 
   # prompt-content-standings-en
   - type: "prompt"
-    title: "Prompt Content Standings - English"
+    title: "Reporter Standings - English"
     name: "prompt-content-standings-en"
     description: "This prompt generates standings summary for both teams"
     schema:
