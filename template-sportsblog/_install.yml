@@ -1,4 +1,5 @@
 datasets:
+
   # connectors
   - type: "connector"
     path: "../connector-openai/sdk-openai.yml"
@@ -10,6 +11,7 @@ datasets:
     path: "../connector-stability/sdk-stability.yml"
   - type: "connector"
     path: "../connector-storage/sdk-storage.yml"
+
   # sportradar-soccer-setup
   - type: "workflow"
     path: "../sportradar-soccer/workflow-reset-schedule.yml"
@@ -23,31 +25,49 @@ datasets:
     path: "../sportradar-soccer/workflow-sync-seasons.yml"
   - type: "workflow"
     path: "../sportradar-soccer/workflow-sync-standings.yml"
+
   # reporter-websearch
   - type: "workflow"
     path: "../reporter-websearch/workflow-reporter-websearch.yml"
+
   # reporter-summary
   - type: "workflow"
     path: "../reporter-summary/workflow-reporter-summary.yml"
+
   # reporter-briefing-en
   - type: "prompts"
     path: "../reporter-briefing-en/prompt-reporter-briefing-en.yml"
   - type: "workflow"
     path: "../reporter-briefing-en/workflow-reporter-briefing-en.yml"
+
   # reporter-preview-br
   - type: "prompts"
     path: "../reporter-preview-br/prompt-reporter-preview-br.yml"
   - type: "workflow"
     path: "../reporter-preview-br/workflow-reporter-preview-br.yml"
+
   # reporter-image
   - type: "prompts"
     path: "../reporter-image/prompt-reporter-image.yml"
   - type: "workflow"
     path: "../reporter-image/workflow-image-preview.yml"
+
+  # reporter-polls-en
+  - type: "prompts"
+    path: "../reporter-polls-en/prompt-reporter-polls-en.yml"
+  - type: "workflow"
+    path: "../reporter-polls-en/workflow-reporter-polls-en.yml"
+
+  # reporter-quizzes-en
+  - type: "prompts"
+    path: "../reporter-quizzes-en/prompt-reporter-quizzes-en.yml"
+  - type: "workflow"
+    path: "../reporter-quizzes-en/workflow-reporter-quizzes-en.yml"
+
   # documents setup
   - type: "workflow"
     path: "folders.yml"
   - type: "agent"
-    path: "setup.yml"
+    path: "setup1.yml"
   - type: "agent"
     path: "scheduler.yml"

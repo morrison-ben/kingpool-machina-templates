@@ -1,5 +1,5 @@
 workflow:
-  name: "workflow-image-preview"
+  name: "workflow-reporter-image-preview"
   title: "Reporter Image Preview"
   description: "Workflow to create image preview."
   context-variables:
@@ -44,8 +44,8 @@ workflow:
         search-vector: false
       filters:
         value.sport_event_status.status: "{'$in': ['not_started']}"
-        value.version_control.image_preview: "{'$exists': False}"
-        value.version_control.pre_event_status: "'processed'"
+        value.version_control.reporter_image_preview: "{'$exists': False}"
+        value.version_control.reporter_summary_status: "'processed'"
         value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=72)}"
         value.processing: "{'$ne': True}"
       inputs:
@@ -73,7 +73,7 @@ workflow:
             'processing': True,
             'version_control': {
               **$.get('event-selected').get('version_control', {}),
-              'image_preview': 'processing'
+              'reporter_image_preview': 'processing'
             }
           }
       metadata:
@@ -164,7 +164,7 @@ workflow:
             'version_control': {
               **$.get('event-selected').get('version_control', {}),
               'image_count': $.get('image_count', 0) + 1,
-              'image_preview': 'processed',
+              'reporter_image_preview': 'processed',
               'updated': datetime.utcnow()
             }
           }

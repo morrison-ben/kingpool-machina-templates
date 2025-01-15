@@ -6,6 +6,8 @@ workflow:
     setup-register: "$.get('setup-register')"
     workflow-status: "$.get('setup-register') is True and 'skipped' or 'executed'"
   tasks:
+
+    # load-setup-register
     - type: "document"
       name: "load-setup-register"
       description: "Search for setup-register"
@@ -17,6 +19,7 @@ workflow:
         name: "'setup-register'"
       outputs:
         setup-register: "$.get('documents')[0].get('value').get('setup', False) if $.get('documents') else False"
+
     # documents-structure
     - type: "document"
       name: "install-documents"
