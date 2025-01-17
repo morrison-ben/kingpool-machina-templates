@@ -22,7 +22,7 @@ agent:
       description: "sync-seasons"
       condition: "$.get('setup-register') is not True"
       inputs:
-        competition_id: "'sr:competition:17'"
+        competition_id: "'sr:competition:35'"
       outputs:
         sync-seasons-status: "$.get('workflow-status', False)"
 
@@ -30,7 +30,7 @@ agent:
       description: "sync-standings"
       condition: "$.get('setup-register') is not True"
       inputs:
-        season_id: "'sr:season:118689'"
+        season_id: "'sr:season:118693'"
       outputs:
         sync-standings-status: "$.get('workflow-status', False)"
 
@@ -38,6 +38,6 @@ agent:
       description: "sync-schedules"
       condition: "$.get('setup-register') is not True"
       inputs:
-        season_id: "'sr:season:118689'"
+        season_id: "'sr:season:118693'"
       outputs:
         sync-schedules-status: "$.get('workflow-status', False)"
