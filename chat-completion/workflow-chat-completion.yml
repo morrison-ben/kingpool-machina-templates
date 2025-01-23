@@ -78,7 +78,7 @@ workflow:
         model: "text-embedding-3-small"
       inputs:
         name: "$.get('event_type')"
-        search-limit: "'10'"
+        search-limit: "'1000'"
         search-query: "$.get('question')"
       outputs:
         documents: "$.get('documents')"
