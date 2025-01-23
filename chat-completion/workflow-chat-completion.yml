@@ -6,7 +6,7 @@ workflow:
     sdk-openai:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
   inputs:
-    event_type: "$.get('event_type', 'content-snippet')"
+    event_type: "$.get('event_type', 'content-preview')"
     prompt_name: "$.get('prompt_name', 'prompt-thread-completion')"
     input_status: "$.get('input_status', 'waiting')"
     output_status: "$.get('output_status', 'idle')"
