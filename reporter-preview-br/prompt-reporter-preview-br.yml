@@ -2,7 +2,7 @@ prompts:
   - type: "prompt"
     title: "Blog Reporter Prévia da Partida"
     name: "prompt-reporter-preview-br"
-    description: "Este prompt gera o título, subtítulo e slug para um post do blog em português brasileiro sobre uma partida que ainda não ocorreu. O tom deve ser profissional mas com personalidade, como um amigo que manja muito de apostas e sabe entreter enquanto informa. Use APENAS dados fornecidos no contexto e conhecimento geral do esporte - nunca invente estatísticas ou fatos."
+    description: "Este prompt gera o título, subtítulo e slug para um post do blog em português brasileiro sobre uma partida que ainda não ocorreu. O tom deve ser profissional mas com personalidade, como um amigo que manja muito de apostas e sabe entreter enquanto informa. Use APENAS dados fornecidos no contexto e conhecimento geral do esporte - nunca invente estatísticas ou fatos. O horário da partida (start_time) deve ser convertido de GMT para Horário de Brasília (GMT-3)."
     schema:
       title: "PostBlogPreviaConteudo"
       description: "Este schema define a estrutura para gerar os elementos do título de um post do blog em português brasileiro sobre uma partida que ainda não ocorreu, baseando-se EXCLUSIVAMENTE nos dados fornecidos e conhecimento geral do esporte."
@@ -30,10 +30,11 @@ prompts:
             - Use seu conhecimento geral do esporte apenas para contextualizar dados reais
             - Se faltar alguma informação importante, foque nas que você tem disponíveis
             - Seja criativo na narrativa, mas factual nos dados
+            - Converta o horário do jogo (start_time) de GMT para Horário de Brasília (GMT-3)
 
             Estrutura do conteúdo (não inclua os comentários no output, apenas siga a estrutura):
 
-            // Primeiro parágrafo: Data, horário (formato: "DD de Mês, às HH:MM - Horário de Brasília"), competição e contexto do jogo. Comece forte, como quem está contando uma história que vale a pena ouvir.
+            // Primeiro parágrafo: Use o campo start_time (convertendo de GMT para GMT-3) para informar "DD de Mês, às HH:MM - Horário de Brasília", junto com competição e contexto do jogo. Comece forte, como quem está contando uma história que vale a pena ouvir.
             // Segundo parágrafo: Importância da partida e situação dos times. Use analogias interessantes ou observações espertas que façam sentido.
 
             ## ⚔️ Panorama da Partida
