@@ -103,6 +103,7 @@ workflow:
         command: "invoke_prompt"
         model: "gpt-4o"
       inputs:
+        start_time: "$.get('event-selected').get('start_time')"
         content-snippets: "$.get('content-snippets')"
       outputs:
         content-preview-br: "$"
