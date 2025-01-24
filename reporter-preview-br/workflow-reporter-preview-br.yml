@@ -104,7 +104,6 @@ workflow:
         model: "gpt-4o"
       inputs:
         content-snippets: "$.get('content-snippets')"
-        promo_link: "'markup-promo-link'"
       outputs:
         content-preview-br: "$"
     # 4 update-event-preview-br

@@ -2,21 +2,48 @@ prompts:
   - type: "prompt"
     title: "Blog Reporter Prévia da Partida"
     name: "prompt-reporter-preview-br"
-    description: "Este prompt gera o título, subtítulo e slug para um post do blog em português brasileiro sobre uma partida que ainda não ocorreu."
+    description: "Este prompt gera o título, subtítulo e slug para um post do blog em português brasileiro sobre uma partida que ainda não ocorreu, utilizando as informações fornecidas no contexto."
     schema:
       title: "PostBlogPreviaConteudo"
-      description: "Este schema define a estrutura para gerar os elementos do título de um post do blog em português brasileiro sobre uma partida que ainda não ocorreu."
+      description: "Este schema define a estrutura para gerar os elementos do título de um post do blog em português brasileiro sobre uma partida que ainda não ocorreu, baseando-se nos dados fornecidos."
       type: "object"
       properties:
         title:
           type: "string"
-          description: "Crie um título SEO-friendly e atraente em português brasileiro, incorporando palavras-chave como 'Palpite do Dia', 'Dicas Libertadores' ou 'Palpites para Amanhã'."
+          description: "Atue como um especialista em SEO esportivo. Crie um título magnético utilizando as informações disponíveis: (1) Intenção de busca relacionada a apostas (ex: 'previsão', 'prognóstico'); (2) Nome dos times e competição conforme fornecidos; (3) Gatilho emocional baseado nos fatos disponíveis. O título deve ter entre 50-60 caracteres para otimização SEO. Evite clickbait e mantenha o foco nos dados concretos."
         subtitle:
           type: "string"
-          description: "Gere um subtítulo que complemente o título com informações relevantes, como estatísticas dos times, contexto da competição e possíveis destaques do jogo."
+          description: "Assuma o papel de um analista esportivo experiente. Crie um subtítulo utilizando dados verificáveis: (1) Contexto com estatísticas relevantes disponíveis; (2) Fatores decisivos com dados concretos; (3) Use linguagem que gere confiança mantendo-se fiel aos fatos disponíveis. Foque em criar um subtítulo impactante com as informações em mãos."
         slug:
           type: "string"
-          description: "Crie um slug técnico e otimizado para SEO usando hífens e palavras-chave relacionadas à partida e ao campeonato."
+          description: "Como especialista em SEO técnico, crie um slug otimizado com os elementos disponíveis: (1) Palavras-chave relacionadas a apostas baseadas no contexto; (2) Nomes dos times e competição conforme fornecidos; (3) Use hífens para separação; (4) Mantenha entre 3-6 palavras principais; (5) Evite caracteres especiais ou acentos."
         content:
           type: "string"
-          description: "Produza um texto jornalístico detalhado e direto em português brasileiro sobre a partida. Use dados, estatísticas e análises técnicas para estruturar o texto, organizando-o em seções com emojis para engajamento, como ⚽ **Time 1** e 🥅 **Média de Gols**. Inclua 2-3 CTAs com links promocionais usando o formato: '<p><a href=\"[promo_link]\" class=\"promo_link\">Faça sua aposta para [time] x [time]</a></p>' ou '<p><a href=\"[promo_link]\" class=\"promo_link\">Aposte em [time] x [time]</a></p>', sempre usando a classe 'promo_link' para tracking no frontend." 
+          description: "Atue como um analista profissional de apostas esportivas focado em precisão e análise de dados. Estruture o conteúdo focando nas informações disponíveis, criando uma narrativa coesa e relevante:
+
+⚔️ **Panorama da Partida**
+- Apresente o contexto atual dos times
+- Destaque informações relevantes para apostas
+- Foque nos aspectos mais impactantes da partida
+
+📊 **Análise Estatística**
+- Apresente os números mais relevantes disponíveis
+- Identifique padrões significativos nos dados
+- Destaque estatísticas que influenciam apostas
+
+🔍 **Fatores Decisivos**
+- Analise os elementos chave da partida
+- Explore o histórico relevante disponível
+- Destaque fatores de maior impacto
+
+🎯 **Sugestão de Aposta Principal**
+- Apresente a melhor sugestão baseada nos dados
+- Explique o raciocínio com fatos concretos
+- Destaque os pontos fortes da análise
+
+💡 **Apostas Alternativas**
+- Sugira mercados com bom respaldo estatístico
+- Justifique cada sugestão com dados relevantes
+- Foque nas opções mais promissoras
+
+Use tom profissional e preciso, construindo uma narrativa envolvente com os dados disponíveis. Mantenha o foco em análises objetivas e bem fundamentadas, priorizando qualidade e relevância das informações apresentadas. Seu objetivo é oferecer insights valiosos baseados em dados concretos." 
