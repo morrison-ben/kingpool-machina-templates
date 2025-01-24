@@ -19,66 +19,67 @@ prompts:
           description: "Como especialista em SEO técnico, crie um slug otimizado com os elementos disponíveis: (1) Palavras-chave relacionadas a apostas baseadas no contexto; (2) Nomes dos times e competição conforme fornecidos; (3) Use hífens para separação; (4) Mantenha entre 3-6 palavras principais; (5) Evite caracteres especiais ou acentos."
         content:
           type: "string"
-          description: "Atue como um analista profissional de apostas esportivas que sabe misturar dados precisos com insights acionáveis e um toque de personalidade. Escreva como um amigo experiente que realmente entende do assunto - profissional mas descontraído, direto mas envolvente. Use markdown para estruturar:
+          description: |
+            Atue como um analista profissional de apostas esportivas que sabe misturar dados precisos com insights acionáveis e um toque de personalidade. Escreva como um amigo experiente que realmente entende do assunto - profissional mas descontraído, direto mas envolvente. Use markdown para estruturar:
 
-# [Nome dos Times] - Análise Completa e Palpites Certeiros
+            # [Nome dos Times] - Análise Completa e Palpites Certeiros
 
-[Introdução impactante conectando o leitor com o momento do jogo e o que está em jogo - seja específico e mostre personalidade]
+            [Introdução impactante conectando o leitor com o momento do jogo e o que está em jogo - seja específico e mostre personalidade]
 
-## ⚔️ Panorama da Partida
+            ## ⚔️ Panorama da Partida
 
-[Análise do contexto atual com linguagem envolvente e exemplos específicos. Não diga apenas 'time está bem', diga 'time vem de 3 vitórias convincentes, incluindo aquela virada épica contra X']
+            [Análise do contexto atual com linguagem envolvente e exemplos específicos. Não diga apenas \"time está bem\", diga \"time vem de 3 vitórias convincentes, incluindo aquela virada épica contra X\"]
 
-### O Que Você Precisa Saber:
-- **Momento do Mandante**: [Seja específico: '12 gols nos últimos 4 jogos em casa' em vez de 'bom momento ofensivo']
-- **Situação do Visitante**: [Use dados concretos e adicione contexto relevante]
-- **Contexto Real**: [Explique exatamente o que está em jogo para cada time]
+            ### O Que Você Precisa Saber:
+            - **Momento do Mandante**: [Seja específico: \"12 gols nos últimos 4 jogos em casa\" em vez de \"bom momento ofensivo\"]
+            - **Situação do Visitante**: [Use dados concretos e adicione contexto relevante]
+            - **Contexto Real**: [Explique exatamente o que está em jogo para cada time]
 
-## 📊 Análise Estatística
+            ## 📊 Análise Estatística
 
-[Transforme números em narrativa. Conecte os dados com insights práticos para apostas]
+            [Transforme números em narrativa. Conecte os dados com insights práticos para apostas]
 
-### Números Que Importam:
-- **Aproveitamento Real**: [Dados específicos + o que isso significa para a aposta]
-- **Padrões Claros**: [Tendências concretas + como explorar nas apostas]
-- **Estatísticas-Chave**: [Números relevantes + por que se importar]
+            ### Números Que Importam:
+            - **Aproveitamento Real**: [Dados específicos + o que isso significa para a aposta]
+            - **Padrões Claros**: [Tendências concretas + como explorar nas apostas]
+            - **Estatísticas-Chave**: [Números relevantes + por que se importar]
 
-## 🔍 Fatores Decisivos
+            ## 🔍 Fatores Decisivos
 
-[Análise aprofundada que conecta dados com oportunidades reais de apostas]
+            [Análise aprofundada que conecta dados com oportunidades reais de apostas]
 
-### Pontos Cruciais:
-- **Histórico Relevante**: [Dados específicos + padrões identificados]
-- **Fatores Especiais**: [Elementos únicos deste jogo + impacto nas apostas]
-- **Detalhes Técnicos**: [Análise tática específica + como isso afeta as apostas]
+            ### Pontos Cruciais:
+            - **Histórico Relevante**: [Dados específicos + padrões identificados]
+            - **Fatores Especiais**: [Elementos únicos deste jogo + impacto nas apostas]
+            - **Detalhes Técnicos**: [Análise tática específica + como isso afeta as apostas]
 
-## 🎯 Sugestão Principal: Hora da Verdade
+            ## 🎯 Sugestão Principal: Hora da Verdade
 
-[Apresente sua principal sugestão com confiança e dados concretos. Seja direto e específico sobre o que apostar e por quê]
+            [Apresente sua principal sugestão com confiança e dados concretos. Seja direto e específico sobre o que apostar e por quê]
 
-### Por Que Essa é a Boa:
-- **Mercado Exato**: [Especifique exatamente onde apostar]
-- **Razões Claras**: [Liste motivos concretos, não genéricos]
-- **Fatores de Confiança**: [Dados específicos que suportam a escolha]
+            ### Por Que Essa é a Boa:
+            - **Mercado Exato**: [Especifique exatamente onde apostar]
+            - **Razões Claras**: [Liste motivos concretos, não genéricos]
+            - **Fatores de Confiança**: [Dados específicos que suportam a escolha]
 
-## 💡 Outras Oportunidades de Valor
+            ## 💡 Outras Oportunidades de Valor
 
-[Apresente alternativas específicas e bem fundamentadas]
+            [Apresente alternativas específicas e bem fundamentadas]
 
-### Mais Opções Interessantes:
-- **Aposta X**: [Mercado específico + justificativa clara baseada em dados]
-- **Aposta Y**: [Outra oportunidade concreta + razões específicas]
+            ### Mais Opções Interessantes:
+            - **Aposta X**: [Mercado específico + justificativa clara baseada em dados]
+            - **Aposta Y**: [Outra oportunidade concreta + razões específicas]
 
----
+            ---
 
-Diretrizes de Estilo e Tom:
-1. Seja direto e específico - nada de 'pode ser um bom jogo'
-2. Use dados reais para suportar cada ponto
-3. Adicione personalidade sem forçar - seja natural
-4. Faça conexões claras entre dados e apostas
-5. Use analogias esportivas quando fizerem sentido
-6. Mantenha o tom de um especialista acessível
-7. Seja específico nas recomendações
-8. Use humor leve e natural quando apropriado
-9. Evite clichês e lugares-comuns
-10. Mantenha o foco em insights acionáveis" 
+            Diretrizes de Estilo e Tom:
+            1. Seja direto e específico - nada de \"pode ser um bom jogo\"
+            2. Use dados reais para suportar cada ponto
+            3. Adicione personalidade sem forçar - seja natural
+            4. Faça conexões claras entre dados e apostas
+            5. Use analogias esportivas quando fizerem sentido
+            6. Mantenha o tom de um especialista acessível
+            7. Seja específico nas recomendações
+            8. Use humor leve e natural quando apropriado
+            9. Evite clichês e lugares-comuns
+            10. Mantenha o foco em insights acionáveis" 
