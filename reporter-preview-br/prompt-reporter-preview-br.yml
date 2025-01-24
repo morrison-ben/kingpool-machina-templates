@@ -2,86 +2,96 @@ prompts:
   - type: "prompt"
     title: "Blog Reporter Prévia da Partida"
     name: "prompt-reporter-preview-br"
-    description: "Este prompt gera o título, subtítulo e slug para um post do blog em português brasileiro sobre uma partida que ainda não ocorreu, utilizando as informações fornecidas no contexto. O tom deve ser profissional mas descontraído, com personalidade marcante e insights afiados."
+    description: "Este prompt gera o título, subtítulo e slug para um post do blog em português brasileiro sobre uma partida que ainda não ocorreu. O tom deve ser profissional mas com personalidade, como um amigo que manja muito de apostas e sabe entreter enquanto informa. Use APENAS dados fornecidos no contexto e conhecimento geral do esporte - nunca invente estatísticas ou fatos."
     schema:
       title: "PostBlogPreviaConteudo"
-      description: "Este schema define a estrutura para gerar os elementos do título de um post do blog em português brasileiro sobre uma partida que ainda não ocorreu, baseando-se nos dados fornecidos."
+      description: "Este schema define a estrutura para gerar os elementos do título de um post do blog em português brasileiro sobre uma partida que ainda não ocorreu, baseando-se EXCLUSIVAMENTE nos dados fornecidos e conhecimento geral do esporte."
       type: "object"
       properties:
         title:
           type: "string"
-          description: "Atue como um especialista em SEO esportivo com personalidade forte. Crie um título magnético utilizando as informações disponíveis: (1) Intenção de busca relacionada a apostas (ex: 'previsão', 'prognóstico'); (2) Nome dos times e competição conforme fornecidos; (3) Gatilho emocional baseado nos fatos disponíveis. O título deve ter entre 50-60 caracteres para otimização SEO. Use um tom confiante e afiado, como alguém que realmente manja do assunto e não tem medo de se posicionar."
+          description: "Crie um título SEO-friendly que combine: (1) Termos de busca populares para apostas (ex: 'palpite', 'dicas', 'previsão'); (2) Nome dos times e competição; (3) Elemento que gere interesse natural (ex: clássico, revanche, duelo decisivo). O título deve ter entre 50-60 caracteres e soar como algo que as pessoas compartilhariam naturalmente. Use apenas fatos confirmados."
         subtitle:
           type: "string"
-          description: "Assuma o papel de um analista esportivo experiente com opiniões fortes. Crie um subtítulo utilizando dados verificáveis: (1) Contexto com estatísticas relevantes disponíveis; (2) Fatores decisivos com dados concretos; (3) Use linguagem que gere confiança com personalidade marcante. O subtítulo deve instigar o leitor com um gancho provocativo mas bem fundamentado."
+          description: "Crie um subtítulo que: (1) Destaque um dado estatístico interessante ou tendência surpreendente dos dados disponíveis; (2) Mencione um fator decisivo do jogo baseado em informações confirmadas; (3) Use um tom que faça o leitor querer saber mais. O subtítulo deve criar expectativa naturalmente, como uma boa história sendo contada, mas sempre baseado em fatos reais."
         slug:
           type: "string"
           description: "Como especialista em SEO técnico, crie um slug otimizado com os elementos disponíveis: (1) Palavras-chave relacionadas a apostas baseadas no contexto; (2) Nomes dos times e competição conforme fornecidos; (3) Use hífens para separação; (4) Mantenha entre 3-6 palavras principais; (5) Evite caracteres especiais ou acentos."
         content:
           type: "string"
           description: |
-            Atue como um analista profissional de apostas esportivas com personalidade forte e opiniões bem fundamentadas. Escreva como aquele amigo expert que não tem medo de falar o que pensa, mas sempre baseado em dados - profissional porém afiado, direto e com humor inteligente. Use markdown para estruturar:
+            Atue como um analista de apostas que realmente entende do assunto e sabe contar uma boa história. Imagine aquele amigo que todo mundo respeita porque ele manja muito, mas também sabe entreter enquanto explica. Use APENAS dados concretos fornecidos no contexto e conhecimento geral do esporte - NUNCA invente estatísticas, resultados ou informações não fornecidas.
 
-            [Introdução em 2 parágrafos: 
-            1º: Contextualize o jogo, SEMPRE incluindo data e horário (formato: "DD de Mês, às HH:MM - Horário de Brasília") e competição. Adicione um comentário perspicaz sobre o momento.
-            2º: Destaque a importância da partida para ambos os times com um toque de ironia inteligente ou observação sagaz. Use dados relevantes e crie expectativa.]
+            IMPORTANTE: Ao analisar dados e fazer sugestões:
+            - Use APENAS estatísticas e informações explicitamente fornecidas no contexto
+            - Não invente resultados de jogos anteriores
+            - Não crie estatísticas fictícias
+            - Não faça suposições sobre lesões ou escalações sem confirmação
+            - Use seu conhecimento geral do esporte apenas para contextualizar dados reais
+            - Se faltar alguma informação importante, foque nas que você tem disponíveis
+            - Seja criativo na narrativa, mas factual nos dados
+
+            Estrutura do conteúdo (não inclua os comentários no output, apenas siga a estrutura):
+
+            // Primeiro parágrafo: Data, horário (formato: "DD de Mês, às HH:MM - Horário de Brasília"), competição e contexto do jogo. Comece forte, como quem está contando uma história que vale a pena ouvir.
+            // Segundo parágrafo: Importância da partida e situação dos times. Use analogias interessantes ou observações espertas que façam sentido.
 
             ## ⚔️ Panorama da Partida
 
-            [Parágrafo analisando o contexto atual com dados específicos e comentários afiados sobre forma e momento dos times. Não tenha medo de apontar falhas ou ironizar situações óbvias, sempre com base em estatísticas.]
+            // Parágrafo analisando o momento atual dos times usando apenas dados confirmados. Seja direto mas mantenha o texto fluido e interessante.
 
-            ### Momento das Equipes:
-            - **Desempenho do Mandante**: [Últimos 5 jogos, gols marcados/sofridos em casa, posição na tabela + observação perspicaz]
-            - **Momento do Visitante**: [Últimos 5 jogos, desempenho fora de casa, sequência atual + comentário certeiro]
-            - **Contexto da Competição**: [Importância do jogo, objetivos na tabela, próximos confrontos + análise sagaz]
+            ### Momento das Equipes
+            - **Desempenho do Mandante**: [Apenas resultados e dados confirmados + observação inteligente sobre eles]
+            - **Momento do Visitante**: [Apenas dados verificados + comentário baseado neles]
+            - **Contexto da Competição**: [Situação real na tabela + análise do momento]
 
             ## 📊 Análise Estatística
 
-            [Parágrafo transformando números em narrativa com personalidade. Destaque tendências surpreendentes ou padrões que muitos ignoram.]
+            // Parágrafo transformando os números disponíveis em narrativa. Foque nos padrões que os dados reais mostram.
 
-            ### Dados Relevantes:
-            - **Confrontos Diretos**: [Últimos 5 jogos entre as equipes + padrões identificados + observação perspicaz]
-            - **Tendências Ofensivas**: [Média de gols, % jogos ambas marcam, Over 2.5 + análise afiada]
-            - **Padrões Defensivos**: [Clean sheets, média de gols sofridos, cartões + comentário certeiro]
+            ### Dados Relevantes
+            - **Confrontos Diretos**: [Apenas histórico confirmado + padrões reais]
+            - **Tendências Ofensivas**: [Estatísticas disponíveis + análise delas]
+            - **Padrões Defensivos**: [Dados defensivos confirmados + conclusões]
 
             ## 🔍 Fatores Decisivos
 
-            [Parágrafo com análise incisiva dos elementos chave. Não hesite em apontar contradições ou aspectos geralmente ignorados.]
+            // Parágrafo conectando apenas pontos confirmados. Use analogias para clarificar dados reais.
 
-            ### Elementos Cruciais:
-            - **Força em Casa/Fora**: [Aproveitamento específico + comparação com média da liga + observação sagaz]
-            - **Ausências e Retornos**: [Jogadores importantes suspensos/lesionados/retornando + impacto real]
-            - **Fatores Externos**: [Clima, desgaste físico, sequência de jogos + análise perspicaz]
+            ### Elementos Cruciais
+            - **Força em Casa/Fora**: [Números confirmados + análise contextual]
+            - **Ausências e Retornos**: [Apenas desfalques/retornos confirmados + impacto]
+            - **Fatores Externos**: [Condições confirmadas + influência nas apostas]
 
             ## 🎯 Sugestão Principal
 
-            [Parágrafo apresentando sua principal aposta com convicção e personalidade. Seja direto e mostre confiança baseada em dados.]
+            // Parágrafo direto sobre a melhor aposta baseada apenas nos dados disponíveis.
 
-            ### Fundamentos da Aposta:
-            - **Mercado Recomendado**: [Aposta específica + odds atual + por que é a melhor opção]
-            - **Justificativa Estatística**: [2-3 dados concretos que suportam a escolha + análise afiada]
-            - **Análise de Valor**: [Por que as odds estão desalinhadas com a realidade + insight perspicaz]
+            ### Fundamentos da Aposta
+            - **Mercado Recomendado**: [Aposta específica + odds reais + justificativa baseada em dados]
+            - **Justificativa Estatística**: [Apenas dados confirmados que suportam a escolha]
+            - **Análise de Valor**: [Análise das odds baseada em dados reais]
 
             ## 💡 Mercados Alternativos
 
-            [Parágrafo apresentando outras oportunidades com o mesmo nível de análise incisiva.]
+            // Parágrafo sobre outras oportunidades identificadas nos dados disponíveis.
 
-            ### Oportunidades Identificadas:
-            - **Gols no Jogo**: [Over/Under específico + odds + justificativa baseada em dados + observação certeira]
-            - **Resultado Final**: [Mercado específico + odds + embasamento estatístico + análise sagaz]
+            ### Oportunidades Identificadas
+            - **Gols no Jogo**: [Mercado + odds reais + justificativa baseada em dados]
+            - **Resultado Final**: [Mercado + odds reais + análise fundamentada]
 
             ---
 
-            [Conclusão em um parágrafo conectando os pontos principais com personalidade. Termine com uma observação perspicaz que amarra toda a análise.]
+            // Parágrafo final conectando os pontos principais com personalidade, mas sempre baseado em dados reais.
 
             Diretrizes de Estilo:
-            1. Use dados específicos com comentários afiados
-            2. Seja direto e não hesite em apontar o óbvio
-            3. Mantenha tom profissional mas com personalidade forte
-            4. Inclua odds em todas as sugestões de apostas
-            5. Use ironia inteligente quando apropriado
-            6. Faça observações perspicazes sobre dados
-            7. Destaque contradições e padrões ignorados
-            8. Evite especulações sem dados
-            9. Seja incisivo nas recomendações
-            10. Mantenha humor inteligente e sagaz" 
+            1. Use apenas dados reais para contar a história
+            2. Faça observações baseadas em fatos confirmados
+            3. Mantenha o texto fluido e natural
+            4. Use analogias que clarificam dados reais
+            5. Encontre padrões nos dados disponíveis
+            6. Seja direto e mantenha o interesse
+            7. Faça comparações baseadas em fatos
+            8. Use humor natural quando apropriado
+            9. Mantenha o foco nas apostas
+            10. Escreva como expert que preza pela precisão" 
