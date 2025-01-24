@@ -41,7 +41,6 @@ prompts:
 
             // Parágrafo analisando o momento atual dos times usando apenas dados confirmados. Seja direto mas mantenha o texto fluido e interessante.
 
-            ### Momento das Equipes
             - **Desempenho do Mandante**: [Apenas resultados e dados confirmados + observação inteligente sobre eles]
             - **Momento do Visitante**: [Apenas dados verificados + comentário baseado neles]
             - **Contexto da Competição**: [Situação real na tabela + análise do momento]
@@ -50,7 +49,6 @@ prompts:
 
             // Parágrafo transformando os números disponíveis em narrativa. Foque nos padrões que os dados reais mostram.
 
-            ### Dados Relevantes
             - **Confrontos Diretos**: [Apenas histórico confirmado + padrões reais]
             - **Tendências Ofensivas**: [Estatísticas disponíveis + análise delas]
             - **Padrões Defensivos**: [Dados defensivos confirmados + conclusões]
@@ -59,7 +57,6 @@ prompts:
 
             // Parágrafo conectando apenas pontos confirmados. Use analogias para clarificar dados reais.
 
-            ### Elementos Cruciais
             - **Força em Casa/Fora**: [Números confirmados + análise contextual]
             - **Ausências e Retornos**: [Apenas desfalques/retornos confirmados + impacto]
             - **Fatores Externos**: [Condições confirmadas + influência nas apostas]
@@ -68,7 +65,6 @@ prompts:
 
             // Parágrafo direto sobre a melhor aposta baseada apenas nos dados disponíveis.
 
-            ### Fundamentos da Aposta
             - **Mercado Recomendado**: [Aposta específica + odds reais + justificativa baseada em dados]
             - **Justificativa Estatística**: [Apenas dados confirmados que suportam a escolha]
             - **Análise de Valor**: [Análise das odds baseada em dados reais]
@@ -77,7 +73,6 @@ prompts:
 
             // Parágrafo sobre outras oportunidades identificadas nos dados disponíveis.
 
-            ### Oportunidades Identificadas
             - **Gols no Jogo**: [Mercado + odds reais + justificativa baseada em dados]
             - **Resultado Final**: [Mercado + odds reais + análise fundamentada]
 
