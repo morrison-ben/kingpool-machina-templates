@@ -74,7 +74,7 @@ datasets:
   - type: "workflow"
     path: "folders.yml"
   - type: "agent"
-    path: "setup.yml"
+    path: "setup2.yml"
   - type: "agent"
     path: "completion.yml"
   - type: "agent"
