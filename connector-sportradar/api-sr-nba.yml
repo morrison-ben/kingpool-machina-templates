@@ -1,0 +1,5 @@
+connector:
+  name: "api-sr-nba"
+  description: "SportRadar API - NBA v8"
+  filename: "api-sr-nba.json"
+  filetype: "restapi"
