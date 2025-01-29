@@ -20,3 +20,15 @@ agent:
       description: "Reporter Summary"
       outputs:
         reporter-summary-status: "$.get('workflow-status', False)"
+
+    # Reporter Websearch
+    - name: "workflow-reporter-websearch"
+      description: "Reporter Websearch"
+      outputs:
+        reporter-websearch-status: "$.get('workflow-status', False)"
+
+    # Reporter Image Preview
+    - name: "workflow-reporter-image-preview"
+      description: "Reporter Image Preview"
+      outputs:
+        reporter-image-preview-status: "$.get('workflow-status', False)"

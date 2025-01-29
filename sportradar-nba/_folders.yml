@@ -54,6 +54,15 @@ workflow:
                   "view": "list"
                 },
                 {
+                  "name": "image-preview",
+                  "title": "Images",
+                  "category": "Content",
+                  "metadata": {
+                    "name": ["image-preview"]
+                  },
+                  "view": "list"
+                },
+                {
                   "name": "raw-data",
                   "title": "Raw Data",
                   "category": "Content",
@@ -71,6 +80,15 @@ workflow:
                     "name": ["event-summary"]
                   },
                   "sorters": ['_id', -1],
+                  "view": "list"
+                },
+                {
+                  "name": "websearch-result",
+                  "title": "Web Search",
+                  "category": "Content",
+                  "metadata": {
+                    "name": ["websearch-result"]
+                  },
                   "view": "list"
                 }
               ]

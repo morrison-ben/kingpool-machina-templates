@@ -7,8 +7,20 @@ datasets:
     path: "../connector-perplexity/api-perplexity.yml"
   - type: "connector"
     path: "../connector-sportradar/api-sr-nba.yml"
+  - type: "connector"
+    path: "../connector-stability/sdk-stability.yml"
+  - type: "connector"
+    path: "../connector-storage/sdk-storage.yml"
+
+  # prompts & workflows
+  - type: "prompts"
+    path: "image-prompt.yml"
+  - type: "workflow"
+    path: "image-preview.yml"
   - type: "workflow"
     path: "reporter-summary.yml"
+  - type: "workflow"
+    path: "reporter-websearch.yml"
   - type: "workflow"
     path: "sync-games.yml"
   
@@ -18,6 +30,6 @@ datasets:
 
   # agents & schedules
   - type: "agent"
-    path: "scheduler.yml"
+    path: "_scheduler.yml"
   - type: "agent"
     path: "_setup.yml"
