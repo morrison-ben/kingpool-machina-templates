@@ -1,0 +1,62 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API-SportRadar - NBA v8",
+    "description": "This API allows you to retrieve information about basketball.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.sportradar.com/nba/trial/v8/en"
+    }
+  ],
+  "paths": {
+    "/games/{game_id}/{data_type}": {
+      "get": {
+        "summary": "Get information about games from a season",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api_key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/games/{season_year}/{season_type}/{data_type}": {
+      "get": {
+        "summary": "Get information about games from a season",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api_key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKey": {
+        "type": "params",
+        "in": "query",
+        "name": "api_key"
+      }
+    }
+  }
+}

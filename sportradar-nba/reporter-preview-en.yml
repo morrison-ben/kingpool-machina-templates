@@ -1,0 +1,152 @@
+workflow:
+  name: "workflow-reporter-preview-en"
+  title: "Reporter Preview NBA - EN"
+  description: "Workflow to produce preview in English."
+  context-variables:
+    sdk-openai:
+      api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
+  inputs:
+    event_code: "$.get('event_code') or None"
+  outputs:
+    events: "$.get('events')"
+    workflow-status: "$.get('event_exists') is True and 'executed' or 'skipped'"
+  tasks:
+    # 0 load-event-by-code
+    - type: "document"
+      name: "load-event-by-code"
+      description: "Search for events in the database."
+      condition: "$.get('event_code') is not None"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+        search-sorters: ["updated", 1]
+      filters:
+        metadata.event_code: "$.get('event_code')"
+      inputs:
+        name: "'game'"
+      outputs:
+        event_exists: "len($.get('documents', [])) > 0"
+        event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        preview_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('preview_count', 0) if $.get('documents') else None"
+        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+    # 1 load-event
+    - type: "document"
+      name: "load-event-prelive"
+      description: "Search for events in the database."
+      condition: "$.get('event_exists') is not True"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      filters:
+        value.status: "{'$in': ['scheduled']}"
+        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=24)}"
+        value.version_control.processing: "{'$ne': True}"
+        value.version_control.preview_en_status: "{'$exists': False}"
+        value.version_control.reporter_summary_status: "'processed'"
+      inputs:
+        name: "'game'"
+      outputs:
+        event_code: "$.get('documents')[0].get('metadata').get('event_code') if $.get('documents') else None"
+        event_exists: "len($.get('documents', [])) > 0"
+        event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        preview_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('preview_count', 0) if $.get('documents') else None"
+        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+    # 1 update-event-status
+    - type: "document"
+      name: "update-event-preevent-start"
+      description: "Update the events document preevent."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        game: |
+          {
+            **$.get('event_selected'),
+            'version_control': {
+              **$.get('event_selected').get('version_control', {}),
+              'processing': True,
+              'preview_en_status': 'processing'
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+    # 2 load-content-snippet-en
+    - type: "document"
+      name: "load-content-snippet-en"
+      description: "Load the content snippet."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "search"
+        search-limit: 10
+        search-vector: false
+      filters:
+        metadata: |
+          {
+            'event_code': $.get('event_code'),
+            'language': 'en'
+          }
+      inputs:
+        name: "'content-snippet'"
+      outputs:
+        content-snippets: "[{**d.get('value', {})} for d in $.get('documents', [])]"
+    # 3 prompt-reporter-preview-en
+    - type: "prompt"
+      name: "prompt-reporter-preview-nba-en"
+      description: "Generate a preview for the upcoming game"
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        start_time: "$.get('event_selected').get('start_time')"
+        content-snippets: "$.get('content-snippets')"
+      outputs:
+        content-preview-en: "$"
+    # 4 update-event-preview-en
+    - type: "document"
+      name: "update-event-preview-en"
+      description: "Update the document."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        content-preview: |
+          {
+            **$.get('content-preview-en', {}),
+            'execution': datetime.utcnow(),
+            'status': 'active'
+          }
+      metadata:
+        document_type: "'content-preview'"
+        event_code: "$.get('event_code')"
+        language: "'en'"
+    # 5 update-event-preevent
+    - type: "document"
+      name: "update-event-preevent-end"
+      description: "Update the events document preevent."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        game: |
+          {
+            **$.get('event_selected'),
+            'version_control': {
+              **$.get('event_selected').get('version_control', {}),
+              'processing': False,
+              'preview_count': $.get('preview_count', 0) + 1,
+              'preview_en_status': 'processed',
+              'updated': datetime.utcnow()
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"
