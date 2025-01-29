@@ -14,7 +14,11 @@ datasets:
 
   # prompts & workflows
   - type: "prompts"
-    path: "image-prompt.yml"
+    path: "image-prompts.yml"
+  - type: "prompts"
+    path: "reporter-prompts.yml"
+  - type: "workflow"
+    path: "reporter-briefing.yml"
   - type: "workflow"
     path: "image-preview.yml"
   - type: "workflow"

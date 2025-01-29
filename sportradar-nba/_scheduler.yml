@@ -27,6 +27,12 @@ agent:
       outputs:
         reporter-websearch-status: "$.get('workflow-status', False)"
 
+    # Reporter Briefing
+    - name: "workflow-reporter-briefing-en"
+      description: "Reporter Briefing English"
+      outputs:
+        reporter-briefing-en-status: "$.get('workflow-status', False)"
+
     # Reporter Image Preview
     - name: "workflow-reporter-image-preview"
       description: "Reporter Image Preview"

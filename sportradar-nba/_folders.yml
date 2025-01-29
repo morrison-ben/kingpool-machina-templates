@@ -32,6 +32,7 @@ workflow:
       documents:
         setup-register: |
           {
+            "title": "Setup",
             "setup": True
           }
         site-structure: |
@@ -63,13 +64,12 @@ workflow:
                   "view": "list"
                 },
                 {
-                  "name": "raw-data",
-                  "title": "Raw Data",
+                  "name": "snippets",
+                  "title": "Snippets",
                   "category": "Content",
                   "metadata": {
-                    "name": ["games"]
+                    "name": ["content-snippet"]
                   },
-                  "sorters": ['_id', -1],
                   "view": "list"
                 },
                 {
@@ -77,7 +77,7 @@ workflow:
                   "title": "Summary",
                   "category": "Content",
                   "metadata": {
-                    "name": ["event-summary"]
+                    "name": ["content-briefing", "content-news", "event-summary"]
                   },
                   "sorters": ['_id', -1],
                   "view": "list"
