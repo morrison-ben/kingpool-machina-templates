@@ -1,0 +1,188 @@
+prompts:
+  - type: "prompt"
+    title: "Blog Reporter Preview NBA - BR"
+    name: "prompt-reporter-preview-nba-br"
+    description: "Este prompt gera o título, subtítulo e slug para um post do blog em português brasileiro sobre uma partida da NBA que ainda não ocorreu. O tom deve ser profissional mas com personalidade, como um amigo que manja muito de basquete e sabe entreter enquanto informa. Use APENAS dados fornecidos no contexto e conhecimento geral do esporte - nunca invente estatísticas ou fatos. O horário da partida (start_time) deve ser convertido de GMT para Horário de Brasília (GMT-3)."
+    schema:
+      title: "PostBlogPreviaNBAConteudo"
+      description: "Este schema define a estrutura para gerar os elementos do título de um post do blog em português brasileiro sobre uma partida da NBA que ainda não ocorreu, baseando-se EXCLUSIVAMENTE nos dados fornecidos e conhecimento geral do basquete."
+      type: "object"
+      properties:
+        title:
+          type: "string"
+          description: "Crie um título SEO-friendly que combine: (1) Termos de busca populares para apostas (ex: 'palpite', 'dicas', 'previsão'); (2) Nome dos times e competição; (3) Elemento que gere interesse natural (ex: clássico, revanche, duelo decisivo). O título deve ter entre 50-60 caracteres e soar como algo que as pessoas compartilhariam naturalmente. Use apenas fatos confirmados."
+        subtitle:
+          type: "string"
+          description: "Crie um subtítulo que: (1) Destaque um dado estatístico interessante ou tendência surpreendente dos dados disponíveis; (2) Mencione um fator decisivo do jogo baseado em informações confirmadas; (3) Use um tom que faça o leitor querer saber mais. O subtítulo deve criar expectativa naturalmente, como uma boa história sendo contada, mas sempre baseado em fatos reais."
+        slug:
+          type: "string"
+          description: "Como especialista em SEO técnico, crie um slug otimizado com os elementos disponíveis: (1) Palavras-chave relacionadas a apostas baseadas no contexto; (2) Nomes dos times e competição conforme fornecidos; (3) Use hífens para separação; (4) Mantenha entre 3-6 palavras principais; (5) Evite caracteres especiais ou acentos."
+        content:
+          type: "string"
+          description: |
+            Atue como um analista de basquete que realmente entende do assunto e sabe contar uma boa história. Imagine aquele amigo que todo mundo respeita porque ele manja muito de NBA, mas também sabe entreter enquanto explica. Use APENAS dados concretos fornecidos no contexto e conhecimento geral do esporte - NUNCA invente estatísticas, resultados ou informações não fornecidas.
+
+            IMPORTANTE: Ao analisar dados e fazer sugestões:
+            - Use APENAS estatísticas e informações explicitamente fornecidas no contexto
+            - Não invente resultados de jogos anteriores
+            - Não crie estatísticas fictícias
+            - Não faça suposições sobre lesões ou escalações sem confirmação
+            - Use seu conhecimento geral do esporte apenas para contextualizar dados reais
+            - Se faltar alguma informação importante, foque nas que você tem disponíveis
+            - Seja criativo na narrativa, mas factual nos dados
+            - Converta o horário do jogo (start_time) de GMT para Horário de Brasília (GMT-3)
+
+            Estrutura do conteúdo (não inclua os comentários no output, apenas siga a estrutura):
+
+            // Primeiro parágrafo: Use o campo start_time (convertendo de GMT para GMT-3) para informar "DD de Mês, às HH:MM - Horário de Brasília", junto com competição e contexto do jogo. Comece forte, como quem está contando uma história que vale a pena ouvir.
+            // Segundo parágrafo: Importância da partida e situação dos times. Use analogias interessantes ou observações espertas que façam sentido.
+
+            ## ⚔️ Panorama da Partida
+
+            // Parágrafo analisando o momento atual dos times usando apenas dados confirmados. Seja direto mas mantenha o texto fluido e interessante.
+
+            - **Desempenho do Mandante**: [Apenas resultados e dados confirmados + análise de eficiência ofensiva/defensiva]
+            - **Momento do Visitante**: [Apenas dados verificados + análise de ritmo de jogo]
+            - **Contexto da Conferência**: [Situação real na classificação + playoffs/play-in]
+
+            ## 📊 Análise Estatística
+
+            // Parágrafo transformando os números disponíveis em narrativa. Foque nos padrões que os dados reais mostram.
+
+            - **Confrontos Diretos**: [Apenas histórico confirmado + padrões reais]
+            - **Eficiência Ofensiva**: [True Shooting %, Pace, pontos por posse + análise]
+            - **Padrões Defensivos**: [Defensive Rating, rebotes, turnovers + conclusões]
+
+            ## 🔍 Fatores Decisivos
+
+            // Parágrafo conectando apenas pontos confirmados. Use analogias para clarificar dados reais.
+
+            - **Home/Road Performance**: [Números confirmados + análise contextual]
+            - **Rotação e Status**: [Apenas lesões/descansos confirmados + impacto]
+            - **Matchups Chave**: [Duelos individuais baseados em dados reais]
+
+            ## 🎯 Sugestão Principal
+
+            // Parágrafo direto sobre a melhor aposta baseada apenas nos dados disponíveis.
+
+            - **Mercado Recomendado**: [Aposta específica + odds reais + justificativa baseada em dados]
+            - **Justificativa Estatística**: [Apenas dados confirmados que suportam a escolha]
+            - **Análise de Valor**: [Análise das odds baseada em dados reais]
+
+            ## 💡 Mercados Alternativos
+
+            // Parágrafo sobre outras oportunidades identificadas nos dados disponíveis.
+
+            - **Pontos Totais**: [Over/Under + odds reais + justificativa baseada em dados]
+            - **Props de Jogador**: [Mercados específicos + odds reais + análise fundamentada]
+            - **Handicap**: [Spread + odds reais + análise baseada em dados]
+
+            ---
+
+            // Parágrafo final conectando os pontos principais com personalidade, mas sempre baseado em dados reais.
+
+            Diretrizes de Estilo:
+            1. Use apenas dados reais para contar a história
+            2. Faça observações baseadas em fatos confirmados
+            3. Mantenha o texto fluido e natural
+            4. Use analogias que clarificam dados reais
+            5. Encontre padrões nos dados disponíveis
+            6. Seja direto e mantenha o interesse
+            7. Faça comparações baseadas em fatos
+            8. Use humor natural quando apropriado
+            9. Mantenha o foco nas apostas
+            10. Escreva como expert que preza pela precisão" 
+
+
+  # prompt-reporter-quizzes-nba-br
+  - type: "prompt"
+    title: "Reporter Quizzes NBA - BR"
+    name: "prompt-reporter-quizzes-nba-br"
+    description: |
+      Você está criando perguntas de quiz concisas e adequadas para TV. Crie perguntas curtas e impactantes que:
+
+      1. Possam ser lidas e compreendidas rapidamente
+      2. Tenham opções de resposta breves e claras
+      3. Foquem em estatísticas importantes da partida, fatos sobre jogadores e história dos times
+      4. Sejam adequadas para exibição na tela
+      
+      Diretrizes:
+      - Mantenha as perguntas com menos de 10 palavras quando possível
+      - Use linguagem simples e direta
+      - Respostas devem ter no máximo 1-3 palavras
+      - Inclua 10 perguntas no total
+      - Misture perguntas fáceis e desafiadoras
+      - Foque em números, nomes e fatos rápidos
+
+      O quiz deve manter ritmo e energia adequados para transmissão de TV.
+    schema:
+      title: "ConteudoQuizPortugues"
+      description: "Este schema define a estrutura para gerar perguntas de quiz breves e adequadas para TV sobre um jogo recente."
+      type: "object"
+      properties:
+        questions:
+          type: "array"
+          description: "Um array de 10 perguntas de quiz concisas adequadas para transmissão de TV."
+          minItems: 10
+          maxItems: 10
+          items:
+            type: "object"
+            properties:
+              question:
+                type: "string"
+                description: "Uma pergunta de quiz breve e adequada para TV (busque menos de 10 palavras)."
+              options:
+                type: "array"
+                description: "Opções curtas de resposta (1-3 palavras cada)."
+                items:
+                  type: "string"
+                  description: "Uma opção concisa de múltipla escolha."
+              correct_answer:
+                type: "string"
+                description: "A resposta correta, correspondendo a uma das opções fornecidas."
+
+  # prompt-reporter-polls-nba-br
+  - type: "prompt"
+    title: "Reporter Polls NBA - BR"
+    name: "prompt-reporter-polls-nba-br"
+    description: |
+      Você está criando enquetes envolventes para a audiência de TV. Crie perguntas claras e impactantes que:
+
+      1. Capturem opiniões e reações dos espectadores
+      2. Incentivem a participação da audiência
+      3. Foquem em eventos da partida, desempenho dos times e momentos-chave
+      4. Sejam adequadas para exibição na tela
+      
+      Diretrizes:
+      - Mantenha as perguntas concisas e fáceis de entender
+      - Use linguagem simples e direta
+      - Forneça 2-4 opções claras de resposta
+      - Inclua 3-5 perguntas de enquete por partida
+      - Misture diferentes tipos de opiniões (previsões, reações, preferências)
+      - Evite perguntas factuais - foque em opiniões
+
+      As enquetes devem estimular o engajamento da audiência e criar momentos interativos na TV.
+    schema:
+      title: "ConteudoEnquetePortugues"
+      description: "Este schema define a estrutura para gerar enquetes envolventes sobre uma partida."
+      type: "object"
+      properties:
+        polls:
+          type: "array"
+          description: "Um array de 3-5 perguntas de enquete adequadas para transmissão de TV."
+          minItems: 3
+          maxItems: 5
+          items:
+            type: "object"
+            properties:
+              question:
+                type: "string"
+                description: "Uma pergunta de enquete envolvente que solicita opiniões dos espectadores."
+              options:
+                type: "array"
+                description: "Opções de resposta para os espectadores escolherem."
+                minItems: 2
+                maxItems: 4
+                items:
+                  type: "string"
+                  description: "Uma opção clara de resposta para a enquete."

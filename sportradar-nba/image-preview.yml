@@ -45,7 +45,7 @@ workflow:
         search-vector: false
       filters:
         value.status: "{'$in': ['scheduled']}"
-        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=72)}"
+        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=24)}"
         value.version_control.processing: "{'$ne': True}"
         value.version_control.reporter_image_preview: "{'$exists': False}"
         value.version_control.reporter_summary_status: "'processed'"

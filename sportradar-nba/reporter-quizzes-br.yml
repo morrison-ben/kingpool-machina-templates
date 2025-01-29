@@ -1,10 +1,8 @@
 workflow:
-  name: "workflow-reporter-summary"
-  title: "Reporter Summary"
-  description: "Workflow to produce summary content."
+  name: "workflow-reporter-quizzes-br"
+  title: "Reporter Quizzes NBA - BR"
+  description: "Workflow to produce quizzes in Brazilian Portuguese."
   context-variables:
-    api-sr-nba:
-      sportradar_api_key: "$TEMP_CONTEXT_VARIABLE_SPORTRADAR_SOCCER_V4_API_KEY"
     sdk-openai:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
   inputs:
@@ -30,7 +28,7 @@ workflow:
       outputs:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        reporter_summary_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_summary_count', 0) if $.get('documents') else None"
+        reporter_quizzes_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_quizzes_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
     # 1 load-event
     - type: "document"
@@ -45,14 +43,15 @@ workflow:
         value.status: "{'$in': ['scheduled']}"
         value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=24)}"
         value.version_control.processing: "{'$ne': True}"
-        value.version_control.reporter_summary_status: "{'$exists': False}"
+        value.version_control.reporter_quizzes_br_status: "{'$exists': False}"
+        value.version_control.reporter_briefing_en_status: "'processed'"
       inputs:
         name: "'game'"
       outputs:
         event_code: "$.get('documents')[0].get('metadata').get('event_code') if $.get('documents') else None"
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        reporter_summary_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_summary_count', 0) if $.get('documents') else None"
+        reporter_quizzes_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_quizzes_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
     # 2 update-event-status
     - type: "document"
@@ -70,48 +69,74 @@ workflow:
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': True,
-              'reporter_summary_status': 'processing'
+              'reporter_quizzes_br_status': 'processing'
             }
           }
       metadata:
         event_code: "$.get('event_code')"
-    # 3 fetch-event-summary
-    - type: "connector"
-      name: "fetch-event-summary"
-      description: "Get Sport_Events/Summary from SportRadar"
-      condition: "$.get('event_exists') is True"
-      connector:
-        name: "api-sr-nba"
-        command: "get-games/{game_id}/{data_type}"
-        command_attribute:
-          data_type: "'summary.json'"
-          game_id: "$.get('event_code')"
-      inputs:
-        api_key: "$.get('sportradar_api_key')"
-      outputs:
-        event-summary: "$"
-    # 4 save search results
+    # 3 load-content-snippet
     - type: "document"
-      name: "update-event-summary"
-      description: "Update the events document."
+      name: "load-content-snippet"
+      description: "Load the content snippet."
       condition: "$.get('event_exists') is True"
       config:
-        action: "update"
-        embed-vector: false
-        force-update: true
-      documents:
-        event-summary: |
+        action: "search"
+        search-limit: 25
+        search-vector: false
+      filters:
+        metadata: |
           {
-            "execution": datetime.utcnow(),
-            "event-summary": $.get('event-summary'),
-            "title": f"{$.get('title')} - Summary",
-            "status": 'active'
+            'event_code': $.get('event_code'),
+            'language': 'en'
           }
-      metadata:
-        document_type: "'event-summary'"
-        event_code: "$.get('event_code')"
-        language: "'en'"
-    # 5 update-event-preevent
+      inputs:
+        name: "'content-snippet'"
+      outputs:
+        content-snippets: "[{**d.get('value', {})} for d in $.get('documents', [])]"
+    # 4 prompt-content-quiz-br
+    - type: "prompt"
+      name: "prompt-reporter-quizzes-nba-br"
+      description: "Generate a quiz for the upcoming game"
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        content-snippets: "$.get('content-snippets')"
+      outputs:
+        bulk-quiz-br: |
+          [
+            {
+              **c,
+              'title': f"$.(title) - {c.get('question', '')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'language': 'br'
+              }
+            }
+            for c in $.get('questions', [])
+          ]
+        content-quizzes: "$"
+    # 5 bulk-save-quizzes
+    - type: "document"
+      name: "bulk-save-quizzes"
+      description: "Bulk save the quizzes."
+      config:
+        action: "bulk-save"
+        embed-vector: true
+        force-update: true
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      document_name: "content-quiz"
+      documents:
+        items: "$.get('parsed-items')"
+      inputs:
+        parsed-items: $.get('bulk-quiz-br', [])
+    # 6 update-event-preevent
     - type: "document"
       name: "update-event-preevent-end"
       description: "Update the events document preevent."
@@ -127,8 +152,8 @@ workflow:
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': False,
-              'reporter_summary_count': $.get('reporter_summary_count', 0) + 1,
-              'reporter_summary_status': 'processed',
+              'reporter_quizzes_count': $.get('reporter_quizzes_count', 0) + 1,
+              'reporter_quizzes_br_status': 'processed',
               'updated': datetime.utcnow()
             }
           }

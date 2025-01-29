@@ -45,6 +45,15 @@ workflow:
               "icon": "folder",
               "items": [
                 {
+                  "name": "content-preview",
+                  "title": "Content",
+                  "category": "Content",
+                  "metadata": {
+                    "name": ["content-preview"]
+                  },
+                  "view": "list"
+                },
+                {
                   "name": "game",
                   "title": "Games",
                   "category": "Content",
@@ -60,6 +69,24 @@ workflow:
                   "category": "Content",
                   "metadata": {
                     "name": ["image-preview"]
+                  },
+                  "view": "list"
+                },
+                {
+                  "name": "polls",
+                  "title": "Polls",
+                  "category": "Content",
+                  "metadata": {
+                    "name": ["content-poll"]
+                  },
+                  "view": "list"
+                },
+                {
+                  "name": "quizzes",
+                  "title": "Quizzes",
+                  "category": "Content",
+                  "metadata": {
+                    "name": ["content-quiz"]
                   },
                   "view": "list"
                 },

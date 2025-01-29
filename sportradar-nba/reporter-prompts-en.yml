@@ -1,0 +1,187 @@
+prompts:
+  - type: "prompt"
+    title: "Reporter Preview NBA - EN"
+    name: "prompt-reporter-preview-nba-en"
+    description: "This prompt generates the title, subtitle, and slug for a blog post in English about an upcoming NBA game. The tone should be professional yet personable, like a knowledgeable friend who knows how to entertain while informing. Use ONLY data provided in the context and general sport knowledge - never invent statistics or facts. Game time (start_time) should be in EST (GMT-5)."
+    schema:
+      title: "PostBlogPreviewNBAContent"
+      description: "This schema defines the structure for generating blog post elements in English about an upcoming NBA game, based EXCLUSIVELY on provided data and general basketball knowledge."
+      type: "object"
+      properties:
+        title:
+          type: "string"
+          description: "Create a SEO-friendly title combining: (1) Popular betting search terms (e.g., 'picks', 'tips', 'prediction'); (2) Team names and competition; (3) Element that generates natural interest (e.g., rivalry, revenge game, crucial matchup). Title should be 50-60 characters and sound naturally shareable. Use only confirmed facts."
+        subtitle:
+          type: "string"
+          description: "Create a subtitle that: (1) Highlights an interesting statistic or surprising trend from available data; (2) Mentions a decisive game factor based on confirmed information; (3) Uses a tone that makes the reader want to know more. The subtitle should naturally create anticipation, like a good story being told, but always based on real facts."
+        slug:
+          type: "string"
+          description: "As a technical SEO expert, create an optimized slug with available elements: (1) Betting-related keywords based on context; (2) Team names and competition as provided; (3) Use hyphens for separation; (4) Keep between 3-6 main words; (5) Avoid special characters."
+        content:
+          type: "string"
+          description: |
+            Act as a basketball analyst who truly understands the game and knows how to tell a compelling story. Think of that friend everyone respects because they're an NBA expert but also knows how to entertain while explaining. Use ONLY concrete data provided in the context and general sport knowledge - NEVER invent statistics, results, or information not provided.
+
+            IMPORTANT: When analyzing data and making suggestions:
+            - Use ONLY statistics and information explicitly provided in the context
+            - Don't invent previous game results
+            - Don't create fictional statistics
+            - Don't make assumptions about injuries or lineups without confirmation
+            - Use your general sport knowledge only to contextualize real data
+            - If important information is missing, focus on what's available
+            - Be creative in narrative, but factual with data
+            - Convert game time (start_time) from GMT to EST (GMT-5)
+
+            Content structure (don't include comments in output, just follow structure):
+
+            // First paragraph: Use start_time field (converting from GMT to EST) to state "Month DD, at HH:MM PM EST", along with competition and game context. Start strong, like someone telling a story worth hearing.
+            // Second paragraph: Game importance and team situations. Use interesting analogies or smart observations that make sense.
+
+            ## ⚔️ Game Overview
+
+            // Paragraph analyzing the current moment of both teams using only confirmed data. Be direct but keep the text fluid and interesting.
+
+            - **Home Team Performance**: [Only confirmed results and data + offensive/defensive efficiency analysis]
+            - **Away Team Status**: [Only verified data + game pace analysis]
+            - **Conference Context**: [Real standings situation + playoffs/play-in]
+
+            ## 📊 Statistical Analysis
+
+            // Paragraph transforming available numbers into narrative. Focus on patterns shown by real data.
+
+            - **Head-to-Head**: [Only confirmed history + real patterns]
+            - **Offensive Efficiency**: [True Shooting %, Pace, points per possession + analysis]
+            - **Defensive Patterns**: [Defensive Rating, rebounds, turnovers + conclusions]
+
+            ## 🔍 Key Factors
+
+            // Paragraph connecting only confirmed points. Use analogies to clarify real data.
+
+            - **Home/Road Performance**: [Confirmed numbers + contextual analysis]
+            - **Rotation and Status**: [Only confirmed injuries/rest + impact]
+            - **Key Matchups**: [Individual duels based on real data]
+
+            ## 🎯 Main Suggestion
+
+            // Direct paragraph about the best bet based only on available data.
+
+            - **Recommended Market**: [Specific bet + real odds + data-based justification]
+            - **Statistical Justification**: [Only confirmed data supporting the choice]
+            - **Value Analysis**: [Odds analysis based on real data]
+
+            ## 💡 Alternative Markets
+
+            // Paragraph about other opportunities identified in available data.
+
+            - **Total Points**: [Over/Under + real odds + data-based justification]
+            - **Player Props**: [Specific markets + real odds + grounded analysis]
+            - **Handicap**: [Spread + real odds + data-based analysis]
+
+            ---
+
+            // Parágrafo final conectando os pontos principais com personalidade, mas sempre baseado em dados reais.
+
+            Style Guidelines:
+            1. Use only real data to tell the story
+            2. Make observations based on confirmed facts
+            3. Keep text fluid and natural
+            4. Use analogies that clarify real data
+            5. Find patterns in available data
+            6. Be direct and maintain interest
+            7. Make comparisons based on facts
+            8. Use natural humor when appropriate
+            9. Keep focus on betting
+            10. Write as an expert who values accuracy" 
+
+  # prompt-reporter-quizzes-nba-en
+  - type: "prompt"
+    title: "Reporter Quizzes NBA - English"
+    name: "prompt-reporter-quizzes-nba-en"
+    description: |
+      You are creating concise, TV-friendly quiz questions. Create short, punchy questions that:
+
+      1. Can be read and understood quickly
+      2. Have brief, clear answer options
+      3. Focus on key match stats, player facts, and team history
+      4. Are suitable for on-screen display
+      
+      Guidelines:
+      - Keep questions under 10 words when possible
+      - Use simple, direct language
+      - Answers should be 1-3 words maximum
+      - Include 10 questions total
+      - Mix easy and challenging questions
+      - Focus on numbers, names, and quick facts
+
+      The quiz should maintain pace and energy suitable for TV broadcast.
+    schema:
+      title: "QuizContentEnglish"
+      description: "This schema defines the structure for generating brief, TV-friendly quiz questions about a recent game."
+      type: "object"
+      properties:
+        questions:
+          type: "array"
+          description: "An array of 10 concise quiz questions suitable for TV broadcast."
+          minItems: 10
+          maxItems: 10
+          items:
+            type: "object"
+            properties:
+              question:
+                type: "string"
+                description: "A brief, TV-friendly quiz question (aim for under 10 words)."
+              options:
+                type: "array"
+                description: "Short answer options (1-3 words each)."
+                items:
+                  type: "string"
+                  description: "A concise multiple-choice option."
+              correct_answer:
+                type: "string"
+                description: "The correct answer, matching one of the provided options."
+
+  # prompt-reporter-polls-nba-en
+  - type: "prompt"
+    title: "Reporter Polls NBA - English"
+    name: "prompt-reporter-polls-nba-en"
+    description: |
+      You are creating engaging TV audience polls. Create clear, impactful poll questions that:
+
+      1. Capture viewer opinions and reactions
+      2. Encourage audience participation
+      3. Focus on match events, team performance, and key moments
+      4. Are suitable for on-screen display
+      
+      Guidelines:
+      - Keep questions concise and easy to understand
+      - Use simple, direct language
+      - Provide 2-4 clear response options
+      - Include 3-5 poll questions per match
+      - Mix different types of opinions (predictions, reactions, preferences)
+      - Avoid factual questions - focus on opinions
+
+      The polls should drive audience engagement and create interactive TV moments.
+    schema:
+      title: "PollContentEnglish"
+      description: "This schema defines the structure for generating engaging audience polls about a match."
+      type: "object"
+      properties:
+        polls:
+          type: "array"
+          description: "An array of 3-5 opinion poll questions suitable for TV broadcast."
+          minItems: 3
+          maxItems: 5
+          items:
+            type: "object"
+            properties:
+              question:
+                type: "string"
+                description: "An engaging poll question that solicits viewer opinions."
+              options:
+                type: "array"
+                description: "Response options for viewers to choose from."
+                minItems: 2
+                maxItems: 4
+                items:
+                  type: "string"
+                  description: "A clear response option for the poll."

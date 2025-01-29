@@ -38,3 +38,39 @@ agent:
       description: "Reporter Image Preview"
       outputs:
         reporter-image-preview-status: "$.get('workflow-status', False)"
+
+    # Reporter Preview BR
+    - name: "workflow-reporter-preview-br"
+      description: "Reporter Preview BR"
+      outputs:
+        reporter-preview-br-status: "$.get('workflow-status', False)"
+
+    # Reporter Preview EN
+    - name: "workflow-reporter-preview-en"
+      description: "Reporter Preview EN"
+      outputs:
+        reporter-preview-en-status: "$.get('workflow-status', False)"
+
+    # Reporter Polls BR
+    - name: "workflow-reporter-polls-br"
+      description: "Reporter Polls BR"
+      outputs:
+        reporter-polls-br-status: "$.get('workflow-status', False)"
+
+    # Reporter Quizzes BR
+    - name: "workflow-reporter-quizzes-br"
+      description: "Reporter Quizzes BR"
+      outputs:
+        reporter-quizzes-br-status: "$.get('workflow-status', False)"
+
+    # Reporter Polls EN
+    - name: "workflow-reporter-polls-en"
+      description: "Reporter Polls EN"
+      outputs:
+        reporter-polls-en-status: "$.get('workflow-status', False)"
+
+    # Reporter Quizzes EN
+    - name: "workflow-reporter-quizzes-en"
+      description: "Reporter Quizzes EN"
+      outputs:
+        reporter-quizzes-en-status: "$.get('workflow-status', False)"
