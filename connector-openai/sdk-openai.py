@@ -1,6 +1,4 @@
-# from langchain_community.embeddings import OpenAIEmbeddings
-
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 from openai import OpenAI
 
@@ -18,8 +16,8 @@ def invoke_embedding(params):
         return {"status": "error", "message": "Model name is required."}
 
     try:
-        # llm = OpenAIEmbeddings(api_key=api_key, model=model_name)
-        llm = OpenAI(api_key=api_key)
+        llm = OpenAIEmbeddings(api_key=api_key, model=model_name)
+        # llm = OpenAI(api_key=api_key)
 
     except Exception as e:
         return {"status": "error", "message": f"Exception when creating model: {e}"}
