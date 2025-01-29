@@ -1,0 +1,16 @@
+agent:
+  name: "template-sportsblog-scheduler"
+  title: "Agent Scheduler"
+  description: "Agent responsible for scheduling workflows."
+  context:
+    config-frequency: 1
+  workflows:
+
+    # Reporter Websearch
+    - name: "workflow-sync-games"
+      description: "Sync Games"
+      inputs:
+        season_year: "'2024'"
+        season_type: "'REG'"
+      outputs:
+        sync-games-status: "$.get('workflow-status', False)"
