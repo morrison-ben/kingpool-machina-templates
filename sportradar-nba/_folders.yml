@@ -58,7 +58,17 @@ workflow:
                   "title": "Raw Data",
                   "category": "Content",
                   "metadata": {
-                    "name": ["games", "synchronization"]
+                    "name": ["games"]
+                  },
+                  "sorters": ['_id', -1],
+                  "view": "list"
+                },
+                {
+                  "name": "event-summary",
+                  "title": "Summary",
+                  "category": "Content",
+                  "metadata": {
+                    "name": ["event-summary"]
                   },
                   "sorters": ['_id', -1],
                   "view": "list"

@@ -1,6 +1,6 @@
 workflow:
   name: "workflow-sync-games"
-  title: "Sync games"
+  title: "Sync Games"
   description: "Workflow to synchronize a season games from SportRadar API to Machina."
   context-variables:
     api-sr-nba:
@@ -21,10 +21,10 @@ workflow:
         search-limit: 1
         search-vector: false
       filters:
-        value.season_year: "$.get('season_year')"
-        value.season_type: "$.get('season_type')"
-        value.execution: "{'$gte': datetime.utcnow() - timedelta(days=0)}"
-        value.status: "'active'"
+        metadata.document_type: "'synchronization'"
+        metadata.season_year: "$.get('season_year')"
+        metadata.season_type: "$.get('season_type')"
+        value.execution: "{'$gte': datetime.utcnow() - timedelta(days=7)}"
       inputs:
         name: "'games'"
       outputs:
@@ -55,8 +55,10 @@ workflow:
                 'event_code': c.get('id', ''),
               },
               'version_control': {
+                'processing': False,
                 'updated': datetime.utcnow()
               },
+              'start_time': datetime.strptime(c.get('scheduled'), '%Y-%m-%dT%H:%M:%SZ'),
               'title': f"{c.get('home', {}).get('name', '')} v {c.get('away', {}).get('name', '')}",
               'selected': False
             }
@@ -76,8 +78,6 @@ workflow:
         games: |
           {
             'data': $.get('games'),
-            'season_year': $.get('season_year'),
-            'season_type': $.get('season_type'),
             'title': f"{$.get('season_year')} - {$.get('season_type')} - All Games ({len($.get('games', []))})",
             'execution': datetime.utcnow(),
             'status': 'active'

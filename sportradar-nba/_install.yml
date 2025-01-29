@@ -8,6 +8,8 @@ datasets:
   - type: "connector"
     path: "../connector-sportradar/api-sr-nba.yml"
   - type: "workflow"
+    path: "reporter-summary.yml"
+  - type: "workflow"
     path: "sync-games.yml"
   
   # agents & documents setup

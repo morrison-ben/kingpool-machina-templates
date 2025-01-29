@@ -6,7 +6,7 @@ agent:
     config-frequency: 1
   workflows:
 
-    # Reporter Websearch
+    # Sync Games
     - name: "workflow-sync-games"
       description: "Sync Games"
       inputs:
@@ -14,3 +14,9 @@ agent:
         season_type: "'REG'"
       outputs:
         sync-games-status: "$.get('workflow-status', False)"
+
+    # Reporter Summary
+    - name: "workflow-reporter-summary"
+      description: "Reporter Summary"
+      outputs:
+        reporter-summary-status: "$.get('workflow-status', False)"
