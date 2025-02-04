@@ -22,9 +22,10 @@ setup:
     - machina-ai
     - hubspot
   status: available
+  value: chat-completion
   version: 1.0.0
 
-  datasets:
+datasets:
   - type: "prompts"
     path: "prompt-chat-completion.yml"
   - type: "workflow"

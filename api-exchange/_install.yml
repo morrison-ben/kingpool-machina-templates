@@ -1,5 +1,5 @@
 setup:
-  title: "Sports Betting Copilot"
+  title: "API Exchange Test"
   description: AI-powered betting analysis and insights assistant with personalized recommendations based on betting history.
   category:
     - betting-fantasy
@@ -21,7 +21,8 @@ setup:
     - machina-vectordb
     - machina-ai
     - hubspot
-  status: coming_soon
+  status: available
+  value: api-exchange
   version: 1.0.0
 datasets:
   - type: "workflow"
