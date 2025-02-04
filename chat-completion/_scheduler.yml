@@ -1,6 +1,6 @@
 agent:
-  name: "template-sportsblog-chat-completion"
-  title: "Agent Chat Completion"
+  name: "agent-chat-completion"
+  title: "Chat Completion"
   description: "Agent responsible for chat completion."
   context:
     config-frequency: 0.1
@@ -10,4 +10,4 @@ agent:
     - name: "workflow-chat-completion"
       description: "Workflow Chat Completion"
       outputs:
-        chat-completion: "$.get('events')"
+        chat-completion-status: "$.get('workflow-status', False)"

@@ -1,4 +1,26 @@
-datasets:
+setup:
+  title: "NBA Reporter"
+  description: AI-powered NBA reporter with personalized recommendations based on betting history.
+  category:
+    - betting-fantasy
+    - crm-fan-data
+  estimatedTime: 15 minutes
+  features:
+    - Real-time Odds Analysis
+    - Historical Performance
+    - AI Insights
+    - Custom Models
+    - Personalized Recommendations
+    - Betting Pattern Analysis
+    - Risk Profile Assessment
+  integrations:
+    - sportradar
+    - machina-vectordb
+    - machina-ai
+  status: available
+  version: 1.0.0
+
+  datasets:
 
   # connectors & workflows
   - type: "connector"

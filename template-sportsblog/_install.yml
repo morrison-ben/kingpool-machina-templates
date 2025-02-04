@@ -1,4 +1,29 @@
-datasets:
+setup:
+  title: "Sports Blog"
+  description: AI-powered sports blog with personalized recommendations based on betting history.
+  category:
+    - betting-fantasy
+    - crm-fan-data
+  estimatedTime: 15 minutes
+  features:
+    - Real-time Odds Analysis
+    - Historical Performance
+    - AI Insights
+    - Custom Models
+    - Personalized Recommendations
+    - Betting Pattern Analysis
+    - Risk Profile Assessment
+    - Preference-Based Alerts
+    - Betting History Tracking
+    - Deal Stage Management
+  integrations:
+    - genius-sports
+    - machina-vectordb
+    - machina-ai
+    - hubspot
+  status: available
+  version: 1.0.0
+  datasets:
 
   # connectors
   - type: "connector"
@@ -72,10 +97,10 @@ datasets:
 
   # documents setup
   - type: "workflow"
-    path: "folders.yml"
+    path: "_folders.yml"
   - type: "agent"
     path: "setup2.yml"
   - type: "agent"
-    path: "completion.yml"
+    path: "../chat-completion/_scheduler.yml"
   - type: "agent"
-    path: "scheduler.yml"
+    path: "_scheduler.yml"

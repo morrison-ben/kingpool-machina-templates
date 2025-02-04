@@ -1,3 +1,28 @@
+setup:
+  title: "Sports Betting Copilot"
+  description: AI-powered betting analysis and insights assistant with personalized recommendations based on betting history.
+  category:
+    - betting-fantasy
+    - crm-fan-data
+  estimatedTime: 15 minutes
+  features:
+    - Real-time Odds Analysis
+    - Historical Performance
+    - AI Insights
+    - Custom Models
+    - Personalized Recommendations
+    - Betting Pattern Analysis
+    - Risk Profile Assessment
+    - Preference-Based Alerts
+    - Betting History Tracking
+    - Deal Stage Management
+  integrations:
+    - genius-sports
+    - machina-vectordb
+    - machina-ai
+    - hubspot
+  status: coming_soon
+  version: 1.0.0
 datasets:
   - type: "workflow"
     path: "../template-moderator/workflow-documents.yml"
@@ -8,4 +33,5 @@ datasets:
   - type: "workflow"
     path: "markets.yml"
   - type: "workflow"
-    path: "runners.yml" 
+    path: "runners.yml"
+  
