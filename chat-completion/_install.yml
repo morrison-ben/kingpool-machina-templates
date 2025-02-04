@@ -1,5 +1,33 @@
-datasets:
+setup:
+  title: "Chat Completion"
+  description: AI-powered chat completion with personalized recommendations based on betting history.
+  category:
+    - betting-fantasy
+    - crm-fan-data
+  estimatedTime: 15 minutes
+  features:
+    - Real-time Odds Analysis
+    - Historical Performance
+    - AI Insights
+    - Custom Models
+    - Personalized Recommendations
+    - Betting Pattern Analysis
+    - Risk Profile Assessment
+    - Preference-Based Alerts
+    - Betting History Tracking
+    - Deal Stage Management
+  integrations:
+    - genius-sports
+    - machina-vectordb
+    - machina-ai
+    - hubspot
+  status: available
+  version: 1.0.0
+
+  datasets:
   - type: "prompts"
     path: "prompt-chat-completion.yml"
   - type: "workflow"
     path: "workflow-chat-completion.yml"
+  - type: "agent"
+    path: "_scheduler.yml"

@@ -4,7 +4,7 @@ prompts:
   - type: "prompt"
     title: "Chat Completion"
     name: "prompt-chat-completion" 
-    description: "This prompt generates a contextual response to user questions about soccer matches, incorporating relevant betting options and follow-up questions."
+    description: "This prompt generates a contextual response to user questions about sports matches, incorporating relevant betting options and follow-up questions."
     schema:
       title: "ThreadCompletion"
       description: "This schema defines the structure for generating comprehensive responses that include match insights, betting suggestions, and conversation continuity."
