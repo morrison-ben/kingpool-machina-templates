@@ -1,0 +1,66 @@
+prompts:
+
+  # prompt-content-match-briefing-en
+  - type: "prompt"
+    title: "Reporter Briefing - English"
+    name: "prompt-content-match-briefing-en"
+    description: "This prompt generates a comprehensive pre-match briefing, covering essential match details, competition context, and venue information."
+    schema:
+      title: "MatchBriefingContent"
+      description: "This schema defines the structure for generating multiple informative sections about the upcoming match details and context."
+      type: "object"
+      properties:
+        sections:
+          type: "array"
+          description: "An array of detailed sections covering different aspects of the match briefing. Should include essential information about the competition context, match timing, venue details, and match officials."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "A specific category title for this section (e.g., 'Competition Context', 'Match Timing', 'Venue Information', 'Match Officials')"
+              content:
+                type: "string"
+                description: "Detailed narrative description specific to this category, incorporating relevant details such as:
+                  - Competition name and current season
+                  - Round or stage of the competition
+                  - Match date and kickoff time
+                  - Stadium name and location
+                  - Teams involved
+                  - Referee and officials
+                  - Weather conditions and pitch status
+                  The content should be written in an engaging, professional tone suitable for sports broadcasting."
+
+  - type: "prompt"
+    title: "Team Briefing"
+    name: "prompt-content-team-briefing"
+    description: "This prompt generates a comprehensive team briefing, covering historical context, current season details, key personnel, and team statistics."
+    schema:
+      title: "TeamBriefingContent"
+      description: "This schema defines the structure for generating multiple informative sections about a specific team's profile and current status."
+      type: "object"
+      properties:
+        sections:
+          type: "array"
+          description: "An array of detailed sections covering different aspects of the team briefing."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "A specific category title for this section (e.g., 'Team History', 'Current Season', 'Key Personnel', 'Team Identity', 'Achievements')"
+              content:
+                type: "string"
+                description: "Detailed narrative description specific to this category, incorporating relevant details such as:
+                  - Team foundation year and historical context
+                  - Team colors, mascot, and nicknames
+                  - Championship history (Super Bowl wins, conference titles, division titles)
+                  - Current leadership (owner, president, general manager)
+                  - Coaching staff highlights
+                  - Current season performance and playoff appearance context
+                  - Home venue information
+                  - Notable team traditions (fight song, etc.)
+                  The content should be written in an engaging, professional tone suitable for sports broadcasting."
+            required: ["title", "content"]
+          minItems: 3
+          maxItems: 7
