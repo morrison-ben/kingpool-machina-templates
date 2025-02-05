@@ -1,0 +1,39 @@
+setup:
+  title: SportRadar NFL
+  description: Connect to the SportRadar NFL API to get live and historical data.
+  category:
+    - data-acquisition
+  estimatedTime: 1 minute
+  features:
+    - Current Season Schedule
+    - Current Week Schedule
+    - Daily Change Log
+    - Daily Transactions
+    - Game Boxscore
+    - Game Play-by-Play
+    - Game Roster
+    - Game Statistics
+    - League Hierarchy
+    - Player Profile
+    - Postgame Standings
+    - Seasonal Statistics
+    - Season Schedule
+    - Seasons
+    - Team Profile
+    - Team Roster
+    - Teams
+    - Tournament List
+    - Tournament Schedule
+    - Tournament Summary
+    - Weekly Depth Charts
+    - Weekly Injuries
+    - Weekly Schedule
+  integrations:
+    - sportradar
+  status: available
+  value: connector-sportradar-nfl
+  version: 1.0.0
+
+datasets:
+  - type: "connector"
+    path: "api-sr-nfl.yml"

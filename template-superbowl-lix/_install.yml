@@ -1,0 +1,34 @@
+setup:
+  title: Superbowl LIX
+  description: Connect to the Superbowl LIX API to get live and historical data.
+  category:
+    - data-acquisition
+  estimatedTime: 1 minute
+  features:
+    - AI News
+    - AI Analysis
+    - AI Predictions
+    - AI Insights
+    - AI Recommendations
+    - AI Summaries
+    - AI Highlights
+  integrations:
+    - sportradar
+    - machina-ai
+  status: available
+  value: template-superbowl-lix
+  version: 1.0.0
+
+datasets:
+  - type: "connector"
+    path: "../connector-openai/sdk-openai.yml"
+  - type: "connector"
+    path: "../connector-sportradar-nfl/api-sr-nfl.yml"
+  - type: "workflow"
+    path: "sync-games.yml"
+  - type: "workflow"
+    path: "sync-teams.yml"
+  - type: "workflow"
+    path: "exe-briefing.yml"
+  - type: "prompts"
+    path: "_prompts.yml"
