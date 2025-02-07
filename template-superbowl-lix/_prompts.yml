@@ -1,9 +1,9 @@
 prompts:
 
-  # prompt-content-match-briefing-en
+  # prompt-briefing-game
   - type: "prompt"
-    title: "Reporter Briefing - English"
-    name: "prompt-content-match-briefing-en"
+    title: "Prompt Briefing Game"
+    name: "prompt-briefing-game"
     description: "This prompt generates a comprehensive pre-match briefing, covering essential match details, competition context, and venue information."
     schema:
       title: "MatchBriefingContent"
@@ -31,9 +31,10 @@ prompts:
                   - Weather conditions and pitch status
                   The content should be written in an engaging, professional tone suitable for sports broadcasting."
 
+  # prompt-briefing-team
   - type: "prompt"
-    title: "Team Briefing"
-    name: "prompt-content-team-briefing"
+    title: "Prompt Briefing Team"
+    name: "prompt-briefing-team"
     description: "This prompt generates a comprehensive team briefing, covering historical context, current season details, key personnel, and team statistics."
     schema:
       title: "TeamBriefingContent"
@@ -64,3 +65,62 @@ prompts:
             required: ["title", "content"]
           minItems: 3
           maxItems: 7
+
+  # prompt-game-predictions
+  - type: "prompt"
+    title: "Game Predictions"
+    name: "prompt-game-predictions"
+    description: "This prompt generates expert game predictions and analysis, identifying key factors that could influence the Super Bowl outcome. Act as a seasoned sports analyst with deep knowledge of NFL statistics, team dynamics, and historical Super Bowl patterns."
+    schema:
+      title: "GamePredictionsContent"
+      description: "This schema defines the structure for generating detailed predictions and analysis of key game-changing factors."
+      type: "object"
+      properties:
+        HOME_WIN_PROBABILITY:
+          type: "number"
+          minimum: 0
+          maximum: 100
+          description: "Calculated probability (percentage) of the home team winning the game, based on comprehensive analysis of all factors"
+        AWAY_WIN_PROBABILITY:
+          type: "number"
+          minimum: 0
+          maximum: 100
+          description: "Calculated probability (percentage) of the away team winning the game, based on comprehensive analysis of all factors"
+        CONFIDENCE:
+          type: "integer"
+          minimum: 50
+          maximum: 100
+          description: "Overall confidence level in the game prediction, considering all analyzed factors and potential variables"
+        predictions:
+          type: "array"
+          description: "An array of detailed predictions covering different aspects that could influence the game outcome."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "A specific prediction category title (e.g., 'Quarterback Battle', 'Defensive Matchup', 'Weather Impact', 'Historical Precedent')"
+              content:
+                type: "string"
+                description: "Detailed analysis of the prediction factor, incorporating relevant details such as:
+                  - Statistical evidence supporting the prediction
+                  - Historical patterns and precedents
+                  - Key player matchups and their implications
+                  - Strategic advantages or disadvantages
+                  - Recent performance indicators
+                  - Expert opinions and analysis
+                  - Impact on game outcome
+                  The content should be written in an authoritative tone with clear reasoning."
+              prediction:
+                type: "string"
+                description: "A clear, concise statement of the predicted outcome for this specific factor (e.g., 'Mahomes to throw for 300+ yards', 'Defense to force 2+ turnovers', 'Home team advantage to result in 7-point spread')"
+              confidence:
+                type: "integer"
+                minimum: 50
+                maximum: 100
+                description: "Confidence level in the prediction, expressed as a percentage based on statistical analysis and expert evaluation"
+            required: ["title", "content", "prediction", "confidence"]
+          minItems: 5
+          maxItems: 7
+      required: ["HOME_WIN_PROBABILITY", "AWAY_WIN_PROBABILITY", "CONFIDENCE", "predictions"]
+  
