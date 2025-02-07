@@ -21,6 +21,8 @@ setup:
 
 datasets:
   - type: "connector"
+    path: "../connector-groq/sdk-groq.yml"
+  - type: "connector"
     path: "../connector-openai/sdk-openai.yml"
   - type: "connector"
     path: "../connector-sportradar-nfl/api-sr-nfl.yml"
@@ -30,5 +32,7 @@ datasets:
     path: "sync-teams.yml"
   - type: "workflow"
     path: "exe-briefing.yml"
+  - type: "workflow"
+    path: "exe-insights.yml"
   - type: "prompts"
     path: "_prompts.yml"
