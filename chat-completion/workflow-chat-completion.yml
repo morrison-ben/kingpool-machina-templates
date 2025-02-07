@@ -3,6 +3,8 @@ workflow:
   title: "Workflow Chat Completion"
   description: "Workflow to chat completion"
   context-variables:
+    sdk-groq:
+      api_key: "$TEMP_CONTEXT_VARIABLE_SDK_GROQ_API_KEY"
     sdk-openai:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
   inputs:
@@ -89,9 +91,14 @@ workflow:
       description: "Chat Completion."
       condition: "$.get('document_id') is not None and $.get('prompt_name') == 'prompt-thread-completion'"
       connector:
-        name: "sdk-openai"
+        name: "sdk-groq"
         command: "invoke_prompt"
-        model: "gpt-4o"
+        # model: "llama-3.1-8b-instant"
+        # model: "llama-3.3-70b-versatile"
+        model: "deepseek-r1-distill-llama-70b"
+        # name: "sdk-openai"
+        # command: "invoke_prompt"
+        # model: "gpt-4o"
       inputs:
         documents: "$.get('documents')"
         messages: "$.get('messages')"
