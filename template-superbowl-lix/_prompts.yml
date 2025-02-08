@@ -125,6 +125,56 @@ prompts:
           minItems: 3
           maxItems: 5
 
+  # prompt-team-statistics
+  - type: "prompt"
+    title: "Team Statistics Analysis"
+    name: "prompt-team-statistics"
+    description: "This prompt analyzes comprehensive team statistics across all phases of the game (offense, defense, special teams), delivering data-driven insights about team performance and tendencies."
+    schema:
+      title: "TeamStatisticsContent"
+      description: "Break down the team's performance metrics with hard-hitting statistical analysis. As an irreverent NFL expert, cut through the noise with concrete numbers and unfiltered insights. Focus on efficiency ratings, scoring trends, and key performance indicators while keeping the commentary sharp and backed by data."
+      type: "object"
+      properties:
+        sections:
+          type: "array"
+          description: "An array of sections that dive deep into different statistical aspects of team performance. Each section should focus on specific performance metrics with clear analysis and comparative context."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "Clear section title (e.g., 'Offensive Efficiency', 'Scoring Prowess', 'Defensive Metrics', 'Special Teams Impact', 'Critical Situations')"
+              content:
+                type: "string"
+                description: "Data-driven analysis of key performance metrics, including relevant comparisons and trend analysis. Break down complex stats into digestible insights while maintaining statistical accuracy."
+              key_stat:
+                type: "string"
+                description: "The most telling statistical highlight from this section, presented as a punchy, quotable metric that encapsulates team performance in this area."
+            required: ["title", "content", "key_stat"]
+          minItems: 5
+          maxItems: 7
+        performance_summary:
+          type: "object"
+          description: "Overall performance metrics highlighting the team's statistical strengths and weaknesses"
+          properties:
+            offensive_rating:
+              type: "number"
+              description: "A 1-100 rating of offensive effectiveness based on available metrics"
+            defensive_rating:
+              type: "number"
+              description: "A 1-100 rating of defensive effectiveness based on available metrics"
+            special_teams_rating:
+              type: "number"
+              description: "A 1-100 rating of special teams effectiveness based on available metrics"
+            standout_metrics:
+              type: "array"
+              items:
+                type: "string"
+                description: "Key statistical achievements that stand out from the data"
+              minItems: 3
+              maxItems: 5
+          required: ["offensive_rating", "defensive_rating", "special_teams_rating", "standout_metrics"]
+
   # prompt-chat-completion
   - type: "prompt"
     title: "Chat Completion"

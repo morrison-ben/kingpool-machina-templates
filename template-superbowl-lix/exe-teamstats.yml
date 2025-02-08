@@ -1,7 +1,7 @@
 workflow:
-  name: "workflow-reporter-keyplayers"
-  title: "Reporter Key Players"
-  description: "Workflow to produce key players."
+  name: "workflow-reporter-teamstats"
+  title: "Reporter Team Statistics"
+  description: "Workflow to produce team statistics."
   context-variables:
     sdk-openai:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
@@ -29,7 +29,7 @@ workflow:
       outputs:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        exe_keyplayers_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('exe_keyplayers_count', 0) if $.get('documents') else None"
+        exe_teamstats_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('exe_teamstats_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
     
     # 1 load-event-scheduled
@@ -45,7 +45,7 @@ workflow:
         value.status: "{'$in': ['scheduled']}"
         value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=24)}"
         value.version_control.processing: "{'$ne': True}"
-        value.version_control.exe_keyplayers_status: "{'$exists': False}"
+        value.version_control.exe_teamstats_status: "{'$exists': False}"
         value.version_control.exe_briefing_status: "'processed'"
         value.version_control.sync_teams_status: "'processed'"
       inputs:
@@ -54,7 +54,7 @@ workflow:
         event_code: "$.get('documents')[0].get('metadata').get('event_code') if $.get('documents') else None"
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        exe_keyplayers_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('exe_keyplayers_count', 0) if $.get('documents') else None"
+        exe_teamstats_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('exe_teamstats_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
     
     # 2 version-control-start
@@ -73,7 +73,7 @@ workflow:
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': True,
-              'exe_keyplayers_status': 'processing'
+              'exe_teamstats_status': 'processing'
             }
           }
       metadata:
@@ -120,10 +120,10 @@ workflow:
       outputs:
         event-briefing: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
     
-    # 5 prompt-keyplayers-analysis (home)
+    # 5 prompt-team-statistics (home)
     - type: "prompt"
-      name: "prompt-keyplayers-analysis"
-      description: "Generate a comprehensive game predictions, covering different aspects that could influence the game outcome."
+      name: "prompt-team-statistics"
+      description: "comprehensive team statistics across all phases of the game"
       condition: "$.get('event_exists') is True and $.get('event-summary_exists') is True"
       connector:
         name: "sdk-openai"
@@ -131,9 +131,9 @@ workflow:
         model: "gpt-4o"
       inputs:
         event-briefing: "$.get('event-briefing')"
-        players-data: "$.get('event-summary').get('home-team').get('players')"
+        home-team-stats: "$.get('event-summary').get('home-team-stats')"
       outputs:
-        home-keyplayers-bulk: |
+        home-statistics-bulk: |
           [
             {
               'subject': c.get('title', ''),
@@ -146,12 +146,12 @@ workflow:
             }
             for c in $.get('sections')
           ]
-        home-keyplayers: "$"
+        home-statistics: "$"
     
-    # 6 prompt-keyplayers-analysis (away)
+    # 6 prompt-team-statistics (away)
     - type: "prompt"
-      name: "prompt-keyplayers-analysis"
-      description: "Generate a comprehensive game predictions, covering different aspects that could influence the game outcome."
+      name: "prompt-team-statistics"
+      description: "comprehensive team statistics across all phases of the game"
       condition: "$.get('event_exists') is True and $.get('event-summary_exists') is True"
       connector:
         name: "sdk-openai"
@@ -159,9 +159,9 @@ workflow:
         model: "gpt-4o"
       inputs:
         event-briefing: "$.get('event-briefing')"
-        players-data: "$.get('event-summary').get('away-team').get('players')"
+        away-team-stats: "$.get('event-summary').get('away-team-stats')"
       outputs:
-        away-keyplayers-bulk: |
+        away-statistics-bulk: |
           [
             {
               'subject': c.get('title', ''),
@@ -174,7 +174,7 @@ workflow:
             }
             for c in $.get('sections')
           ]
-        away-keyplayers: "$"
+        away-statistics: "$"
     
     # 7 bulk-save-snippets
     - type: "document"
@@ -195,8 +195,8 @@ workflow:
       inputs:
         parsed-items: |
           [
-            *$.get('home-keyplayers-bulk', []),
-            *$.get('away-keyplayers-bulk', []),
+            *$.get('home-statistics-bulk', []),
+            *$.get('away-statistics-bulk', []),
           ]
     
     # 8 version-control-end
@@ -215,8 +215,8 @@ workflow:
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': False,
-              'exe_keyplayers_count': $.get('exe_keyplayers_count', 0) + 1,
-              'exe_keyplayers_status': 'processed',
+              'exe_teamstats_count': $.get('exe_teamstats_count', 0) + 1,
+              'exe_teamstats_status': 'processed',
               'updated': datetime.utcnow()
             }
           }

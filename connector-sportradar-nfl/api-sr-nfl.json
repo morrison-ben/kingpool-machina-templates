@@ -49,6 +49,25 @@
         ]
       }
     },
+    "/seasons/{season_year}/{season_type}/teams/{team_id}/{data_type}": {
+      "get": {
+        "summary": "Get information about teams",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api_key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
     "/teams/{team_id}/{data_type}": {
       "get": {
         "summary": "Get information about teams",
