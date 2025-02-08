@@ -124,3 +124,49 @@ prompts:
           maxItems: 7
       required: ["HOME_WIN_PROBABILITY", "AWAY_WIN_PROBABILITY", "CONFIDENCE", "predictions"]
   
+  # prompt-chat-completion
+  - type: "prompt"
+    title: "Chat Completion"
+    name: "prompt-chat-completion" 
+    description: "This prompt generates a contextual response to user questions about sports matches, incorporating relevant betting options and follow-up questions."
+    schema:
+      title: "ThreadCompletion"
+      description: "This schema defines the structure for generating comprehensive responses that include match insights, betting suggestions, and conversation continuity."
+      type: "object"
+      properties:
+        question_answer:
+          type: "string"
+          description: "Generate an informative and engaging response that directly addresses the user's question while maintaining a conversational tone."
+        is_match_finished:
+          type: "boolean"
+          description: "Whether the match is finished."
+        related_betting_enabled:
+          type: "boolean"
+          description: "Whether to include related betting opportunities in the response."
+        related_bettings:
+          type: "array"
+          description: "List relevant betting opportunities related to the match or topic being discussed."
+          items:
+            type: "object"
+            properties:
+              bet_title:
+                type: "string"
+                description: "Clear and appealing title for the betting opportunity."
+              bet_odd:
+                type: "string"
+                description: "Current odds for this betting option."
+              bet_size:
+                type: "string"
+                description: "Recommended bet size based on risk assessment."
+              runner_name:
+                type: "string"
+                description: "Name of the team, player or outcome being bet on."
+        related_questions:
+          type: "array"
+          description: "Suggest natural follow-up questions to maintain conversation flow and user engagement."
+          items:
+            type: "string"
+            description: "Relevant and engaging follow-up question that builds on the current conversation context."
+        speech_to_avatar:
+          type: "string"
+          description: "The speech to avatar speak to the user, more conversational and engaging, more like a human talking to the user."

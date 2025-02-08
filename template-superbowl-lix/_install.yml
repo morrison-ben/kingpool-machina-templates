@@ -20,19 +20,37 @@ setup:
   version: 1.0.0
 
 datasets:
+
+  # connectors
   - type: "connector"
     path: "../connector-groq/sdk-groq.yml"
   - type: "connector"
     path: "../connector-openai/sdk-openai.yml"
   - type: "connector"
     path: "../connector-sportradar-nfl/api-sr-nfl.yml"
+
+  # workflows
   - type: "workflow"
-    path: "sync-games.yml"
-  - type: "workflow"
-    path: "sync-teams.yml"
+    path: "completion.yml"
   - type: "workflow"
     path: "exe-briefing.yml"
   - type: "workflow"
     path: "exe-insights.yml"
+  - type: "workflow"
+    path: "sync-games.yml"
+  - type: "workflow"
+    path: "sync-teams.yml"
+
+  # prompts
   - type: "prompts"
     path: "_prompts.yml"
+
+  # agents & documents setup
+  - type: "workflow"
+    path: "_folders.yml"
+
+  # agents & schedules
+  - type: "agent"
+    path: "_scheduler.yml"
+  - type: "agent"
+    path: "_populate.yml"
