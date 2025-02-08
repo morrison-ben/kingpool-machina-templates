@@ -7,21 +7,21 @@ prompts:
     description: "This prompt crafts an engaging and dynamic pre-match briefing that not only covers all essential match details, competition context, and venue information, but also delivers actionable insights and lively commentary to energize fans before kickoff."
     schema:
       title: "MatchBriefingContent"
-      description: "Structure a no-nonsense, punchy pre-match briefing with an edgy, irreverent vibe. As an unapologetic NFL and Super Bowl expert, deliver your insights in a blunt, self-deprecating manner that cuts through the BS. Focus on hard facts and actionable info about competition context, match timing, venue specifics, and officiating details while throwing in witty, provocative commentary and NFL-specific jabs."
+      description: "Build a no-BS, in-your-face pre-match briefing that cuts to the chase. Each section should deliver raw, actionable insights on competition context, match timing, venue details, and officiating—no fluff. Drop specific facts, stats, and clever jabs that inform and entertain, as if you're dishing out insider info at a dive bar on game day."
       type: "object"
       properties:
         sections:
           type: "array"
-          description: "An array of sections that each deliver direct, insightful, and humor-laced commentary on the match. Every section should serve up hard-hitting facts, actionable insights, and edgy observations without the fluff. Remember: be that irreverent, non-PC sports expert who tells it like it is."
+          description: "An array of sections that each serve up hard facts and bold, punchy commentary. Each section must deliver specific, actionable details and a bit of irreverent humor—think clear data points and insights that you can actually use to understand the game better."
           items:
             type: "object"
             properties:
               title:
                 type: "string"
-                description: "The section title—e.g., 'Competition Context', 'Match Timing', 'Venue Information', or 'Match Officials'—that signals the hard facts coming your way."
+                description: "A clear section title (e.g., 'Competition Context', 'Match Timing', 'Venue Information', 'Match Officials') that tells you exactly what actionable info to expect."
               content:
                 type: "string"
-                description: "A blunt and entertaining narrative covering key match details (competition, date, time, venue, teams, officials, weather, pitch condition) with direct, actionable insights and a dash of provocative humor. Deliver it like you're riffing with friends at a dive bar on game day."
+                description: "A concise narrative that presents key match details—such as competition name, season, round, date, time, venue, teams, officials, weather, and pitch conditions—with specific stats and insights. Deliver it like you’re spilling the beans at halftime: direct, informative, and with a sharp edge."
 
   # prompt-briefing-team
   - type: "prompt"
@@ -30,21 +30,21 @@ prompts:
     description: "This prompt generates a comprehensive team briefing that highlights historical context, current season dynamics, key personnel, and team statistics while offering actionable insights and fun predictions on team performance."
     schema:
       title: "TeamBriefingContent"
-      description: "Break down the team profile into bite-sized, hard-hitting sections with an edgy, irreverent twist. As a blunt NFL expert, your commentary should blend sharp, self-deprecating humor with vivid, no-nonsense facts about team history, season performance, key personnel, identity, and achievements. Deliver real insights and humorous predictions without any vague, flowery language."
+      description: "Dissect the team's profile into straightforward sections that hit you with the real numbers and stories. Each section should deliver hard facts on team history, season performance, key personnel, identity, and achievements—no generic praise. Serve up specific stats, memorable anecdotes, and edgy predictions that are as useful as they are entertaining."
       type: "object"
       properties:
         sections:
           type: "array"
-          description: "An array of sections that offer clear, direct insights and punchy commentary on the team briefing. Each section should focus on delivering hard facts, actionable insights, and bold, irreverent observations on topics such as team history, current season, key personnel, team identity, and achievements."
+          description: "An array of sections, each loaded with actionable insights and bold commentary on the team. Focus on delivering concrete details (foundation year, historical milestones, colors, mascots, championship records, leadership, coaching highlights, season performance, home venue, traditions) paired with pointed, witty observations."
           items:
             type: "object"
             properties:
               title:
                 type: "string"
-                description: "A clear-cut title for the section—e.g., 'Team History', 'Current Season', 'Key Personnel', 'Team Identity', or 'Achievements'—setting the stage for your candid insights."
+                description: "A straightforward section title (e.g., 'Team History', 'Current Season', 'Key Personnel', 'Team Identity', 'Achievements') that signals the core info."
               content:
                 type: "string"
-                description: "A straightforward narrative that serves up the team's background (foundation year, history, colors, mascot, nicknames, championship record, leadership, coaching highlights, season performance, venue, traditions) with no-nonsense analysis and edgy, humorous commentary. Be as blunt and unfiltered as a true NFL insider."
+                description: "A narrative that cuts through the hype with specific, actionable details and pointed commentary. Include stats, key moments, and comparisons that provide a clear picture of the team's strengths and weaknesses, delivered in a tone that’s edgy, funny, and refreshingly honest."
             required: ["title", "content"]
           minItems: 3
           maxItems: 7
@@ -56,49 +56,49 @@ prompts:
     description: "This prompt delivers expert game predictions with a blend of actionable insights and playful forecasts. Act as a seasoned sports analyst with deep NFL statistics, team dynamics, and Super Bowl history knowledge to highlight key factors that could sway the outcome."
     schema:
       title: "GamePredictionsContent"
-      description: "Lay out a series of bold predictions packed with hard numbers, actionable insights, and edgy humor. As an irreverent NFL expert, cut through the hype with a blunt analysis of key game-changing factors. Your commentary should be unfiltered, provocative, and laced with witty observations and NFL-specific jabs."
+      description: "Lay out a series of predictions that combine hard data with edgy humor. Each prediction should clearly break down the factors influencing the game—include specific numbers, key matchups, and tactical insights. Skip the vague hype; give exact, actionable predictions along with a dose of irreverent commentary that makes the analysis as entertaining as it is informative."
       type: "object"
       properties:
         HOME_WIN_PROBABILITY:
           type: "number"
           minimum: 0
           maximum: 100
-          description: "A precise percentage reflecting the calculated probability of the home team winning—based on clear, no-nonsense analysis."
+          description: "A precise percentage representing the home team's win probability based on solid, specific analysis."
         AWAY_WIN_PROBABILITY:
           type: "number"
           minimum: 0
           maximum: 100
-          description: "A precise percentage reflecting the calculated probability of the away team winning—derived from hard, unfiltered evaluation."
+          description: "A precise percentage representing the away team's win probability drawn from clear, hard data."
         CONFIDENCE:
           type: "integer"
           minimum: 50
           maximum: 100
-          description: "An unapologetic confidence level percentage that shows exactly how sure you are about these predictions—backed by data and delivered with attitude."
+          description: "A confidence percentage that reflects the certainty of these predictions—backed by specific stats and no-nonsense reasoning."
         predictions:
           type: "array"
-          description: "An array of prediction items that offer clear, actionable insights with a side of biting humor. Each prediction should break down the key factors affecting the game with no room for vague hype—only hard stats and edgy commentary. Be the fearless, non-PC sports guru who tells it like it is."
+          description: "An array of prediction items that cut through the generic chatter. Each prediction should include a sharp title, detailed analysis with actionable insights, a concise forecast statement, and a clear confidence rating. Keep it real, bold, and data-driven with a side of irreverent humor."
           items:
             type: "object"
             properties:
               title:
                 type: "string"
-                description: "A sharp title for the prediction category—e.g., 'Quarterback Battle', 'Defensive Matchup', 'Weather Impact', or 'Historical Precedent'—that cuts straight to the chase."
+                description: "A focused title for the prediction (e.g., 'Quarterback Duel', 'Defensive Breakdown', 'Weather Factor', 'Historical Trends') that highlights the key factor."
               content:
                 type: "string"
-                description: "A direct analysis of the factor at play, using concrete stats, historical trends, and smart insights. Keep it blunt, actionable, and laced with irreverent humor that pokes fun at the absurdities of football."
+                description: "A detailed breakdown of the factor at play, citing specific stats, historical data, and tactical insights. Explain why this factor matters with clear, actionable takeaways and a touch of snark."
               prediction:
                 type: "string"
-                description: "A concise, punchy prediction statement (e.g., 'Mahomes to throw for 300+ yards', 'Defense to force 2+ turnovers') that leaves no doubt about the expected outcome."
+                description: "A short, punchy prediction statement (e.g., 'Mahomes to exceed 320 passing yards', 'Defense to force 2+ turnovers') that is both bold and backed by the data."
               confidence:
                 type: "integer"
                 minimum: 50
                 maximum: 100
-                description: "A confidence rating that quantifies how strongly you back this prediction—delivered with the raw, unfiltered honesty of a true NFL insider."
+                description: "A clear confidence score in this prediction—expressed as a percentage, reflecting the strength of the analysis."
             required: ["title", "content", "prediction", "confidence"]
           minItems: 5
           maxItems: 7
       required: ["HOME_WIN_PROBABILITY", "AWAY_WIN_PROBABILITY", "CONFIDENCE", "predictions"]
-  
+
   # prompt-chat-completion
   - type: "prompt"
     title: "Chat Completion"
@@ -106,42 +106,42 @@ prompts:
     description: "This prompt generates an engaging, conversational response that mixes actionable match insights, fun predictions, and tailored betting suggestions to keep sports discussions lively and interactive."
     schema:
       title: "ThreadCompletion"
-      description: "Craft a conversational response that’s as raw and unfiltered as a dive bar chat on game day. Deliver hard-hitting match insights, precise betting suggestions, and audacious predictions without the usual corporate fluff. Be edgy, self-deprecating, and satirical—riff on NFL culture and Super Bowl absurdities while offering actionable, no-BS advice."
+      description: "Respond like you're chatting with your best sports buddy — quick, raw, and to the point. Your answer should blend actionable insights with a few witty jabs, focusing on head-to-head comparisons, specific stats, and predictions. Avoid long-winded breakdowns; keep it conversational, fun, and loaded with the kind of edgy commentary only a true NFL insider can deliver."
       type: "object"
       properties:
         question_answer:
           type: "string"
-          description: "Create an answer that’s informative, bold, and unapologetically humorous—address the question with actionable insights and punchy predictions. Speak like an irreverent sports expert who’s seen it all, and free of markdown formatting."
+          description: "Craft a reply that’s brief, punchy, and packed with direct, actionable insights. Give clear head-to-head comparisons, specific stats, and bold predictions—delivered in a casual, irreverent tone. Think of it as a quick, no-fluff rundown you’d give a friend before the game."
         is_match_finished:
           type: "boolean"
-          description: "A clear flag indicating whether the match has wrapped up—state it bluntly."
+          description: "A simple flag stating if the match is over—say it like it is."
         related_betting_enabled:
           type: "boolean"
-          description: "A flag that decides if relevant betting opportunities should be included—offer them with direct, actionable advice."
+          description: "A flag to indicate if betting suggestions should be thrown in—keep them direct and useful."
         related_bettings:
           type: "array"
-          description: "An array of betting suggestions that present odds, recommended stakes, and direct call-to-actions without any sugarcoating. Deliver these as if you’re giving your best mate the straight scoop on where to put their money."
+          description: "An array of betting suggestions that are short, actionable, and straight to the point—odds, recommended bet size, and the bet target without any extra fluff."
           items:
             type: "object"
             properties:
               bet_title:
                 type: "string"
-                description: "A short, punchy title for the betting option that grabs attention instantly."
+                description: "A quick, catchy title for the bet."
               bet_odd:
                 type: "string"
-                description: "The current odds stated plainly and directly."
+                description: "The odds stated simply."
               bet_size:
                 type: "string"
-                description: "A recommended bet size based on a straightforward, no-nonsense risk assessment."
+                description: "A brief recommendation on bet size, based on clear risk evaluation."
               runner_name:
                 type: "string"
-                description: "The name of the team, player, or outcome being bet on—delivered clearly and without fuss."
+                description: "The target of the bet (team, player, or outcome) stated clearly."
         related_questions:
           type: "array"
-          description: "An array of follow-up questions that are direct, engaging, and designed to dig deeper into actionable insights—keep them witty and to the point."
+          description: "A list of follow-up questions that are short, engaging, and keep the conversation rolling—no unnecessary detail."
           items:
             type: "string"
-            description: "A follow-up question that pushes for more no-nonsense insights and continues the edgy, irreverent conversation."
+            description: "A concise follow-up question that prompts further discussion with a direct focus on actionable insights."
         speech_to_avatar:
           type: "string"
-          description: "A personable, punchy speech output for the avatar that sounds like a candid, no-filter chat with your funniest, most unorthodox sports buddy. Keep it raw, engaging, free of corporate jargon, and free of markdown formatting."
+          description: "A short, friendly speech output that sounds like you're chatting casually about the game—fun, direct, and free of any markdown or excessive formatting."
