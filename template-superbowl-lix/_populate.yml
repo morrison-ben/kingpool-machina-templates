@@ -29,7 +29,7 @@ agent:
       inputs:
         event_code: "$.get('event_code')"
         season_year: "$.get('season_year')"
-        season_type: "'PST'"
+        season_type: "'REG'"
       outputs:
         sync-teams-status: "$.get('workflow-status', False)"
 

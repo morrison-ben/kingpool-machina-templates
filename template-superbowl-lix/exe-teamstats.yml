@@ -176,7 +176,27 @@ workflow:
           ]
         away-statistics: "$"
     
-    # 7 bulk-save-snippets
+    # 7 performance-report-update
+    - type: "document"
+      name: "performance-report-update"
+      description: "Update the performance report document."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        performance-report: |
+          {
+            'away-performance': $.get('away-statistics', {}).get('performance_summary', {}),
+            'home-performance': $.get('home-statistics', {}).get('performance_summary', {}),
+            'title': f"$.(title) - Performance Report"
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+        language: "'en'"
+
+    # 8 bulk-save-snippets
     - type: "document"
       name: "bulk-save-snippets"
       condition: "$.get('event_exists') is True"
@@ -199,7 +219,7 @@ workflow:
             *$.get('away-statistics-bulk', []),
           ]
     
-    # 8 version-control-end
+    # 9 version-control-end
     - type: "document"
       name: "version-control-end"
       description: "Update the events document end."
