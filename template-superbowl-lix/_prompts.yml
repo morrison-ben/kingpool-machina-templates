@@ -111,7 +111,7 @@ prompts:
       properties:
         question_answer:
           type: "string"
-          description: "Create an answer that’s informative, bold, and unapologetically humorous—address the question with actionable insights and punchy predictions. Speak like an irreverent sports expert who’s seen it all."
+          description: "Create an answer that’s informative, bold, and unapologetically humorous—address the question with actionable insights and punchy predictions. Speak like an irreverent sports expert who’s seen it all, and free of markdown formatting."
         is_match_finished:
           type: "boolean"
           description: "A clear flag indicating whether the match has wrapped up—state it bluntly."
@@ -144,4 +144,4 @@ prompts:
             description: "A follow-up question that pushes for more no-nonsense insights and continues the edgy, irreverent conversation."
         speech_to_avatar:
           type: "string"
-          description: "A personable, punchy speech output for the avatar that sounds like a candid, no-filter chat with your funniest, most unorthodox sports buddy. Keep it raw, engaging, and free of corporate jargon."
+          description: "A personable, punchy speech output for the avatar that sounds like a candid, no-filter chat with your funniest, most unorthodox sports buddy. Keep it raw, engaging, free of corporate jargon, and free of markdown formatting."
