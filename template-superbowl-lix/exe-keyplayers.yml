@@ -147,7 +147,7 @@ workflow:
           ]
         home-keyplayers: "$"
     
-    # 5 prompt-keyplayers-analysis (away)
+    # 6 prompt-keyplayers-analysis (away)
     - type: "prompt"
       name: "prompt-keyplayers-analysis"
       description: "Generate a comprehensive game predictions, covering different aspects that could influence the game outcome."
@@ -174,44 +174,6 @@ workflow:
             for c in $.get('sections')
           ]
         away-keyplayers: "$"
-    
-    # 6 document-update
-    - type: "document"
-      name: "document-update"
-      condition: "$.get('event_exists') is True"
-      config:
-        action: "update"
-        embed-vector: false
-        force-update: true
-      documents:
-        content-insights: |
-          {
-            **$.get('home-keyplayers'),
-            'title': f"$.(title) - Key Players (Home Team)"
-          }
-      metadata:
-        event_code: "$.get('event_code')"
-        team_id: "$.get('event-summary').get('home-team').get('id')"
-        language: "'en'"
-    
-    # 6 document-update
-    - type: "document"
-      name: "document-update"
-      condition: "$.get('event_exists') is True"
-      config:
-        action: "update"
-        embed-vector: false
-        force-update: true
-      documents:
-        content-insights: |
-          {
-            **$.get('away-keyplayers'),
-            'title': f"$.(title) - Key Players (Away Team)"
-          }
-      metadata:
-        event_code: "$.get('event_code')"
-        team_id: "$.get('event-summary').get('away-team').get('id')"
-        language: "'en'"
     
     # 7 bulk-save-snippets
     - type: "document"
