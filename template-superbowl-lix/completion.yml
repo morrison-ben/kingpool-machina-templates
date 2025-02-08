@@ -91,14 +91,13 @@ workflow:
       description: "Chat Completion."
       condition: "$.get('document_id') is not None and $.get('prompt_name') == 'prompt-thread-completion'"
       connector:
-        #name: "sdk-groq"
-        #command: "invoke_prompt"
+        name: "sdk-groq"
         # model: "llama-3.1-8b-instant"
         # model: "llama-3.3-70b-versatile"
-        #model: "deepseek-r1-distill-llama-70b"
-        name: "sdk-openai"
+        model: "deepseek-r1-distill-llama-70b"
+        #name: "sdk-openai"
         command: "invoke_prompt"
-        model: "gpt-4o-mini"
+        #model: "gpt-4o-mini"
       inputs:
         documents: "$.get('documents')"
         messages: "$.get('messages')"
