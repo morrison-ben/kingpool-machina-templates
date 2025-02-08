@@ -101,6 +101,7 @@ workflow:
               'metadata': {
                 'event_code': '$.(event_code)',
                 'player_id': p.get('id', ''),
+                'team_id': $.get('id', ''),
               },
               'title': f"{p.get('name', '')}",
             }
@@ -129,6 +130,7 @@ workflow:
               'metadata': {
                 'event_code': '$.(event_code)',
                 'player_id': p.get('id', ''),
+                'team_id': $.get('id', ''),
               },
               'title': f"{p.get('name', '')}",
             }
@@ -165,7 +167,7 @@ workflow:
       description: "Bulk save the snippets."
       config:
         action: "bulk-save"
-        embed-vector: true
+        embed-vector: false
         force-update: true
       connector:
         name: "sdk-openai"

@@ -99,6 +99,32 @@ prompts:
           maxItems: 7
       required: ["HOME_WIN_PROBABILITY", "AWAY_WIN_PROBABILITY", "CONFIDENCE", "predictions"]
   
+  # prompt-keyplayers-analysis
+  - type: "prompt"
+    title: "Key Players Analysis"
+    name: "prompt-keyplayers-analysis"
+    description: "This prompt analyzes the most impactful players from the team's 53-player roster, delivering focused snippets about standout performers across all units."
+    schema:
+      title: "KeyPlayersAnalysisContent"
+      description: "Break down the team's star players with hard-hitting stats and unfiltered analysis. As an irreverent NFL expert, spotlight the game-changers across all units while delivering concrete performance data and career highlights. Keep the commentary sharp, stats-heavy, and sprinkled with NFL-insider humor."
+      type: "object"
+      properties:
+        sections:
+          type: "array"
+          description: "An array of sections covering offensive stars, defensive anchors, and special teams standouts. Each section should deliver statistical insights and memorable highlights that define these playmakers."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "Clear section title (e.g., 'Offensive Powerhouses', 'Defensive Game-Changers', 'Special Teams Impact Players')"
+              content:
+                type: "string"
+                description: "Detailed analysis of the key players in this unit, including stats, career highlights, and their importance to the team. Focus on 2-3 standout players per section with concrete examples and performance metrics."
+            required: ["title", "content"]
+          minItems: 3
+          maxItems: 5
+
   # prompt-chat-completion
   - type: "prompt"
     title: "Chat Completion"
@@ -106,12 +132,12 @@ prompts:
     description: "This prompt generates an engaging, conversational response that mixes actionable match insights, fun predictions, and tailored betting suggestions to keep sports discussions lively and interactive."
     schema:
       title: "ThreadCompletion"
-      description: "Craft a conversational response that’s as raw and unfiltered as a dive bar chat on game day. Deliver hard-hitting match insights, precise betting suggestions, and audacious predictions without the usual corporate fluff. Be edgy, self-deprecating, and satirical—riff on NFL culture and Super Bowl absurdities while offering actionable, no-BS advice."
+      description: "Craft a conversational response that's as raw and unfiltered as a dive bar chat on game day. Deliver hard-hitting match insights, precise betting suggestions, and audacious predictions without the usual corporate fluff. Be edgy, self-deprecating, and satirical—riff on NFL culture and Super Bowl absurdities while offering actionable, no-BS advice."
       type: "object"
       properties:
         question_answer:
           type: "string"
-          description: "Create an answer that’s informative, bold, and unapologetically humorous—address the question with actionable insights and punchy predictions. Speak like an irreverent sports expert who’s seen it all, and free of markdown formatting."
+          description: "Create an answer that's informative, bold, and unapologetically humorous—address the question with actionable insights and punchy predictions. Speak like an irreverent sports expert who's seen it all, and free of markdown formatting."
         is_match_finished:
           type: "boolean"
           description: "A clear flag indicating whether the match has wrapped up—state it bluntly."
@@ -120,7 +146,7 @@ prompts:
           description: "A flag that decides if relevant betting opportunities should be included—offer them with direct, actionable advice."
         related_bettings:
           type: "array"
-          description: "An array of betting suggestions that present odds, recommended stakes, and direct call-to-actions without any sugarcoating. Deliver these as if you’re giving your best mate the straight scoop on where to put their money."
+          description: "An array of betting suggestions that present odds, recommended stakes, and direct call-to-actions without any sugarcoating. Deliver these as if you're giving your best mate the straight scoop on where to put their money."
           items:
             type: "object"
             properties:

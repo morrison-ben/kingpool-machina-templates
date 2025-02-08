@@ -44,3 +44,11 @@ agent:
         event_code: "'ca9d8f84-8e7b-4ee7-a310-54c2e3ca4edc'"
       outputs:
         reporter-insights-status: "$.get('workflow-status', False)"
+
+    - name: "workflow-reporter-keyplayers"
+      description: "Reporter Key Players"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        event_code: "'ca9d8f84-8e7b-4ee7-a310-54c2e3ca4edc'"
+      outputs:
+        reporter-keyplayers-status: "$.get('workflow-status', False)"
