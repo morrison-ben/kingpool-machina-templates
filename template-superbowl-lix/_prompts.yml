@@ -4,15 +4,15 @@ prompts:
   - type: "prompt"
     title: "Prompt Briefing Game"
     name: "prompt-briefing-game"
-    description: "This prompt generates a comprehensive pre-match briefing, covering essential match details, competition context, and venue information."
+    description: "This prompt crafts an engaging and dynamic pre-match briefing that not only covers all essential match details, competition context, and venue information, but also delivers actionable insights and lively commentary to energize fans before kickoff."
     schema:
       title: "MatchBriefingContent"
-      description: "This schema defines the structure for generating multiple informative sections about the upcoming match details and context."
+      description: "This schema structures the dynamic pre-match briefing into multiple actionable sections, offering fun insights, actionable information, and lively commentary on competition context, match timing, venue specifics, and officiating details. Roleplay and generate interesting facts and insights as a Super Bowl expert, and do not act like an assistant."
       type: "object"
       properties:
         sections:
           type: "array"
-          description: "An array of detailed sections covering different aspects of the match briefing. Should include essential information about the competition context, match timing, venue details, and match officials."
+          description: "An array of detailed sections covering different aspects of the match briefing. Each section should deliver actionable information, fun predictions, and engaging commentary. Roleplay and generate interesting facts and insights as a Super Bowl expert, and do not act like an assistant."
           items:
             type: "object"
             properties:
@@ -21,29 +21,21 @@ prompts:
                 description: "A specific category title for this section (e.g., 'Competition Context', 'Match Timing', 'Venue Information', 'Match Officials')"
               content:
                 type: "string"
-                description: "Detailed narrative description specific to this category, incorporating relevant details such as:
-                  - Competition name and current season
-                  - Round or stage of the competition
-                  - Match date and kickoff time
-                  - Stadium name and location
-                  - Teams involved
-                  - Referee and officials
-                  - Weather conditions and pitch status
-                  The content should be written in an engaging, professional tone suitable for sports broadcasting."
+                description: "A detailed narrative that explains key match details—including competition name and season, round or stage, match date and kickoff time, stadium name and location, teams involved, referee and officials, weather conditions, and pitch status—while offering actionable insights and fun commentary. Roleplay and generate interesting facts and insights as a Super Bowl expert, and do not act like an assistant."
 
   # prompt-briefing-team
   - type: "prompt"
     title: "Prompt Briefing Team"
     name: "prompt-briefing-team"
-    description: "This prompt generates a comprehensive team briefing, covering historical context, current season details, key personnel, and team statistics."
+    description: "This prompt generates a comprehensive and engaging team briefing that highlights historical context, current season dynamics, key personnel, and team statistics while offering actionable insights and fun predictions on team performance."
     schema:
       title: "TeamBriefingContent"
-      description: "This schema defines the structure for generating multiple informative sections about a specific team's profile and current status."
+      description: "This schema structures a multi-section team briefing that delivers detailed background information, actionable insights, and playful predictions about a team's history, current season, key personnel, identity, and achievements. Roleplay and generate interesting facts and insights as a Super Bowl expert, and do not act like an assistant."
       type: "object"
       properties:
         sections:
           type: "array"
-          description: "An array of detailed sections covering different aspects of the team briefing."
+          description: "An array of detailed sections covering different aspects of the team briefing. Each section should provide clear, actionable insights and fun observations on topics such as team history, current season, key personnel, team identity, and achievements. Roleplay and generate interesting facts and insights as a Super Bowl expert, and do not act like an assistant."
           items:
             type: "object"
             properties:
@@ -52,16 +44,7 @@ prompts:
                 description: "A specific category title for this section (e.g., 'Team History', 'Current Season', 'Key Personnel', 'Team Identity', 'Achievements')"
               content:
                 type: "string"
-                description: "Detailed narrative description specific to this category, incorporating relevant details such as:
-                  - Team foundation year and historical context
-                  - Team colors, mascot, and nicknames
-                  - Championship history (Super Bowl wins, conference titles, division titles)
-                  - Current leadership (owner, president, general manager)
-                  - Coaching staff highlights
-                  - Current season performance and playoff appearance context
-                  - Home venue information
-                  - Notable team traditions (fight song, etc.)
-                  The content should be written in an engaging, professional tone suitable for sports broadcasting."
+                description: "A detailed narrative that includes relevant details such as the team’s foundation year, historical context, team colors, mascot, nicknames, championship history, current leadership, coaching staff highlights, current season performance, playoff context, home venue, and notable traditions, paired with actionable insights and fun predictions. Roleplay and generate interesting facts and insights as a Super Bowl expert, and do not act like an assistant."
             required: ["title", "content"]
           minItems: 3
           maxItems: 7
@@ -70,30 +53,30 @@ prompts:
   - type: "prompt"
     title: "Game Predictions"
     name: "prompt-game-predictions"
-    description: "This prompt generates expert game predictions and analysis, identifying key factors that could influence the Super Bowl outcome. Act as a seasoned sports analyst with deep knowledge of NFL statistics, team dynamics, and historical Super Bowl patterns."
+    description: "This prompt delivers expert game predictions with a blend of actionable insights and playful forecasts. Act as a seasoned sports analyst with deep NFL statistics, team dynamics, and Super Bowl history knowledge to highlight key factors that could sway the outcome."
     schema:
       title: "GamePredictionsContent"
-      description: "This schema defines the structure for generating detailed predictions and analysis of key game-changing factors."
+      description: "This schema defines the structure for generating detailed, actionable predictions and analysis on key game-changing factors, paired with fun commentary to boost excitement. Roleplay and generate interesting facts and insights as a Super Bowl expert, and do not act like an assistant."
       type: "object"
       properties:
         HOME_WIN_PROBABILITY:
           type: "number"
           minimum: 0
           maximum: 100
-          description: "Calculated probability (percentage) of the home team winning the game, based on comprehensive analysis of all factors"
+          description: "Calculated probability (percentage) of the home team winning, based on thorough analysis of all relevant factors."
         AWAY_WIN_PROBABILITY:
           type: "number"
           minimum: 0
           maximum: 100
-          description: "Calculated probability (percentage) of the away team winning the game, based on comprehensive analysis of all factors"
+          description: "Calculated probability (percentage) of the away team winning, derived from a comprehensive evaluation of all key variables."
         CONFIDENCE:
           type: "integer"
           minimum: 50
           maximum: 100
-          description: "Overall confidence level in the game prediction, considering all analyzed factors and potential variables"
+          description: "Overall confidence level in the game prediction, reflecting the certainty of the analysis and forecast."
         predictions:
           type: "array"
-          description: "An array of detailed predictions covering different aspects that could influence the game outcome."
+          description: "An array of detailed predictions covering various game aspects that could impact the outcome. Each prediction should include analytical insights and a fun, memorable forecast. Roleplay and generate interesting facts and insights as a Super Bowl expert, and do not act like an assistant."
           items:
             type: "object"
             properties:
@@ -102,23 +85,15 @@ prompts:
                 description: "A specific prediction category title (e.g., 'Quarterback Battle', 'Defensive Matchup', 'Weather Impact', 'Historical Precedent')"
               content:
                 type: "string"
-                description: "Detailed analysis of the prediction factor, incorporating relevant details such as:
-                  - Statistical evidence supporting the prediction
-                  - Historical patterns and precedents
-                  - Key player matchups and their implications
-                  - Strategic advantages or disadvantages
-                  - Recent performance indicators
-                  - Expert opinions and analysis
-                  - Impact on game outcome
-                  The content should be written in an authoritative tone with clear reasoning."
+                description: "A detailed analysis of the prediction factor, incorporating statistical evidence, historical patterns, key player matchups, strategic insights, and expert opinions with a playful twist. Roleplay and generate interesting facts and insights as a Super Bowl expert, and do not act like an assistant."
               prediction:
                 type: "string"
-                description: "A clear, concise statement of the predicted outcome for this specific factor (e.g., 'Mahomes to throw for 300+ yards', 'Defense to force 2+ turnovers', 'Home team advantage to result in 7-point spread')"
+                description: "A clear, concise statement of the predicted outcome for this factor (e.g., 'Mahomes to throw for 300+ yards', 'Defense to force 2+ turnovers', 'Home team advantage to yield a 7-point spread')."
               confidence:
                 type: "integer"
                 minimum: 50
                 maximum: 100
-                description: "Confidence level in the prediction, expressed as a percentage based on statistical analysis and expert evaluation"
+                description: "Confidence level in this specific prediction, expressed as a percentage based on rigorous analysis and expert evaluation."
             required: ["title", "content", "prediction", "confidence"]
           minItems: 5
           maxItems: 7
@@ -128,45 +103,45 @@ prompts:
   - type: "prompt"
     title: "Chat Completion"
     name: "prompt-chat-completion" 
-    description: "This prompt generates a contextual response to user questions about sports matches, incorporating relevant betting options and follow-up questions."
+    description: "This prompt generates an engaging, conversational response that mixes actionable match insights, fun predictions, and tailored betting suggestions to keep sports discussions lively and interactive."
     schema:
       title: "ThreadCompletion"
-      description: "This schema defines the structure for generating comprehensive responses that include match insights, betting suggestions, and conversation continuity."
+      description: "This schema defines the structure for producing comprehensive responses that include match insights, playful predictions, actionable betting suggestions, and natural follow-up questions to maintain engaging dialogue. Roleplay and generate interesting facts and insights as a Super Bowl expert, and do not act like an assistant."
       type: "object"
       properties:
         question_answer:
           type: "string"
-          description: "Generate an informative and engaging response that directly addresses the user's question while maintaining a conversational tone."
+          description: "Generate an informative, engaging, and conversational response that directly addresses the user's question while providing actionable insights and fun predictions about the match. Roleplay and generate interesting facts and insights as a Super Bowl expert, and do not act like an assistant."
         is_match_finished:
           type: "boolean"
-          description: "Whether the match is finished."
+          description: "Indicates whether the match is finished."
         related_betting_enabled:
           type: "boolean"
-          description: "Whether to include related betting opportunities in the response."
+          description: "Specifies whether to include relevant betting opportunities in the response."
         related_bettings:
           type: "array"
-          description: "List relevant betting opportunities related to the match or topic being discussed."
+          description: "A list of appealing betting opportunities related to the match or discussion topic, each offering clear and actionable information. Roleplay and generate interesting facts and insights as a Super Bowl expert, and do not act like an assistant."
           items:
             type: "object"
             properties:
               bet_title:
                 type: "string"
-                description: "Clear and appealing title for the betting opportunity."
+                description: "A clear and engaging title for the betting opportunity."
               bet_odd:
                 type: "string"
-                description: "Current odds for this betting option."
+                description: "The current odds for this betting option."
               bet_size:
                 type: "string"
-                description: "Recommended bet size based on risk assessment."
+                description: "A recommended bet size based on a balanced risk assessment."
               runner_name:
                 type: "string"
-                description: "Name of the team, player or outcome being bet on."
+                description: "The team, player, or outcome being bet on."
         related_questions:
           type: "array"
-          description: "Suggest natural follow-up questions to maintain conversation flow and user engagement."
+          description: "A list of natural follow-up questions designed to keep the conversation flowing and to further engage the user with additional insights and betting angles. Roleplay and generate interesting facts and insights as a Super Bowl expert, and do not act like an assistant."
           items:
             type: "string"
-            description: "Relevant and engaging follow-up question that builds on the current conversation context."
+            description: "A relevant and engaging follow-up question that builds on the current conversation context."
         speech_to_avatar:
           type: "string"
-          description: "The speech to avatar speak to the user, more conversational and engaging, more like a human talking to the user."
+          description: "A conversational and personable speech output for the avatar, designed to sound engaging and human-like while delivering match insights and fun predictions. Roleplay and generate interesting facts and insights as a Super Bowl expert, and do not act like an assistant."
