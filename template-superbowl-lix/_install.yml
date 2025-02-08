@@ -39,6 +39,8 @@ datasets:
   - type: "workflow"
     path: "sync-games.yml"
   - type: "workflow"
+    path: "sync-players.yml"
+  - type: "workflow"
     path: "sync-teams.yml"
 
   # prompts

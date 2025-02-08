@@ -13,6 +13,7 @@ workflow:
     events: "$.get('events')"
     workflow-status: "$.get('event_exists') is not True and 'skipped' or 'executed'"
   tasks:
+    
     # 0 load-event-by-code
     - type: "document"
       name: "load-event-by-code"
@@ -32,6 +33,7 @@ workflow:
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
         sync_teams_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('sync_teams_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+    
     # 1 load-event
     - type: "document"
       name: "load-event-prelive"
@@ -54,6 +56,7 @@ workflow:
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
         sync_teams_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('sync_teams_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+    
     # 2 update-event-status
     - type: "document"
       name: "update-event-preevent-start"
@@ -75,6 +78,7 @@ workflow:
           }
       metadata:
         event_code: "$.get('event_code')"
+    
     # 3 fetch-home-team
     - type: "connector"
       name: "fetch-home-team"
@@ -90,6 +94,19 @@ workflow:
         api_key: "$.get('sportradar_api_key')"
       outputs:
         home-team: "$"
+        home-team-players: |
+          [
+            {
+              **p,
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'player_id': p.get('id', ''),
+              },
+              'title': f"{p.get('name', '')}",
+            }
+            for p in $.get('players', [])
+          ]
+    
     # 4 fetch-away-team
     - type: "connector"
       name: "fetch-away-team"
@@ -105,6 +122,19 @@ workflow:
         api_key: "$.get('sportradar_api_key')"
       outputs:
         away-team: "$"
+        away-team-players: |
+          [
+            {
+              **p,
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'player_id': p.get('id', ''),
+              },
+              'title': f"{p.get('name', '')}",
+            }
+            for p in $.get('players', [])
+          ]
+    
     # 5 save search results
     - type: "document"
       name: "update-event-summary"
@@ -127,7 +157,31 @@ workflow:
         document_type: "'event-summary'"
         event_code: "$.get('event_code')"
         language: "'en'"
-    # 5 update-event-preevent
+    
+    # 6 bulk-save-snippets
+    - type: "document"
+      name: "bulk-save-snippets"
+      condition: "$.get('event_exists') is True"
+      description: "Bulk save the snippets."
+      config:
+        action: "bulk-save"
+        embed-vector: true
+        force-update: true
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      document_name: "player-profile"
+      documents:
+        items: "$.get('parsed-items')"
+      inputs:
+        parsed-items: |
+          [
+            *$.get('home-team-players', []),
+            *$.get('away-team-players', []),
+          ]
+
+    # 7 update-event-preevent
     - type: "document"
       name: "update-event-preevent-end"
       description: "Update the events document preevent."

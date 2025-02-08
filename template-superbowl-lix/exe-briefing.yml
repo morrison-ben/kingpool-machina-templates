@@ -11,6 +11,7 @@ workflow:
     events: "$.get('events')"
     workflow-status: "$.get('event_exists') is not True and 'skipped' or 'executed'"
   tasks:
+    
     # 0 load-event-by-code
     - type: "document"
       name: "load-event-by-code"
@@ -30,6 +31,7 @@ workflow:
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
         exe_briefing_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('exe_briefing_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+    
     # 1 load-event
     - type: "document"
       name: "load-event-prelive"
@@ -53,6 +55,7 @@ workflow:
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
         exe_briefing_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('exe_briefing_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+    
     # 2 update-event-status
     - type: "document"
       name: "update-event-preevent-start"
@@ -74,6 +77,7 @@ workflow:
           }
       metadata:
         event_code: "$.get('event_code')"
+    
     # 3 load-event-summary
     - type: "document"
       name: "load-event-summary"
@@ -95,7 +99,8 @@ workflow:
       outputs:
         event-summary: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
         event-summary_exists: "len($.get('documents')) > 0"
-    # 6 prompt-briefing-game
+    
+    # 4 prompt-briefing-game
     - type: "prompt"
       name: "prompt-briefing-game"
       description: "Summarize the Briefing for the upcoming game"
@@ -121,7 +126,8 @@ workflow:
             for c in $.get('sections')
           ]
         content-briefing-match: "$"
-    # 6 prompt-briefing home
+    
+    # 5 prompt-briefing home
     - type: "prompt"
       name: "prompt-briefing-team"
       description: "Summarize the Briefing for the upcoming game"
@@ -148,6 +154,7 @@ workflow:
             for c in $.get('sections')
           ]
         content-briefing-home: "$"
+    
     # 6 prompt-briefing away
     - type: "prompt"
       name: "prompt-briefing-team"
@@ -175,7 +182,8 @@ workflow:
             for c in $.get('sections')
           ]
         content-briefing-away: "$"
-    # 9 document-update-en
+    
+    # 7 document-update-en
     - type: "document"
       name: "document-update-en"
       condition: "$.get('event_exists') is True"
@@ -196,7 +204,8 @@ workflow:
       metadata:
         event_code: "$.get('event_code')"
         language: "'en'"
-    # 10 bulk-save-snippets
+    
+    # 8 bulk-save-snippets
     - type: "document"
       name: "bulk-save-snippets"
       condition: "$.get('event_exists') is True"
@@ -219,7 +228,8 @@ workflow:
             *$.get('bulk-briefing-home', []),
             *$.get('bulk-briefing-away', []),
           ]
-    # 11 update-event-preevent
+    
+    # 9 update-event-preevent
     - type: "document"
       name: "update-event-preevent-end"
       description: "Update the events document preevent."
