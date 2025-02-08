@@ -98,6 +98,205 @@ prompts:
           minItems: 5
           maxItems: 7
       required: ["HOME_WIN_PROBABILITY", "AWAY_WIN_PROBABILITY", "CONFIDENCE", "predictions"]
+  
+  # prompt-head-to-head
+  - type: "prompt"
+    title: "Head-to-Head Analysis"
+    name: "prompt-head-to-head"
+    description: "This prompt analyzes and compares the statistical performance of both teams, highlighting key matchups, advantages, and potential mismatches across all phases of the game."
+    schema:
+      title: "HeadToHeadContent"
+      description: "Break down the statistical matchup with hard-hitting comparative analysis. As an irreverent NFL expert, identify clear advantages, glaring mismatches, and key battlegrounds using concrete numbers. Keep the commentary sharp, data-driven, and sprinkled with NFL-insider humor while comparing both teams' strengths and weaknesses."
+      type: "object"
+      properties:
+        sections:
+          type: "array"
+          description: "An array of sections comparing different aspects of team performance. Each section should directly contrast both teams' metrics and identify clear advantages."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "Clear section title (e.g., 'Scoring Battle', 'Defensive Showdown', 'Third Down War', 'Trenches Matchup')"
+              content:
+                type: "string"
+                description: "Direct comparison of both teams' performance metrics, highlighting significant disparities and potential advantages. Use concrete numbers and clear analysis to show which team has the edge."
+              advantage:
+                type: "string"
+                enum: ["HOME", "AWAY", "EVEN"]
+                description: "Indicates which team has the statistical advantage in this area"
+              advantage_rating:
+                type: "integer"
+                minimum: 1
+                maximum: 5
+                description: "Rates the significance of the advantage from 1 (slight edge) to 5 (dominant advantage)"
+            required: ["title", "content", "advantage", "advantage_rating"]
+          minItems: 5
+          maxItems: 7
+        key_matchups:
+          type: "array"
+          description: "Critical statistical matchups that could decide the game"
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "Brief description of the key matchup (e.g., 'Red Zone Efficiency', 'Pass Rush vs Protection')"
+              home_stat:
+                type: "string"
+                description: "Key statistic for the home team in this matchup"
+              away_stat:
+                type: "string"
+                description: "Key statistic for the away team in this matchup"
+              analysis:
+                type: "string"
+                description: "Brief analysis of the statistical mismatch and its potential game impact"
+            required: ["title", "home_stat", "away_stat", "analysis"]
+          minItems: 3
+          maxItems: 5
+        overall_advantage:
+          type: "object"
+          description: "Summary of the overall statistical comparison"
+          properties:
+            team:
+              type: "string"
+              enum: ["HOME", "AWAY", "EVEN"]
+              description: "Team with the overall statistical advantage"
+            confidence:
+              type: "integer"
+              minimum: 1
+              maximum: 5
+              description: "Confidence level in the overall advantage (1-5)"
+            key_factors:
+              type: "array"
+              items:
+                type: "string"
+                description: "Key statistical factors supporting the overall advantage"
+              minItems: 3
+              maxItems: 5
+          required: ["team", "confidence", "key_factors"]
+
+  # prompt-keyplayers-analysis
+  - type: "prompt"
+    title: "Key Players Analysis"
+    name: "prompt-keyplayers-analysis"
+    description: "This prompt analyzes the most impactful players from the team's 53-player roster, delivering focused snippets about standout performers across all units."
+    schema:
+      title: "KeyPlayersAnalysisContent"
+      description: "Break down the team's star players with hard-hitting stats and unfiltered analysis. As an irreverent NFL expert, spotlight the game-changers across all units while delivering concrete performance data and career highlights. Keep the commentary sharp, stats-heavy, and sprinkled with NFL-insider humor."
+      type: "object"
+      properties:
+        sections:
+          type: "array"
+          description: "An array of sections covering offensive stars, defensive anchors, and special teams standouts. Each section should deliver statistical insights and memorable highlights that define these playmakers."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "Clear section title (e.g., 'Offensive Powerhouses', 'Defensive Game-Changers', 'Special Teams Impact Players')"
+              content:
+                type: "string"
+                description: "Detailed analysis of the key players in this unit, including stats, career highlights, and their importance to the team. Focus on 2-3 standout players per section with concrete examples and performance metrics."
+            required: ["title", "content"]
+          minItems: 3
+          maxItems: 5
+
+  # prompt-team-statistics
+  - type: "prompt"
+    title: "Team Statistics Analysis"
+    name: "prompt-team-statistics"
+    description: "This prompt analyzes comprehensive team statistics across all phases of the game (offense, defense, special teams), delivering data-driven insights about team performance and tendencies."
+    schema:
+      title: "TeamStatisticsContent"
+      description: "Break down the team's performance metrics with hard-hitting statistical analysis. As an irreverent NFL expert, cut through the noise with concrete numbers and unfiltered insights. Focus on efficiency ratings, scoring trends, and key performance indicators while keeping the commentary sharp and backed by data."
+      type: "object"
+      properties:
+        sections:
+          type: "array"
+          description: "An array of sections that dive deep into different statistical aspects of team performance. Each section should focus on specific performance metrics with clear analysis and comparative context."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "Clear section title (e.g., 'Offensive Efficiency', 'Scoring Prowess', 'Defensive Metrics', 'Special Teams Impact', 'Critical Situations')"
+              content:
+                type: "string"
+                description: "Data-driven analysis of key performance metrics, including relevant comparisons and trend analysis. Break down complex stats into digestible insights while maintaining statistical accuracy."
+              key_stat:
+                type: "string"
+                description: "The most telling statistical highlight from this section, presented as a punchy, quotable metric that encapsulates team performance in this area."
+            required: ["title", "content", "key_stat"]
+          minItems: 5
+          maxItems: 7
+        performance_summary:
+          type: "object"
+          description: "Overall performance metrics highlighting the team's statistical strengths and weaknesses"
+          properties:
+            offensive_rating:
+              type: "number"
+              description: "A 1-100 rating of offensive effectiveness based on available metrics"
+            defensive_rating:
+              type: "number"
+              description: "A 1-100 rating of defensive effectiveness based on available metrics"
+            special_teams_rating:
+              type: "number"
+              description: "A 1-100 rating of special teams effectiveness based on available metrics"
+            points_per_game:
+              type: "number"
+              description: "Average points scored per game"
+            points_allowed_per_game:
+              type: "number"
+              description: "Average points allowed per game"
+            turnover_differential:
+              type: "number"
+              description: "Total turnovers forced minus turnovers committed"
+            third_down_rate:
+              type: "number"
+              description: "Third down conversion percentage"
+            red_zone_efficiency:
+              type: "number"
+              description: "Percentage of red zone trips resulting in touchdowns"
+            yards_per_game:
+              type: "number"
+              description: "Average total yards gained per game"
+            yards_allowed_per_game:
+              type: "number"
+              description: "Average total yards allowed per game"
+            sacks_made:
+              type: "number"
+              description: "Total number of sacks by the defense"
+            sacks_allowed:
+              type: "number"
+              description: "Total number of sacks allowed by the offense"
+            penalties_per_game:
+              type: "number"
+              description: "Average number of penalties per game"
+            time_of_possession:
+              type: "string"
+              description: "Average time of possession per game (MM:SS format)"
+            standout_metrics:
+              type: "array"
+              items:
+                type: "string"
+                description: "Key statistical achievements that stand out from the data"
+              minItems: 3
+              maxItems: 5
+          required: [
+            "offensive_rating", 
+            "defensive_rating", 
+            "special_teams_rating", 
+            "points_per_game",
+            "points_allowed_per_game",
+            "turnover_differential",
+            "third_down_rate",
+            "red_zone_efficiency",
+            "yards_per_game",
+            "yards_allowed_per_game",
+            "standout_metrics"
+          ]
+
 
   # prompt-chat-completion
   - type: "prompt"

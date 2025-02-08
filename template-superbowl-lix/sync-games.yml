@@ -12,7 +12,8 @@ workflow:
     games: "$.get('games')"
     workflow-status: "$.get('should_update') is not True and 'skipped' or 'executed'"
   tasks:
-    # check-document-timedelta
+    
+    # 0 check-document-timedelta
     - type: "document"
       name: "check-document-timedelta"
       description: "Check if the games document has expired."
@@ -31,7 +32,7 @@ workflow:
         documents: "$.get('documents')"
         should_update: "len($.get('documents')) == 0"
 
-    # load-games
+    # 1 load-games
     - type: "connector"
       name: "load-games"
       description: "Get a season games from SportRadar"
@@ -66,7 +67,7 @@ workflow:
             for game in week.get('games', [])
           ]
 
-    # update-games
+    # 2 update-games
     - type: "document"
       name: "update-games"
       description: "Update the games document."
@@ -88,7 +89,7 @@ workflow:
         season_type: "$.get('season_type')"
         document_type: "'synchronization'"
 
-    # bulk-save-games
+    # 3 bulk-save-games
     - type: "document"
       name: "bulk-save-games"
       condition: "$.get('should_update') == True"

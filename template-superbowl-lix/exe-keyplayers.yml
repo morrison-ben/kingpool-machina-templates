@@ -1,7 +1,7 @@
 workflow:
-  name: "workflow-reporter-briefing"
-  title: "Reporter Briefing"
-  description: "Workflow to produce briefing in English."
+  name: "workflow-reporter-keyplayers"
+  title: "Reporter Key Players"
+  description: "Workflow to produce key players."
   context-variables:
     sdk-openai:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
@@ -29,12 +29,12 @@ workflow:
       outputs:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        exe_briefing_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('exe_briefing_count', 0) if $.get('documents') else None"
+        exe_keyplayers_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('exe_keyplayers_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
     
-    # 1 load-event
+    # 1 load-event-scheduled
     - type: "document"
-      name: "load-event-prelive"
+      name: "load-event-scheduled"
       description: "Search for events in the database."
       condition: "$.get('event_exists') is not True"
       config:
@@ -45,7 +45,8 @@ workflow:
         value.status: "{'$in': ['scheduled']}"
         value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=24)}"
         value.version_control.processing: "{'$ne': True}"
-        value.version_control.exe_briefing_status: "{'$exists': False}"
+        value.version_control.exe_keyplayers_status: "{'$exists': False}"
+        value.version_control.exe_briefing_status: "'processed'"
         value.version_control.sync_teams_status: "'processed'"
       inputs:
         name: "'game'"
@@ -53,12 +54,12 @@ workflow:
         event_code: "$.get('documents')[0].get('metadata').get('event_code') if $.get('documents') else None"
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        exe_briefing_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('exe_briefing_count', 0) if $.get('documents') else None"
+        exe_keyplayers_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('exe_keyplayers_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
     
-    # 2 update-event-status
+    # 2 version-control-start
     - type: "document"
-      name: "update-event-preevent-start"
+      name: "version-control-start"
       description: "Update the events document preevent."
       condition: "$.get('event_exists') is True"
       config:
@@ -72,7 +73,7 @@ workflow:
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': True,
-              'exe_briefing_status': 'processing'
+              'exe_keyplayers_status': 'processing'
             }
           }
       metadata:
@@ -100,112 +101,82 @@ workflow:
         event-summary: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
         event-summary_exists: "len($.get('documents')) > 0"
     
-    # 4 prompt-briefing-game
-    - type: "prompt"
-      name: "prompt-briefing-game"
-      description: "Summarize the Briefing for the upcoming game"
-      condition: "$.get('event_exists') is True and $.get('event-summary_exists') is True"
-      connector:
-        name: "sdk-openai"
-        command: "invoke_prompt"
-        model: "gpt-4o"
-      inputs:
-        input_event: "$.get('event_selected')"
-      outputs:
-        bulk-briefing-match: |
-          [
-            {
-              'subject': c.get('title', ''),
-              'text': c.get('content', ''),
-              'title': f"$.(title) - {c.get('title', '')}",
-              'metadata': {
-                'event_code': '$.(event_code)',
-                'language': 'en'
-              }
-            }
-            for c in $.get('sections')
-          ]
-        content-briefing-match: "$"
-    
-    # 5 prompt-briefing home
-    - type: "prompt"
-      name: "prompt-briefing-team"
-      description: "Summarize the Briefing for the upcoming game"
-      condition: "$.get('event_exists') is True and $.get('event-summary_exists') is True"
-      connector:
-        name: "sdk-openai"
-        command: "invoke_prompt"
-        model: "gpt-4o"
-      inputs:
-        input_event: "$.get('content-briefing-match', {}).get('sections', [])"
-        team-summary: "$.get('event-summary').get('home-team', {})"
-      outputs:
-        bulk-briefing-home: |
-          [
-            {
-              'subject': c.get('title', ''),
-              'text': c.get('content', ''),
-              'title': f"$.(title) - {c.get('title', '')}",
-              'metadata': {
-                'event_code': '$.(event_code)',
-                'language': 'en'
-              }
-            }
-            for c in $.get('sections')
-          ]
-        content-briefing-home: "$"
-    
-    # 6 prompt-briefing away
-    - type: "prompt"
-      name: "prompt-briefing-team"
-      description: "Summarize the Briefing for the upcoming game"
-      condition: "$.get('event_exists') is True and $.get('event-summary_exists') is True"
-      connector:
-        name: "sdk-openai"
-        command: "invoke_prompt"
-        model: "gpt-4o"
-      inputs:
-        input_event: "$.get('content-briefing-match', {}).get('sections', [])"
-        team-summary: "$.get('event-summary').get('away-team', {})"
-      outputs:
-        bulk-briefing-away: |
-          [
-            {
-              'subject': c.get('title', ''),
-              'text': c.get('content', ''),
-              'title': f"$.(title) - {c.get('title', '')}",
-              'metadata': {
-                'event_code': '$.(event_code)',
-                'language': 'en'
-              }
-            }
-            for c in $.get('sections')
-          ]
-        content-briefing-away: "$"
-    
-    # 7 document-update-en
+    # 4 load-event-briefing
     - type: "document"
-      name: "document-update-en"
+      name: "load-event-briefing"
+      description: "Load the events document briefing."
       condition: "$.get('event_exists') is True"
       config:
-        action: "update"
-        embed-vector: false
-        force-update: true
-      documents:
-        content-briefing: |
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      filters:
+        metadata: |
           {
-            'sections': [
-              *$.get('content-briefing-match', {}).get('sections', []),
-              *$.get('content-briefing-home', {}).get('sections', []),
-              *$.get('content-briefing-away', {}).get('sections', []),
-            ],
-            'title': f"$.(title) - Briefing"
+            'event_code': $.get('event_code'),
+            'language': 'en'
           }
-      metadata:
-        event_code: "$.get('event_code')"
-        language: "'en'"
+        name: "'content-briefing'"
+      outputs:
+        event-briefing: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
     
-    # 8 bulk-save-snippets
+    # 5 prompt-keyplayers-analysis (home)
+    - type: "prompt"
+      name: "prompt-keyplayers-analysis"
+      description: "Generate a comprehensive game predictions, covering different aspects that could influence the game outcome."
+      condition: "$.get('event_exists') is True and $.get('event-summary_exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        event-briefing: "$.get('event-briefing')"
+        players-data: "$.get('event-summary').get('home-team').get('players')"
+      outputs:
+        home-keyplayers-bulk: |
+          [
+            {
+              'subject': c.get('title', ''),
+              'text': c.get('content', ''),
+              'title': f"$.(title) - {c.get('title', '')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'language': 'en'
+              }
+            }
+            for c in $.get('sections')
+          ]
+        home-keyplayers: "$"
+    
+    # 6 prompt-keyplayers-analysis (away)
+    - type: "prompt"
+      name: "prompt-keyplayers-analysis"
+      description: "Generate a comprehensive game predictions, covering different aspects that could influence the game outcome."
+      condition: "$.get('event_exists') is True and $.get('event-summary_exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        event-briefing: "$.get('event-briefing')"
+        players-data: "$.get('event-summary').get('away-team').get('players')"
+      outputs:
+        away-keyplayers-bulk: |
+          [
+            {
+              'subject': c.get('title', ''),
+              'text': c.get('content', ''),
+              'title': f"$.(title) - {c.get('title', '')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'language': 'en'
+              }
+            }
+            for c in $.get('sections')
+          ]
+        away-keyplayers: "$"
+    
+    # 7 bulk-save-snippets
     - type: "document"
       name: "bulk-save-snippets"
       condition: "$.get('event_exists') is True"
@@ -224,15 +195,14 @@ workflow:
       inputs:
         parsed-items: |
           [
-            *$.get('bulk-briefing-match', []),
-            *$.get('bulk-briefing-home', []),
-            *$.get('bulk-briefing-away', []),
+            *$.get('home-keyplayers-bulk', []),
+            *$.get('away-keyplayers-bulk', []),
           ]
     
-    # 9 update-event-preevent
+    # 8 version-control-end
     - type: "document"
-      name: "update-event-preevent-end"
-      description: "Update the events document preevent."
+      name: "version-control-end"
+      description: "Update the events document end."
       condition: "$.get('event_exists') is True"
       config:
         action: "update"
@@ -245,8 +215,8 @@ workflow:
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': False,
-              'exe_briefing_count': $.get('exe_briefing_count', 0) + 1,
-              'exe_briefing_status': 'processed',
+              'exe_keyplayers_count': $.get('exe_keyplayers_count', 0) + 1,
+              'exe_keyplayers_status': 'processed',
               'updated': datetime.utcnow()
             }
           }

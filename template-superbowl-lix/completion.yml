@@ -21,7 +21,7 @@ workflow:
     workflow-status: "$.get('document_id') is not None and 'executed' or 'skipped'"
   tasks:
 
-    # Load pending thread
+    # 0 Load pending thread
     - type: "document"
       name: "load-pending-thread"
       description: "Load pending thread"
@@ -42,7 +42,7 @@ workflow:
         messages: "$.get('documents')[0].get('value', {}).get('messages', []) if len($.get('documents', [])) > 0 else None"
         question: "$.get('documents')[0].get('value', {}).get('messages', [])[-1].get('content', '') if len($.get('documents', [])) > 0 else None"
 
-    # Update thread status
+    # 1 Update thread status
     - type: "document"
       name: "update-thread-status"
       config:
@@ -63,7 +63,7 @@ workflow:
       filters:
         document_id: "$.get('document_id')"
 
-    # Load similar documents
+    # 2 Load similar documents
     - type: "document"
       name: "load-similar-documents"
       description: "Load similar documents"
@@ -85,7 +85,7 @@ workflow:
       outputs:
         documents: "$.get('documents')"
 
-    # Prompt chat completion
+    # 3 Prompt chat completion
     - type: "prompt"
       name: "prompt-chat-completion"
       description: "Chat Completion."
@@ -105,7 +105,7 @@ workflow:
       outputs:
         content: "$"
 
-    # Prompt bet confirmation
+    # 4 Prompt bet confirmation
     - type: "prompt"
       name: "prompt-bet-confirmation"
       description: "Bet Confirmation."
@@ -121,7 +121,7 @@ workflow:
       outputs:
         content: "$"
 
-    # Load thread document
+    # 5 Load thread document
     - type: "document"
       name: "load-thread-document"
       description: "Load thread document"
@@ -142,7 +142,7 @@ workflow:
         document_data: "$.get('documents')[0]"
         messages: "$.get('documents')[0].get('value', {}).get('messages', [])"
 
-    # Update thread document
+    # 6 Update thread document
     - type: "document"
       name: "update-thread-document"
       config:
