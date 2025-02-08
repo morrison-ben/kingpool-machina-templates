@@ -86,7 +86,7 @@ workflow:
                   "title": "Summary",
                   "category": "Content",
                   "metadata": {
-                    "name": ["content-briefing", "content-news", "event-summary"]
+                    "name": ["content-briefing", "content-news", "event-summary", "performance-report"]
                   },
                   "sorters": ['_id', -1],
                   "view": "list"

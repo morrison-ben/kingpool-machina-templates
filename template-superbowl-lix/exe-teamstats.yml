@@ -131,7 +131,7 @@ workflow:
         model: "gpt-4o"
       inputs:
         event-briefing: "$.get('event-briefing')"
-        home-team-stats: "$.get('event-summary').get('home-team-stats')"
+        home-team-stats: "$.get('event-summary').get('home-team-stats').get('record')"
       outputs:
         home-statistics-bulk: |
           [
@@ -159,7 +159,7 @@ workflow:
         model: "gpt-4o"
       inputs:
         event-briefing: "$.get('event-briefing')"
-        away-team-stats: "$.get('event-summary').get('away-team-stats')"
+        away-team-stats: "$.get('event-summary').get('away-team-stats').get('record')"
       outputs:
         away-statistics-bulk: |
           [
@@ -175,8 +175,37 @@ workflow:
             for c in $.get('sections')
           ]
         away-statistics: "$"
+
+    # 7 prompt-head-to-head
+    - type: "prompt"
+      name: "prompt-head-to-head"
+      description: "head-to-head performance between the two teams"
+      condition: "$.get('event_exists') is True and $.get('event-summary_exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        event-briefing: "$.get('event-briefing')"
+        home-team-stats: "$.get('event-summary').get('home-team-stats').get('record')"
+        away-team-stats: "$.get('event-summary').get('away-team-stats').get('record')"
+      outputs:
+        head-to-head-bulk: |
+          [
+            {
+              'subject': c.get('title', ''),
+              'text': c.get('content', ''),
+              'title': f"$.(title) - {c.get('title', '')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'language': 'en'
+              }
+            }
+            for c in $.get('sections')
+          ]
+        head-to-head-report: "$"
     
-    # 7 performance-report-update
+    # 8 performance-report-update
     - type: "document"
       name: "performance-report-update"
       description: "Update the performance report document."
@@ -190,13 +219,14 @@ workflow:
           {
             'away-performance': $.get('away-statistics', {}).get('performance_summary', {}),
             'home-performance': $.get('home-statistics', {}).get('performance_summary', {}),
+            'head-to-head-report': $.get('head-to-head-report', {}),
             'title': f"$.(title) - Performance Report"
           }
       metadata:
         event_code: "$.get('event_code')"
         language: "'en'"
 
-    # 8 bulk-save-snippets
+    # 9 bulk-save-snippets
     - type: "document"
       name: "bulk-save-snippets"
       condition: "$.get('event_exists') is True"
@@ -217,9 +247,10 @@ workflow:
           [
             *$.get('home-statistics-bulk', []),
             *$.get('away-statistics-bulk', []),
+            *$.get('head-to-head-bulk', []),
           ]
     
-    # 9 version-control-end
+    # 10 version-control-end
     - type: "document"
       name: "version-control-end"
       description: "Update the events document end."
