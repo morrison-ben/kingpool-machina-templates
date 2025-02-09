@@ -54,15 +54,6 @@ workflow:
                   "view": "list"
                 },
                 {
-                  "name": "player-comparison",
-                  "title": "Comparisons",
-                  "category": "Content",
-                  "metadata": {
-                    "name": ["player-comparison"]
-                  },
-                  "view": "list"
-                },
-                {
                   "name": "game",
                   "title": "Games",
                   "category": "Content",
@@ -82,20 +73,20 @@ workflow:
                   "view": "list"
                 },
                 {
+                  "name": "players-data",
+                  "title": "Players",
+                  "category": "Content",
+                  "metadata": {
+                    "name": ["player-comparison", "player-profile", "player-statistics"]
+                  },
+                  "view": "list"
+                },
+                {
                   "name": "snippets",
                   "title": "Snippets",
                   "category": "Content",
                   "metadata": {
                     "name": ["content-snippet"]
-                  },
-                  "view": "list"
-                },
-                {
-                  "name": "statistics",
-                  "title": "Statistics",
-                  "category": "Content",
-                  "metadata": {
-                    "name": ["player-statistics"]
                   },
                   "view": "list"
                 },

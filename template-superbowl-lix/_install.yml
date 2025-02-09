@@ -35,6 +35,8 @@ datasets:
   - type: "workflow"
     path: "exe-briefing.yml"
   - type: "workflow"
+    path: "exe-comparison.yml"
+  - type: "workflow"
     path: "exe-insights.yml"
   - type: "workflow"
     path: "exe-keyplayers.yml"

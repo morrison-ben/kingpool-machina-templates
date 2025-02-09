@@ -176,39 +176,82 @@ prompts:
               maxItems: 5
           required: ["team", "confidence", "key_factors"]
 
-  # prompt-keyplayers-analysis
+  # prompt-keyplayers-comparison-analysis
   - type: "prompt"
-    title: "Key Players Analysis"
-    name: "prompt-keyplayers-analysis"
-    description: "This prompt analyzes the most impactful players from the team's 53-player roster, delivering focused snippets about standout performers across all units."
+    title: "Key Players Comparison Analysis"
+    name: "prompt-keyplayers-comparison-analysis"
+    description: "This prompt analyzes the pre-selected player matchups, providing detailed statistical comparisons and performance analysis for each pair."
     schema:
-      title: "KeyPlayersAnalysisContent"
-      description: "Break down the team's star players with hard-hitting stats and unfiltered analysis. As an irreverent NFL expert, spotlight the game-changers across all units while delivering concrete performance data and career highlights. Keep the commentary sharp, stats-heavy, and sprinkled with NFL-insider humor."
+      title: "KeyPlayersComparisonAnalysis"
+      description: "Analyze the pre-selected player matchups with hard-hitting statistical comparisons. As an irreverent NFL expert, break down their performance metrics, recent form, and head-to-head history. Keep the commentary sharp, stats-heavy, and highlight clear advantages in each comparison."
       type: "object"
       properties:
+        player_home:
+          type: "object"
+          description: "Detailed analysis of the home team player"
+          properties:
+            title:
+              type: "string"
+              description: "Player name and position"
+            content:
+              type: "string"
+              description: "Comprehensive review of the player's performance, including season stats, strengths, and recent form"
+          required: ["title", "content"]
+        player_away:
+          type: "object"
+          description: "Detailed analysis of the away team player"
+          properties:
+            title:
+              type: "string"
+              description: "Player name and position"
+            content:
+              type: "string"
+              description: "Comprehensive review of the player's performance, including season stats, strengths, and recent form"
+          required: ["title", "content"]
         sections:
-          type: "array"
-          description: "An array of sections covering offensive stars, defensive anchors, and special teams standouts. Each section should deliver statistical insights and memorable highlights that define these playmakers."
-          items:
-            type: "object"
-            properties:
-              title:
+          type: "object"
+          description: "Direct comparison analysis between the two players"
+          properties:
+            title:
+              type: "string"
+              description: "Clear matchup title based on the pre-selected player pair"
+            content:
+              type: "string"
+              description: "Head-to-head statistical comparison and analysis between the two players, including direct performance metrics, matchup history, and situational effectiveness"
+            advantage:
+              type: "string"
+              enum: ["HOME", "AWAY", "EVEN"]
+              description: "Which player has the statistical edge in this matchup"
+            advantage_rating:
+              type: "integer"
+              minimum: 1
+              maximum: 5
+              description: "The significance of the advantage (1: slight edge, 5: dominant advantage)"
+          required: ["title", "content", "advantage", "advantage_rating"]
+        impact_summary:
+          type: "object"
+          description: "Overall analysis of the pre-selected matchups' potential impact"
+          properties:
+            overall_advantage:
+              type: "string"
+              enum: ["HOME", "AWAY", "EVEN"]
+            key_findings:
+              type: "array"
+              items:
                 type: "string"
-                description: "Clear section title (e.g., 'Offensive Powerhouses', 'Defensive Game-Changers', 'Special Teams Impact Players')"
-              content:
-                type: "string"
-                description: "Detailed analysis of the key players in this unit, including stats, career highlights, and their importance to the team. Focus on 2-3 standout players per section with concrete examples and performance metrics."
-            required: ["title", "content"]
-          minItems: 3
-          maxItems: 5
+              description: "3-5 crucial takeaways from analyzing these specific matchups"
+            game_impact:
+              type: "string"
+              description: "How these specific player matchups are likely to influence the game outcome"
+          required: ["overall_advantage", "key_findings", "game_impact"]
 
-  # prompt-keyplayers-comparison
+  # prompt-keyplayers-comparison-selection
   - type: "prompt"
-    title: "Key Players Comparison"
-    name: "prompt-keyplayers-comparison"
-    description: "This prompt compares the key players from both teams, highlighting the strengths and weaknesses of each player."
+    title: "Key Players Comparison Selection"
+    name: "prompt-keyplayers-comparison-selection"
+    description: "This prompt selects the key players from both teams, highlighting the strengths and weaknesses of each player."
     schema:
-      title: "KeyPlayersComparisonContent"
+      title: "KeyPlayersComparisonSelection"
       description: "Break down the key players from both teams, highlighting the strengths and weaknesses of each player."
       type: "object"
       properties:

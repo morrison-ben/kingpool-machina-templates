@@ -49,6 +49,25 @@
         ]
       }
     },
+    "/players/{player_id}/{data_type}": {
+      "get": {
+        "summary": "Get information about players",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api_key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
     "/seasons/{season_year}/{season_type}/teams/{team_id}/{data_type}": {
       "get": {
         "summary": "Get information about teams",

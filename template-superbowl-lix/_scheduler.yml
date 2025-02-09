@@ -12,7 +12,7 @@ agent:
       outputs:
         chat-completion-status: "$.get('workflow-status', False)"
 
-    # Workflow Reporter Comparisons
+    # # Workflow Reporter Comparisons
     - name: "workflow-reporter-comparisons"
       description: "Workflow Reporter Comparisons"
       outputs:

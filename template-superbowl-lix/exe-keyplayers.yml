@@ -120,10 +120,10 @@ workflow:
       outputs:
         event-briefing: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
     
-    # 5 prompt-keyplayers-comparison
+    # 5 prompt-keyplayers-comparison-selection
     - type: "prompt"
-      name: "prompt-keyplayers-comparison"
-      description: "Compare the key players from both teams, highlighting the strengths and weaknesses of each player."
+      name: "prompt-keyplayers-comparison-selection"
+      description: "Select the key players from both teams, highlighting the strengths and weaknesses of each player."
       condition: "$.get('event_exists') is True and $.get('event-summary_exists') is True"
       connector:
         name: "sdk-openai"
@@ -142,7 +142,7 @@ workflow:
               'title': f"$.(title) - {c.get('title', '')}",
               'metadata': {
                 'event_code': '$.(event_code)',
-                'language': 'en'
+                'player_ids': c.get('player_ids', '')
               },
               'version_control': {
                 'processing': False

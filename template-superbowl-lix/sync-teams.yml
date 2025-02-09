@@ -101,7 +101,6 @@ workflow:
             {
               **p,
               'metadata': {
-                'event_code': '$.(event_code)',
                 'player_id': p.get('id', ''),
                 'team_id': $.get('id', ''),
               },
@@ -130,7 +129,6 @@ workflow:
             {
               **p,
               'metadata': {
-                'event_code': '$.(event_code)',
                 'player_id': p.get('id', ''),
                 'team_id': $.get('id', ''),
               },
