@@ -43,6 +43,8 @@ datasets:
   - type: "workflow"
     path: "exe-teamstats.yml"
   - type: "workflow"
+    path: "live-updates.yml"
+  - type: "workflow"
     path: "sync-games.yml"
   - type: "workflow"
     path: "sync-teams.yml"

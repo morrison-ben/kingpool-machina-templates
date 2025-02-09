@@ -49,13 +49,13 @@ agent:
     #   outputs:
     #     reporter-insights-status: "$.get('workflow-status', False)"
 
-    - name: "workflow-reporter-keyplayers"
-      description: "Reporter Key Players"
-      condition: "$.get('setup-register') is not True"
-      inputs:
-        event_code: "$.get('event_code')"
-      outputs:
-        reporter-keyplayers-status: "$.get('workflow-status', False)"
+    # - name: "workflow-reporter-keyplayers"
+    #   description: "Reporter Key Players"
+    #   condition: "$.get('setup-register') is not True"
+    #   inputs:
+    #     event_code: "$.get('event_code')"
+    #   outputs:
+    #     reporter-keyplayers-status: "$.get('workflow-status', False)"
 
     # - name: "workflow-reporter-teamstats"
     #   description: "Reporter Team Statistics"
