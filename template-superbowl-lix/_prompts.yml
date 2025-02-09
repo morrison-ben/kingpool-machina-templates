@@ -21,7 +21,7 @@ prompts:
                 description: "A clear section title (e.g., 'Competition Context', 'Match Timing', 'Venue Information', 'Match Officials') that tells you exactly what actionable info to expect."
               content:
                 type: "string"
-                description: "A concise narrative that presents key match details—such as competition name, season, round, date, time, venue, teams, officials, weather, and pitch conditions—with specific stats and insights. Deliver it like you’re spilling the beans at halftime: direct, informative, and with a sharp edge."
+                description: "A concise narrative that presents key match details—such as competition name, season, round, date, time, venue, teams, officials, weather, and pitch conditions—with specific stats and insights. Deliver it like you're spilling the beans at halftime: direct, informative, and with a sharp edge."
 
   # prompt-briefing-team
   - type: "prompt"
@@ -44,7 +44,7 @@ prompts:
                 description: "A straightforward section title (e.g., 'Team History', 'Current Season', 'Key Personnel', 'Team Identity', 'Achievements') that signals the core info."
               content:
                 type: "string"
-                description: "A narrative that cuts through the hype with specific, actionable details and pointed commentary. Include stats, key moments, and comparisons that provide a clear picture of the team's strengths and weaknesses, delivered in a tone that’s edgy, funny, and refreshingly honest."
+                description: "A narrative that cuts through the hype with specific, actionable details and pointed commentary. Include stats, key moments, and comparisons that provide a clear picture of the team's strengths and weaknesses, delivered in a tone that's edgy, funny, and refreshingly honest."
             required: ["title", "content"]
           minItems: 3
           maxItems: 7
@@ -202,6 +202,33 @@ prompts:
           minItems: 3
           maxItems: 5
 
+  # prompt-keyplayers-comparison
+  - type: "prompt"
+    title: "Key Players Comparison"
+    name: "prompt-keyplayers-comparison"
+    description: "This prompt compares the key players from both teams, highlighting the strengths and weaknesses of each player."
+    schema:
+      title: "KeyPlayersComparisonContent"
+      description: "Break down the key players from both teams, highlighting the strengths and weaknesses of each player."
+      type: "object"
+      properties:
+        sections:
+          type: "array"
+          description: "An array of sections comparing the key players from both teams."
+          items:
+            type: "object"
+            properties:
+              player_ids:
+                type: "array"
+                description: "The existing player ID that matches the ID from the player object in the database"
+                items:
+                  type: "string"
+              title:
+                type: "string"
+            required: ["player_ids", "title"]
+          minItems: 10
+          maxItems: 10
+
   # prompt-team-statistics
   - type: "prompt"
     title: "Team Statistics Analysis"
@@ -297,7 +324,6 @@ prompts:
             "standout_metrics"
           ]
 
-
   # prompt-chat-completion
   - type: "prompt"
     title: "Chat Completion"
@@ -310,7 +336,7 @@ prompts:
       properties:
         question_answer:
           type: "string"
-          description: "Craft a reply that’s brief, punchy, and packed with direct, actionable insights. Give clear head-to-head comparisons, specific stats, and bold predictions—delivered in a casual, irreverent tone. Think of it as a quick, no-fluff rundown you’d give a friend before the game."
+          description: "Craft a reply that's brief, punchy, and packed with direct, actionable insights. Give clear head-to-head comparisons, specific stats, and bold predictions—delivered in a casual, irreverent tone. Think of it as a quick, no-fluff rundown you'd give a friend before the game."
         is_match_finished:
           type: "boolean"
           description: "A simple flag stating if the match is over—say it like it is."

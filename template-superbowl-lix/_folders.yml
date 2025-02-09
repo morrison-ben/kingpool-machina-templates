@@ -54,6 +54,15 @@ workflow:
                   "view": "list"
                 },
                 {
+                  "name": "player-comparison",
+                  "title": "Comparisons",
+                  "category": "Content",
+                  "metadata": {
+                    "name": ["player-comparison"]
+                  },
+                  "view": "list"
+                },
+                {
                   "name": "game",
                   "title": "Games",
                   "category": "Content",
@@ -78,6 +87,15 @@ workflow:
                   "category": "Content",
                   "metadata": {
                     "name": ["content-snippet"]
+                  },
+                  "view": "list"
+                },
+                {
+                  "name": "statistics",
+                  "title": "Statistics",
+                  "category": "Content",
+                  "metadata": {
+                    "name": ["player-statistics"]
                   },
                   "view": "list"
                 },

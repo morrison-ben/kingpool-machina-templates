@@ -1,7 +1,7 @@
 workflow:
-  name: "workflow-reporter-keyplayers"
-  title: "Reporter Key Players"
-  description: "Workflow to produce key players."
+  name: "workflow-reporter-comparisons"
+  title: "Reporter Comparisons"
+  description: "Workflow to produce comparisons."
   context-variables:
     sdk-openai:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
@@ -9,13 +9,13 @@ workflow:
     event_code: "$.get('event_code') or None"
   outputs:
     events: "$.get('events')"
-    workflow-status: "$.get('event_exists') is not True and 'skipped' or 'executed'"
+    workflow-status: "$.get('item_exists') is not True and 'skipped' or 'executed'"
   tasks:
     
-    # 0 load-event-by-code
+    # 0 load-player-comparison-by-event-code
     - type: "document"
-      name: "load-event-by-code"
-      description: "Search for events in the database."
+      name: "load-player-comparison-by-event-code"
+      description: "Search for player comparisons in the database."
       condition: "$.get('event_code') is not None"
       config:
         action: "search"
@@ -24,66 +24,41 @@ workflow:
         search-sorters: ["updated", 1]
       filters:
         metadata.event_code: "$.get('event_code')"
+        value.version_control.processing: "{'$ne': True}"
+        value.version_control.statistics_loaded: "{'$exists': False}"
       inputs:
-        name: "'game'"
+        name: "'player-comparison'"
       outputs:
-        event_exists: "len($.get('documents', [])) > 0"
-        event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        exe_keyplayers_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('exe_keyplayers_count', 0) if $.get('documents') else None"
+        item_exists: "len($.get('documents', [])) > 0"
+        item_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
     
     # 1 load-event-scheduled
     - type: "document"
       name: "load-event-scheduled"
       description: "Search for events in the database."
-      condition: "$.get('event_exists') is not True"
+      condition: "$.get('item_exists') is not True"
       config:
         action: "search"
         search-limit: 1
         search-vector: false
+        search-sorters: ["updated", 1]
       filters:
-        value.status: "{'$in': ['scheduled']}"
-        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=24)}"
         value.version_control.processing: "{'$ne': True}"
-        value.version_control.exe_keyplayers_status: "{'$exists': False}"
-        value.version_control.exe_briefing_status: "'processed'"
-        value.version_control.sync_teams_status: "'processed'"
+        value.version_control.statistics_loaded: "{'$exists': False}"
       inputs:
-        name: "'game'"
+        name: "'player-comparison'"
       outputs:
         event_code: "$.get('documents')[0].get('metadata').get('event_code') if $.get('documents') else None"
-        event_exists: "len($.get('documents', [])) > 0"
-        event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        exe_keyplayers_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('exe_keyplayers_count', 0) if $.get('documents') else None"
+        item_exists: "len($.get('documents', [])) > 0"
+        item_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
-    
-    # 2 version-control-start
-    - type: "document"
-      name: "version-control-start"
-      description: "Update the events document preevent."
-      condition: "$.get('event_exists') is True"
-      config:
-        action: "update"
-        embed-vector: false
-        force-update: true
-      documents:
-        game: |
-          {
-            **$.get('event_selected'),
-            'version_control': {
-              **$.get('event_selected').get('version_control', {}),
-              'processing': True,
-              'exe_keyplayers_status': 'processing'
-            }
-          }
-      metadata:
-        event_code: "$.get('event_code')"
     
     # 3 load-event-summary
     - type: "document"
       name: "load-event-summary"
       description: "Load the events document summary."
-      condition: "$.get('event_exists') is True"
+      condition: "$.get('item_exists') is True"
       config:
         action: "search"
         search-limit: 1
@@ -105,7 +80,7 @@ workflow:
     - type: "document"
       name: "load-event-briefing"
       description: "Load the events document briefing."
-      condition: "$.get('event_exists') is True"
+      condition: "$.get('item_exists') is True"
       config:
         action: "search"
         search-limit: 1
@@ -124,7 +99,7 @@ workflow:
     - type: "prompt"
       name: "prompt-keyplayers-comparison"
       description: "Compare the key players from both teams, highlighting the strengths and weaknesses of each player."
-      condition: "$.get('event_exists') is True and $.get('event-summary_exists') is True"
+      condition: "$.get('item_exists') is True and $.get('event-summary_exists') is True"
       connector:
         name: "sdk-openai"
         command: "invoke_prompt"
@@ -145,7 +120,7 @@ workflow:
                 'language': 'en'
               },
               'version_control': {
-                'processing': False
+                'statistics_loaded': False
               }
             }
             for c in $.get('sections')
@@ -155,7 +130,7 @@ workflow:
     # 6 bulk-save-comparisons
     - type: "document"
       name: "bulk-save-comparisons"
-      condition: "$.get('event_exists') is True"
+      condition: "$.get('item_exists') is True"
       description: "Bulk save the comparisons."
       config:
         action: "bulk-save"
@@ -175,7 +150,7 @@ workflow:
     - type: "document"
       name: "version-control-end"
       description: "Update the events document end."
-      condition: "$.get('event_exists') is True"
+      condition: "$.get('item_exists') is True"
       config:
         action: "update"
         embed-vector: false
@@ -183,9 +158,9 @@ workflow:
       documents:
         game: |
           {
-            **$.get('event_selected'),
+            **$.get('item_selected'),
             'version_control': {
-              **$.get('event_selected').get('version_control', {}),
+              **$.get('item_selected').get('version_control', {}),
               'processing': False,
               'exe_keyplayers_count': $.get('exe_keyplayers_count', 0) + 1,
               'exe_keyplayers_status': 'processed',
