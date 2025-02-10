@@ -493,3 +493,33 @@ prompts:
           minItems: 5
           maxItems: 7
       required: ["HOME_WIN_PROBABILITY", "AWAY_WIN_PROBABILITY", "CONFIDENCE", "predictions"]
+
+  # prompt-match-recap
+  - type: "prompt"
+    title: "Match Recap"
+    name: "prompt-match-recap"
+    description: "This prompt generates a concise recap of the game, highlighting key moments, strategic insights, and player performances."
+    schema:
+      title: "MatchRecap"
+      description: "Break down the game's story with no-nonsense analysis. Deliver clear insights on pivotal moments, tactical shifts, and standout performances that shaped the outcome. Keep it sharp, specific, and loaded with actionable takeaways—no fluff allowed."
+      type: "object"
+      properties:
+        commentary:
+          type: "array"
+          description: "A chronological breakdown of key game moments that shaped the outcome. Each entry should deliver specific details about scoring plays, momentum shifts, or game-changing performances with clear, direct analysis."
+          items:
+            type: "object"
+            properties:
+              timestamp:
+                type: "string"
+                description: "Precise game time in 'Q:MM' format (e.g., '1:45' for first quarter, 45-minute mark)"
+              text:
+                type: "string"
+                description: "Sharp, focused analysis of the play or moment. Include specific details like yard lines, player numbers, or formation types that show exactly how the play unfolded."
+              importance:
+                type: "string"
+                enum: ["routine"]
+                description: "Standard classification for all recap entries to maintain consistent narrative flow"
+            required: ["timestamp", "text", "importance"]
+          minItems: 1
+          maxItems: 5

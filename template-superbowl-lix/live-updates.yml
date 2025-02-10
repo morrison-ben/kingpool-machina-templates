@@ -153,7 +153,7 @@ workflow:
     - type: "prompt"
       name: "prompt-live-narration"
       description: "Generate a live narration of the game, highlighting the key moments and insights."
-      condition: "$.get('event_exists') is True"
+      condition: "$.get('event_exists') is True and $.get('event-boxscore', {}).get('status', '') == 'inprogress'"
       connector:
         name: "sdk-openai"
         command: "invoke_prompt"
@@ -167,7 +167,7 @@ workflow:
     - type: "prompt"
       name: "prompt-live-summary"
       description: "Generate a live summary of the game, highlighting the key moments and insights."
-      condition: "$.get('event_exists') is True"
+      condition: "$.get('event_exists') is True and $.get('event-boxscore', {}).get('status', '') == 'inprogress'"
       connector:
         name: "sdk-openai"
         command: "invoke_prompt"
@@ -190,7 +190,34 @@ workflow:
           ]
         content-insights: "$"
 
-    # 9 document-update
+    # 9 prompt-match-recap
+    - type: "prompt"
+      name: "prompt-match-recap"
+      description: "Generate a recap of the game, highlighting the key moments and insights."
+      condition: "$.get('event_exists') is True and $.get('event-boxscore', {}).get('status', '') is not 'inprogress'"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        data-event-boxscore: "$.get('event-boxscore', {})"
+      outputs:
+        bulk-recap: |
+          [
+            {
+              'subject': c.get('title', ''),
+              'text': f"{c.get('content', '')}",
+              'title': f"$.(title) - Recap",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'language': 'en'
+              }
+            }
+            for c in $.get('commentary')
+          ]
+        content-recap: "$"
+
+    # 10 document-update
     - type: "document"
       name: "document-update"
       condition: "$.get('event_exists') is True"
@@ -208,7 +235,7 @@ workflow:
         event_code: "$.get('event_code')"
         language: "'en'"
     
-    # 10 bulk-save-snippets
+    # 11 bulk-save-snippets
     - type: "document"
       name: "bulk-save-snippets"
       condition: "$.get('event_exists') is True"
@@ -230,7 +257,7 @@ workflow:
             *$.get('bulk-insights', []),
           ]
 
-    # 11 update-event-statistics
+    # 12 update-event-statistics
     - type: "document"
       name: "update-event-statistics"
       description: "Update the events document."
@@ -254,11 +281,11 @@ workflow:
         document_type: "'event-statistics'"
         event_code: "$.get('event_code')"
 
-    # 12 version-control-end
+    # 13 version-control-step
     - type: "document"
-      name: "version-control-end"
+      name: "version-control-step"
       description: "Update the events document end."
-      condition: "$.get('event_exists') is True"
+      condition: "$.get('event_exists') is True and $.get('event-boxscore', {}).get('status', '') == 'inprogress'"
       config:
         action: "update"
         embed-vector: false
@@ -267,6 +294,31 @@ workflow:
         game: |
           {
             **$.get('event_selected'),
+            'version_control': {
+              **$.get('event_selected').get('version_control', {}),
+              'processing': False,
+              'live_update_count': $.get('live_update_count', 0) + 1,
+              'live_update_status': 'processed',
+              'updated': datetime.utcnow()
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+
+    # 14 version-control-end
+    - type: "document"
+      name: "version-control-end"
+      description: "Update the events document end."
+      condition: "$.get('event_exists') is True and $.get('event-boxscore', {}).get('status', '') is not 'inprogress'"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        game: |
+          {
+            **$.get('event_selected'),
+            'status': 'closed',
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': False,
