@@ -413,3 +413,33 @@ prompts:
         speech_to_avatar:
           type: "string"
           description: "A short, friendly speech output that sounds like you're chatting casually about the game—fun, direct, and free of any markdown or excessive formatting."
+
+  # prompt-live-narration
+  - type: "prompt"
+    title: "Live Narration"
+    name: "prompt-live-narration"
+    description: "Generate Championship Manager style live commentary for NFL games"
+    schema:
+      title: "LiveNarration"
+      description: "Generate dynamic, play-by-play commentary that captures the excitement and drama of the game"
+      type: "object"
+      properties:
+        commentary:
+          type: "array"
+          description: "Multiple diverse perspectives on the same play. Each entry should focus on different aspects: play description, strategy, player performance, game context, or crowd reaction."
+          items:
+            type: "object"
+            properties:
+              timestamp:
+                type: "string"
+                description: "Game time (quarter and clock)"
+              text:
+                type: "string"
+                description: "Brief commentary (15-30 words) focusing on ONE unique aspect: basic play call, strategic insight, player analysis, field position impact, or crowd/momentum effects."
+              importance:
+                type: "string"
+                enum: ["routine", "notable", "highlight", "crucial"]
+                description: "How significant this play is in the context of the game"
+            required: ["timestamp", "text", "importance"]
+          minItems: 1
+          maxItems: 5

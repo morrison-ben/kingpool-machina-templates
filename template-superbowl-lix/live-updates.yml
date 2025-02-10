@@ -117,7 +117,23 @@ workflow:
       outputs:
         event-boxscore: "$"
     
-    # 4 fetch-event-statistics
+    # 5 fetch-event-play-by-play
+    - type: "connector"
+      name: "fetch-event-play-by-play"
+      description: "Get Sport_Events/play_by_play from SportRadar"
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "api-sr-nfl"
+        command: "get-games/{game_id}/{data_type}"
+        command_attribute:
+          data_type: "'pbp.json'"
+          game_id: "$.get('event_code')"
+      inputs:
+        api_key: "$.get('sportradar_api_key')"
+      outputs:
+        event-play-by-play: "$"
+
+    # 6 fetch-event-statistics
     - type: "connector"
       name: "fetch-event-statistics"
       description: "Get Sport_Events/Statistics from SportRadar"
@@ -133,7 +149,21 @@ workflow:
       outputs:
         event-statistics: "$"
 
-    # 5 update event-statistics
+    # 7 prompt-live-narration
+    - type: "prompt"
+      name: "prompt-live-narration"
+      description: "Generate a live narration of the game, highlighting the key moments and insights."
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        data-event-boxscore: "$.get('event-boxscore', {}).get('last_event', {})"
+      outputs:
+        content-live-narration: "$.get('commentary', [])"
+
+    # 8 update-event-statistics
     - type: "document"
       name: "update-event-statistics"
       description: "Update the events document."
@@ -147,7 +177,9 @@ workflow:
           {
             "execution": datetime.utcnow(),
             "event-boxscore": $.get('event-boxscore'),
+            "event-play-by-play": $.get('event-play-by-play'),
             "event-statistics": $.get('event-statistics'),
+            "latest-live-narration": $.get('content-live-narration'),
             "title": f"{$.get('title')} - Statistics",
             "status": 'active'
           }
@@ -155,7 +187,7 @@ workflow:
         document_type: "'event-statistics'"
         event_code: "$.get('event_code')"
 
-    # 6 version-control-end
+    # 9 version-control-end
     - type: "document"
       name: "version-control-end"
       description: "Update the events document end."
