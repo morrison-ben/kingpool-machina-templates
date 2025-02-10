@@ -49,6 +49,76 @@ prompts:
           minItems: 3
           maxItems: 7
 
+  # prompt-chat-completion
+  - type: "prompt"
+    title: "Chat Completion"
+    name: "prompt-chat-completion" 
+    description: "This prompt generates an engaging, conversational response that mixes actionable match insights, fun predictions, and tailored betting suggestions to keep sports discussions lively and interactive."
+    schema:
+      title: "ThreadCompletion"
+      description: "Respond like you're chatting with your best sports buddy — quick, raw, and to the point. Your answer should blend actionable insights with a few witty jabs, focusing on head-to-head comparisons, specific stats, and predictions. Avoid long-winded breakdowns; keep it conversational, fun, and loaded with the kind of edgy commentary only a true NFL insider can deliver."
+      type: "object"
+      properties:
+        question_answer:
+          type: "string"
+          description: "Craft a reply that's brief, punchy, and packed with direct, actionable insights. Give clear head-to-head comparisons, specific stats, and bold predictions—delivered in a casual, irreverent tone. Think of it as a quick, no-fluff rundown you'd give a friend before the game."
+        is_match_finished:
+          type: "boolean"
+          description: "A simple flag stating if the match is over—say it like it is."
+        related_betting_enabled:
+          type: "boolean"
+          description: "A flag to indicate if betting suggestions should be thrown in—keep them direct and useful."
+        related_bettings:
+          type: "array"
+          description: "An array of betting suggestions that are short, actionable, and straight to the point—odds, recommended bet size, and the bet target without any extra fluff."
+          items:
+            type: "object"
+            properties:
+              bet_title:
+                type: "string"
+                description: "A quick, catchy title for the bet."
+              bet_odd:
+                type: "string"
+                description: "The odds stated simply."
+              bet_size:
+                type: "string"
+                description: "A brief recommendation on bet size, based on clear risk evaluation."
+              runner_name:
+                type: "string"
+                description: "The target of the bet (team, player, or outcome) stated clearly."
+        related_questions:
+          type: "array"
+          description: "A list of follow-up questions that are short, engaging, and keep the conversation rolling—no unnecessary detail."
+          items:
+            type: "string"
+            description: "A concise follow-up question that prompts further discussion with a direct focus on actionable insights."
+        speech_to_avatar:
+          type: "string"
+          description: "A short, friendly speech output that sounds like you're chatting casually about the game—fun, direct, and free of any markdown or excessive formatting."
+
+  # prompt-chat-postmatch
+  - type: "prompt"
+    title: "Chat Postmatch"
+    name: "prompt-chat-postmatch" 
+    description: "This prompt generates engaging post-match responses that analyze game outcomes, key moments, and player performances while maintaining a lively, conversational tone."
+    schema:
+      title: "PostMatchCompletion"
+      description: "Break down the game like you're chatting with your best sports buddy at the bar right after the final whistle. Focus on what actually happened - key plays, turning points, standout performances, and final stats. Keep it real, raw, and backed by what we just saw on the field. Mix clear analysis with that insider edge that makes post-game breakdowns fun."
+      type: "object"
+      properties:
+        question_answer:
+          type: "string"
+          description: "Deliver a sharp post-game take that focuses on what actually happened. Break down crucial moments, final stats, and game-changing plays. Keep it conversational but grounded in real game events and outcomes—think post-game bar talk with actual insight."
+        related_questions:
+          type: "array"
+          description: "Post-game follow-up questions that dig deeper into game outcomes, performances, and implications."
+          items:
+            type: "string"
+            description: "A focused follow-up question about specific game outcomes, key moments, or future implications."
+        speech_to_avatar:
+          type: "string"
+          description: "A casual post-game reaction that captures the emotion and key takeaways from the game—like sharing your immediate thoughts with a friend."
+
   # prompt-game-predictions
   - type: "prompt"
     title: "Game Predictions"
@@ -367,53 +437,6 @@ prompts:
             "standout_metrics"
           ]
 
-  # prompt-chat-completion
-  - type: "prompt"
-    title: "Chat Completion"
-    name: "prompt-chat-completion" 
-    description: "This prompt generates an engaging, conversational response that mixes actionable match insights, fun predictions, and tailored betting suggestions to keep sports discussions lively and interactive."
-    schema:
-      title: "ThreadCompletion"
-      description: "Respond like you're chatting with your best sports buddy — quick, raw, and to the point. Your answer should blend actionable insights with a few witty jabs, focusing on head-to-head comparisons, specific stats, and predictions. Avoid long-winded breakdowns; keep it conversational, fun, and loaded with the kind of edgy commentary only a true NFL insider can deliver."
-      type: "object"
-      properties:
-        question_answer:
-          type: "string"
-          description: "Craft a reply that's brief, punchy, and packed with direct, actionable insights. Give clear head-to-head comparisons, specific stats, and bold predictions—delivered in a casual, irreverent tone. Think of it as a quick, no-fluff rundown you'd give a friend before the game."
-        is_match_finished:
-          type: "boolean"
-          description: "A simple flag stating if the match is over—say it like it is."
-        related_betting_enabled:
-          type: "boolean"
-          description: "A flag to indicate if betting suggestions should be thrown in—keep them direct and useful."
-        related_bettings:
-          type: "array"
-          description: "An array of betting suggestions that are short, actionable, and straight to the point—odds, recommended bet size, and the bet target without any extra fluff."
-          items:
-            type: "object"
-            properties:
-              bet_title:
-                type: "string"
-                description: "A quick, catchy title for the bet."
-              bet_odd:
-                type: "string"
-                description: "The odds stated simply."
-              bet_size:
-                type: "string"
-                description: "A brief recommendation on bet size, based on clear risk evaluation."
-              runner_name:
-                type: "string"
-                description: "The target of the bet (team, player, or outcome) stated clearly."
-        related_questions:
-          type: "array"
-          description: "A list of follow-up questions that are short, engaging, and keep the conversation rolling—no unnecessary detail."
-          items:
-            type: "string"
-            description: "A concise follow-up question that prompts further discussion with a direct focus on actionable insights."
-        speech_to_avatar:
-          type: "string"
-          description: "A short, friendly speech output that sounds like you're chatting casually about the game—fun, direct, and free of any markdown or excessive formatting."
-
   # prompt-live-narration
   - type: "prompt"
     title: "Live Narration"
@@ -444,13 +467,13 @@ prompts:
           minItems: 1
           maxItems: 5
 
-  # prompt-live-summary
+  # prompt-live-predictions
   - type: "prompt"
-    title: "Live Summary"
-    name: "prompt-live-summary"
-    description: "This prompt generates a dynamic, real-time summary of the game's current state, highlighting key developments, momentum shifts, and critical statistics."
+    title: "Live Predictions"
+    name: "prompt-live-predictions"
+    description: "This prompt generates a dynamic, real-time predictions of the game's current state, highlighting key developments, momentum shifts, and critical statistics."
     schema:
-      title: "LiveSummary"
+      title: "LivePredictions"
       description: "Create a sharp, up-to-the-minute game summary that captures the current state of play, recent developments, and emerging trends. Focus on actionable insights about scoring, momentum, key player performances, and tactical adjustments."
       type: "object"
       properties:
@@ -498,28 +521,31 @@ prompts:
   - type: "prompt"
     title: "Match Recap"
     name: "prompt-match-recap"
-    description: "This prompt generates a concise recap of the game, highlighting key moments, strategic insights, and player performances."
+    description: "This prompt generates a comprehensive recap of the game, organized by key topics and highlighting crucial moments, strategic insights, and player performances."
     schema:
       title: "MatchRecap"
-      description: "Break down the game's story with no-nonsense analysis. Deliver clear insights on pivotal moments, tactical shifts, and standout performances that shaped the outcome. Keep it sharp, specific, and loaded with actionable takeaways—no fluff allowed."
+      description: "Break down the game's story into focused sections with no-nonsense analysis. Each section should deliver clear insights on different aspects of the game, from scoring highlights to tactical battles. Keep it sharp, specific, and loaded with actionable takeaways—no fluff allowed."
       type: "object"
       properties:
-        commentary:
+        sections:
           type: "array"
-          description: "A chronological breakdown of key game moments that shaped the outcome. Each entry should deliver specific details about scoring plays, momentum shifts, or game-changing performances with clear, direct analysis."
+          description: "An array of sections that analyze different aspects of the game. Each section should focus on a specific theme (scoring summary, key plays, tactical shifts, standout performances, etc.) with clear, direct analysis."
           items:
             type: "object"
             properties:
-              timestamp:
+              subject:
                 type: "string"
-                description: "Precise game time in 'Q:MM' format (e.g., '1:45' for first quarter, 45-minute mark)"
-              text:
+                description: "Clear section title (e.g., 'Scoring Summary', 'Game-Changing Moments', 'Tactical Battle', 'MVP Performance')"
+              title:
                 type: "string"
-                description: "Sharp, focused analysis of the play or moment. Include specific details like yard lines, player numbers, or formation types that show exactly how the play unfolded."
-              importance:
+                description: "Title of the section, describing the content of the section"
+              content:
                 type: "string"
-                enum: ["routine"]
-                description: "Standard classification for all recap entries to maintain consistent narrative flow"
-            required: ["timestamp", "text", "importance"]
-          minItems: 1
-          maxItems: 5
+                description: "Sharp, focused analysis of this aspect of the game. Include specific details like scores, yard lines, player stats, or strategic adjustments that shaped this part of the game."
+              confidence:
+                type: "integer"
+                minimum: 50
+                maximum: 100
+            required: ["title", "content", "subject", "confidence"]
+          minItems: 5
+          maxItems: 10

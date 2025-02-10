@@ -1,7 +1,7 @@
 workflow:
-  name: "workflow-live-updates"
-  title: "Live Updates"
-  description: "Workflow to produce live updates."
+  name: "workflow-reporter-gamerecap"
+  title: "Reporter Game Recap"
+  description: "Workflow to produce game recap."
   context-variables:
     api-sr-nfl:
       sportradar_api_key: "$TEMP_CONTEXT_VARIABLE_SPORTRADAR_SOCCER_V4_API_KEY"
@@ -31,7 +31,7 @@ workflow:
       outputs:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        live_update_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('live_update_count', 0) if $.get('documents') else None"
+        gamerecap_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('gamerecap_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
     
     # 1 load-event-scheduled
@@ -44,9 +44,8 @@ workflow:
         search-limit: 1
         search-vector: false
       filters:
-        value.status: "{'$in': ['scheduled', 'created']}"
-        # value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=24)}"
-        value.version_control.updated: "{'$lt': datetime.utcnow() - timedelta(seconds=10)}"
+        value.status: "{'$in': ['closed']}"
+        value.version_control.gamerecap_status: "{'$exists': False}"
         value.version_control.processing: "{'$ne': True}"
       inputs:
         name: "'game'"
@@ -54,7 +53,7 @@ workflow:
         event_code: "$.get('documents')[0].get('metadata').get('event_code') if $.get('documents') else None"
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        live_update_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('live_update_count', 0) if $.get('documents') else None"
+        gamerecap_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('gamerecap_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
     
     # 2 version-control-start
@@ -73,7 +72,7 @@ workflow:
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': True,
-              'live_update_status': 'processing'
+              'gamerecap_status': 'processing'
             }
           }
       metadata:
@@ -149,51 +148,40 @@ workflow:
       outputs:
         event-statistics: "$"
 
-    # 7 prompt-live-narration
+    # 7 prompt-match-recap
     - type: "prompt"
-      name: "prompt-live-narration"
-      description: "Generate a live narration of the game, highlighting the key moments and insights."
-      condition: "$.get('event_exists') is True and $.get('event-boxscore', {}).get('status', '') == 'inprogress'"
+      name: "prompt-match-recap"
+      description: "Generate a recap of the game, highlighting the key moments and insights."
+      condition: "$.get('event_exists') is True and $.get('event-boxscore', {}).get('status', '') is not 'inprogress'"
       connector:
         name: "sdk-openai"
         command: "invoke_prompt"
         model: "gpt-4o"
       inputs:
-        data-event-boxscore: "$.get('event-boxscore', {}).get('last_event', {})"
+        # data-event-boxscore: "$.get('event-boxscore', {})"
+        data-summary-home: "$.get('event-statistics', {}).get('summary', {}).get('home', {})"
+        data-summary-away: "$.get('event-statistics', {}).get('summary', {}).get('away', {})"
       outputs:
-        content-live-narration: "$.get('commentary', [])"
-    
-    # 8 prompt-live-predictions
-    - type: "prompt"
-      name: "prompt-live-predictions"
-      description: "Generate a live summary of the game, highlighting the key moments and insights."
-      condition: "$.get('event_exists') is True and $.get('event-boxscore', {}).get('status', '') == 'inprogress'"
-      connector:
-        name: "sdk-openai"
-        command: "invoke_prompt"
-        model: "gpt-4o"
-      inputs:
-        data-event-boxscore: "$.get('event-boxscore', {}).get('last_event', {})"
-      outputs:
-        bulk-predictions: |
+        bulk-recap: |
           [
             {
-              'subject': c.get('title', ''),
+              'subject': c.get('subject', ''),
               'text': f"{c.get('content', '')}",
-              'title': f"$.(title) - Predictions",
+              'confidence': c.get('confidence', 0),
+              'title': f"$.(title) - {c.get('title')}",
               'metadata': {
                 'event_code': '$.(event_code)',
                 'language': 'en'
               }
             }
-            for c in $.get('predictions')
+            for c in $.get('sections')
           ]
-        content-predictions: "$"
+        content-recap: "$"
 
-    # 9 update-live-predictions (insights)
+    # 8 document-update
     - type: "document"
-      name: "update-live-predictions"
-      condition: "$.get('event_exists') is True and $.get('event-boxscore', {}).get('status', '') == 'inprogress'"
+      name: "document-update"
+      condition: "$.get('event_exists') is True"
       config:
         action: "update"
         embed-vector: false
@@ -201,17 +189,17 @@ workflow:
       documents:
         content-insights: |
           {
-            **$.get('content-predictions'),
-            'title': f"$.(title) - Predictions"
+            **$.get('content-recap'),
+            'title': f"$.(title) - Recap"
           }
       metadata:
         event_code: "$.get('event_code')"
         language: "'en'"
     
-    # 10 bulk-save-snippets
+    # 9 bulk-save-snippets
     - type: "document"
       name: "bulk-save-snippets"
-      condition: "$.get('event_exists') is True and $.get('event-boxscore', {}).get('status', '') == 'inprogress'"
+      condition: "$.get('event_exists') is True"
       description: "Bulk save the snippets."
       config:
         action: "bulk-save"
@@ -227,76 +215,49 @@ workflow:
       inputs:
         parsed-items: |
           [
-            *$.get('bulk-predictions', []),
+            *$.get('bulk-recap', []),
+          ]
+    
+    # 10 bulk-save-insights
+    - type: "document"
+      name: "bulk-save-insights"
+      condition: "$.get('event_exists') is True"
+      description: "Bulk save the insights."
+      config:
+        action: "bulk-save"
+        embed-vector: true
+        force-update: true
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      document_name: "content-insights"
+      documents:
+        items: "$.get('parsed-items')"
+      inputs:
+        parsed-items: |
+          [
+            *$.get('bulk-recap', []),
           ]
 
-    # 11 update-event-statistics
+    # 11 version-control-end
     - type: "document"
-      name: "update-event-statistics"
-      description: "Update the events document."
+      name: "version-control-end"
+      description: "Update the events document end."
       condition: "$.get('event_exists') is True"
       config:
         action: "update"
         embed-vector: false
         force-update: true
       documents:
-        event-statistics: |
-          {
-            "execution": datetime.utcnow(),
-            "event-boxscore": $.get('event-boxscore'),
-            "event-play-by-play": $.get('event-play-by-play'),
-            "event-statistics": $.get('event-statistics'),
-            "latest-live-narration": $.get('content-live-narration'),
-            "title": f"{$.get('title')} - Statistics",
-            "status": 'active'
-          }
-      metadata:
-        document_type: "'event-statistics'"
-        event_code: "$.get('event_code')"
-
-    # 12 version-control-step
-    - type: "document"
-      name: "version-control-step"
-      description: "Update the events document end."
-      condition: "$.get('event_exists') is True and $.get('event-boxscore', {}).get('status', '') == 'inprogress'"
-      config:
-        action: "update"
-        embed-vector: false
-        force-update: true
-      documents:
         game: |
           {
             **$.get('event_selected'),
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': False,
-              'live_update_count': $.get('live_update_count', 0) + 1,
-              'live_update_status': 'processed',
-              'updated': datetime.utcnow()
-            }
-          }
-      metadata:
-        event_code: "$.get('event_code')"
-
-    # 13 version-control-end
-    - type: "document"
-      name: "version-control-end"
-      description: "Update the events document end."
-      condition: "$.get('event_exists') is True and $.get('event-boxscore', {}).get('status', '') is not 'inprogress'"
-      config:
-        action: "update"
-        embed-vector: false
-        force-update: true
-      documents:
-        game: |
-          {
-            **$.get('event_selected'),
-            'status': 'closed',
-            'version_control': {
-              **$.get('event_selected').get('version_control', {}),
-              'processing': False,
-              'live_update_count': $.get('live_update_count', 0) + 1,
-              'live_update_status': 'processed',
+              'gamerecap_count': $.get('gamerecap_count', 0) + 1,
+              'gamerecap_status': 'processed',
               'updated': datetime.utcnow()
             }
           }
