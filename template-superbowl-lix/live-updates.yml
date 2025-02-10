@@ -162,8 +162,75 @@ workflow:
         data-event-boxscore: "$.get('event-boxscore', {}).get('last_event', {})"
       outputs:
         content-live-narration: "$.get('commentary', [])"
+    
+    # 8 prompt-live-summary
+    - type: "prompt"
+      name: "prompt-live-summary"
+      description: "Generate a live summary of the game, highlighting the key moments and insights."
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        data-event-boxscore: "$.get('event-boxscore', {}).get('last_event', {})"
+      outputs:
+        bulk-insights: |
+          [
+            {
+              'subject': c.get('title', ''),
+              'text': f"{c.get('content', '')}",
+              'title': f"$.(title) - Insights",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'language': 'en'
+              }
+            }
+            for c in $.get('predictions')
+          ]
+        content-insights: "$"
 
-    # 8 update-event-statistics
+    # 9 document-update
+    - type: "document"
+      name: "document-update"
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        content-insights: |
+          {
+            **$.get('content-insights'),
+            'title': f"$.(title) - Insights"
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+        language: "'en'"
+    
+    # 10 bulk-save-snippets
+    - type: "document"
+      name: "bulk-save-snippets"
+      condition: "$.get('event_exists') is True"
+      description: "Bulk save the snippets."
+      config:
+        action: "bulk-save"
+        embed-vector: true
+        force-update: true
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      document_name: "content-snippet"
+      documents:
+        items: "$.get('parsed-items')"
+      inputs:
+        parsed-items: |
+          [
+            *$.get('bulk-insights', []),
+          ]
+
+    # 11 update-event-statistics
     - type: "document"
       name: "update-event-statistics"
       description: "Update the events document."
@@ -187,7 +254,7 @@ workflow:
         document_type: "'event-statistics'"
         event_code: "$.get('event_code')"
 
-    # 9 version-control-end
+    # 12 version-control-end
     - type: "document"
       name: "version-control-end"
       description: "Update the events document end."
