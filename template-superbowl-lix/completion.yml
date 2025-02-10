@@ -8,6 +8,7 @@ workflow:
     sdk-openai:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
   inputs:
+    event_code: "'ca9d8f84-8e7b-4ee7-a310-54c2e3ca4edc'"
     event_type: "$.get('event_type', 'content-snippet')"
     prompt_name: "$.get('prompt_name', 'prompt-chat-postmatch')"
     input_status: "$.get('input_status', 'waiting')"
@@ -83,7 +84,7 @@ workflow:
       outputs:
         last-documents: "$.get('documents')"
 
-    # 2 Load similar documents
+    # 3 Load similar documents
     - type: "document"
       name: "load-similar-documents"
       description: "Load similar documents"
@@ -105,7 +106,29 @@ workflow:
       outputs:
         similar-documents: "$.get('documents')"
 
-    # 3 Prompt chat completion
+    # 4 load-event-statistics
+    - type: "document"
+      name: "load-event-statistics"
+      description: "Load the events document statistics."
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      filters:
+        metadata: |
+          {
+            'document_type': 'event-statistics',
+            'event_code': $.get('event_code')
+          }
+      inputs:
+        name: "'event-statistics'"
+      outputs:
+        data-statistics: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        data-statistics-home: "$.get('documents')[0].get('value', {}).get('event-statistics', {}).get('summary', {}).get('home', {}) if $.get('documents') else None"
+        data-statistics-away: "$.get('documents')[0].get('value', {}).get('event-statistics', {}).get('summary', {}).get('away', {}) if $.get('documents') else None"
+        data-statistics_exists: "len($.get('documents')) > 0"
+
+    # 5 Prompt chat completion
     - type: "prompt"
       name: "prompt-chat-completion"
       description: "Chat Completion."
@@ -129,7 +152,7 @@ workflow:
       outputs:
         content: "$"
 
-    # 4 Prompt chat postmatch
+    # 6 Prompt chat postmatch
     - type: "prompt"
       name: "prompt-chat-postmatch"
       description: "Chat Postmatch."
@@ -144,12 +167,21 @@ workflow:
             *$.get('last-documents', []),
             *$.get('similar-documents', []),
           ]
+        data-info: |
+          {
+            'home-team-name': $.get('data-statistics-home', {}).get('name', ''),
+            'home-team-points': $.get('data-statistics-home', {}).get('points', ''),
+            'home-statistics': $.get('data-statistics', {}).get('event-statistics', {}).get('statistics', {}).get('home', {}).get('summary', {}),
+            'away-team-name': $.get('data-statistics-away', {}).get('name', ''),
+            'away-team-points': $.get('data-statistics-away', {}).get('points', ''),
+            'away-statistics': $.get('data-statistics', {}).get('event-statistics', {}).get('statistics', {}).get('away', {}).get('summary', {}),
+          }
         messages: "$.get('messages')"
         question: "$.get('question')"
       outputs:
         content: "$"
 
-    # 5 Load thread document
+    # 7 Load thread document
     - type: "document"
       name: "load-thread-document"
       description: "Load thread document"
@@ -170,7 +202,7 @@ workflow:
         document_data: "$.get('documents')[0]"
         messages: "$.get('documents')[0].get('value', {}).get('messages', [])"
 
-    # 6 Update thread document
+    # 8 Update thread document
     - type: "document"
       name: "update-thread-document"
       config:
