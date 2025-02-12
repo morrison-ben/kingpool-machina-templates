@@ -26,9 +26,9 @@ datasets:
   - type: "connector"
     path: "../connector-perplexity/api-perplexity.yml"
 
-  # generate-by-topic
+  # quizzes-by-topic
   - type: "workflow"
-    path: "generate-by-topic.yml"
+    path: "quizzes-by-topic.yml"
 
   # documents setup
   - type: "workflow"

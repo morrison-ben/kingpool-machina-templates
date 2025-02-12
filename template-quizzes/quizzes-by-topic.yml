@@ -1,6 +1,6 @@
 workflow:
-  name: "generate-quizzes-by-topic"
-  title: "Generate Quizzes by Topic"
+  name: "quizzes-by-topic"
+  title: "Quizzes by Topic"
   description: "Workflow to generate quizzes by topic."
   context-variables:
     sdk-openai:
@@ -10,7 +10,8 @@ workflow:
   inputs:
     topic: "$.get('topic') or None"
   outputs:
-    content-quizzes: "$.get('content-quizzes')"
+    topic: "$.get('topic')"
+    questions: "$.get('content-quizzes').get('questions', [])"
     workflow-status: "$.get('topic') is None and 'skipped' or 'executed'"
   tasks:
     
@@ -29,14 +30,9 @@ workflow:
         bulk-briefing: |
           [
             {
-              'subject': c.get('subject', ''),
               'text': f"{c.get('content', '')}",
-              'confidence': c.get('confidence', 0),
-              'title': f"$.(title) - {c.get('title')}",
-              'metadata': {
-                'event_code': '$.(event_code)',
-                'language': 'en'
-              }
+              'title': f"$.(topic) - {c.get('title')}",
+              'metadata': {}
             }
             for c in $.get('sections')
           ]
@@ -54,20 +50,6 @@ workflow:
       inputs:
         data-briefing: "$.get('content-briefing')"
       outputs:
-        bulk-quizzes: |
-          [
-            {
-              'subject': c.get('subject', ''),
-              'text': f"{c.get('content', '')}",
-              'confidence': c.get('confidence', 0),
-              'title': f"$.(title) - {c.get('title')}",
-              'metadata': {
-                'event_code': '$.(event_code)',
-                'language': 'en'
-              }
-            }
-            for c in $.get('sections')
-          ]
         content-quizzes: "$"
 
     # 2 save content-quizzes
@@ -103,13 +85,12 @@ workflow:
         name: "sdk-openai"
         command: "invoke_embedding"
         model: "text-embedding-3-small"
-      document_name: "content-snippets"
+      document_name: "content-snippet"
       documents:
         items: "$.get('parsed_items')"
       inputs:
         parsed_items: |
           [
-            *$.get('bulk-briefing', []),
-            *$.get('bulk-quizzes', [])
+            *$.get('bulk-briefing', [])
           ]
       
