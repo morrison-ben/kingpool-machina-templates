@@ -1,0 +1,39 @@
+setup:
+  title: "Quizzes"
+  description: AI-powered quizzes with personalized recommendations based on betting history.
+  category:
+    - content-creation
+  estimatedTime: 15 minutes
+  features:
+    - Betting Quizzes
+    - Betting History
+    - Betting Pattern Analysis
+    - Risk Profile Assessment
+    - Preference-Based Alerts
+    - Betting History Tracking
+    - Deal Stage Management
+  integrations:
+    - machina-ai
+  status: available
+  value: template-quizzes
+  version: 1.0.0
+
+datasets:
+
+  # connectors
+  - type: "connector"
+    path: "../connector-openai/sdk-openai.yml"
+  - type: "connector"
+    path: "../connector-perplexity/api-perplexity.yml"
+
+  # quizzes-by-topic
+  - type: "workflow"
+    path: "quizzes-by-topic.yml"
+
+  # documents setup
+  - type: "workflow"
+    path: "_folders.yml"
+  - type: "prompts"
+    path: "_prompts.yml"
+  - type: "agent"
+    path: "_populate.yml"
