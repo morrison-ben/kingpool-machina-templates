@@ -7,6 +7,8 @@ workflow:
       sportradar_api_key: "$TEMP_CONTEXT_VARIABLE_SPORTRADAR_SOCCER_V4_API_KEY"
     sdk-openai:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
+    debugger:
+      enabled: true
   inputs:
     event_code: "$.get('event_code') or None"
   outputs:

@@ -1,0 +1,13 @@
+agent:
+  name: template-quizzes-setup  
+  title: "Setup Quizzes"
+  description: "Setup Quizzes"
+  context:
+    config-frequency: 99999999
+  workflows:
+
+    - name: "template-quizzes-folders"
+      description: "Setup Folders"
+      condition: "$.get('setup-register') is not True"
+      outputs:
+        setup-register: "$.get('setup-register')"

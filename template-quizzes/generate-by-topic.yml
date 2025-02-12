@@ -1,0 +1,115 @@
+workflow:
+  name: "generate-quizzes-by-topic"
+  title: "Generate Quizzes by Topic"
+  description: "Workflow to generate quizzes by topic."
+  context-variables:
+    sdk-openai:
+      api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
+    debugger:
+      enabled: true
+  inputs:
+    topic: "$.get('topic') or None"
+  outputs:
+    content-quizzes: "$.get('content-quizzes')"
+    workflow-status: "$.get('topic') is None and 'skipped' or 'executed'"
+  tasks:
+    
+    # 0 prompt-briefing-topic
+    - type: "prompt"
+      name: "prompt-briefing-topic"
+      description: "Generate a briefing by topic."
+      condition: "$.get('topic') is not None"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        topic: "$.get('topic')"
+      outputs:
+        bulk-briefing: |
+          [
+            {
+              'subject': c.get('subject', ''),
+              'text': f"{c.get('content', '')}",
+              'confidence': c.get('confidence', 0),
+              'title': f"$.(title) - {c.get('title')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'language': 'en'
+              }
+            }
+            for c in $.get('sections')
+          ]
+        content-briefing: "$"
+    
+    # 1 prompt-quizzes-by-topic
+    - type: "prompt"
+      name: "prompt-quizzes-by-topic"
+      description: "Generate a quiz by topic."
+      condition: "$.get('topic') is not None"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        data-briefing: "$.get('content-briefing')"
+      outputs:
+        bulk-quizzes: |
+          [
+            {
+              'subject': c.get('subject', ''),
+              'text': f"{c.get('content', '')}",
+              'confidence': c.get('confidence', 0),
+              'title': f"$.(title) - {c.get('title')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'language': 'en'
+              }
+            }
+            for c in $.get('sections')
+          ]
+        content-quizzes: "$"
+
+    # 2 save content-quizzes
+    - type: "document"
+      name: "save-content-quizzes"
+      condition: "$.get('topic') is not None"
+      config:
+        action: "save"
+        embed-vector: false
+      documents:
+        content-briefing: |
+          {
+            **$.get('content-briefing'),
+            'title': f"$.(topic) - Briefing"
+          }
+        content-quizzes: |
+          {
+            **$.get('content-quizzes'),
+            'title': f"$.(topic) - Quizzes"
+          }
+      metadata:
+        document_type: "'content-quizzes'"
+    
+    # 3 bulk-content-quizzes
+    - type: "document"
+      name: "bulk-content-quizzes"
+      condition: "$.get('topic') is not None"
+      description: "Bulk save the quizzes."
+      config:
+        action: "bulk-save"
+        embed-vector: true
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      document_name: "content-snippets"
+      documents:
+        items: "$.get('parsed_items')"
+      inputs:
+        parsed_items: |
+          [
+            *$.get('bulk-briefing', []),
+            *$.get('bulk-quizzes', [])
+          ]
+      
