@@ -49,6 +49,7 @@ workflow:
         model: "gpt-4o"
       inputs:
         data-briefing: "$.get('content-briefing')"
+        data-topic: "$.get('topic')"
       outputs:
         content-quizzes: "$"
 
