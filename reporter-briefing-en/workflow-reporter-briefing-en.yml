@@ -1,6 +1,6 @@
 workflow:
   name: "workflow-reporter-briefing-en"
-  title: "Reporter Briefing English"
+  title: "Reporter Briefing"
   description: "Workflow to produce briefing in English."
   context-variables:
     sdk-openai:
