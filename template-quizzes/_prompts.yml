@@ -40,10 +40,10 @@ prompts:
           minItems: 14
           maxItems: 14
       
-  # prompt-quizzes-by-topic
+  # prompt-quizzes
   - type: "prompt"
-    title: "Quizzes by Topic"
-    name: "prompt-quizzes-by-topic"
+    title: "Prompt Quizzes"
+    name: "prompt-quizzes"
     description: |
       You are creating engaging, TV-friendly quiz questions that captivate viewers. Generate questions that:
 

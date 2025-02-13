@@ -40,7 +40,7 @@ workflow:
     
     # 1 prompt-quizzes-by-topic
     - type: "prompt"
-      name: "prompt-quizzes-by-topic"
+      name: "prompt-quizzes"
       description: "Generate a quiz by topic."
       condition: "$.get('topic') is not None"
       connector:
