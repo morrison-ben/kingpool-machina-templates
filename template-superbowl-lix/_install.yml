@@ -2,7 +2,7 @@ setup:
   title: Superbowl LIX
   description: Connect to the Superbowl LIX API to get live and historical data.
   category:
-    - data-acquisition
+    - special-template
   estimatedTime: 1 minute
   features:
     - AI News

@@ -1,21 +1,21 @@
 setup:
-  title: "Quizzes Generator"
-  description: AI-powered quizzes with personalized recommendations based on betting history.
+  title: "Sportingbet Blog"
+  description: AI-powered blog with personalized recommendations based on betting history.
   category:
-    - content-creation
+    - special-templates
   estimatedTime: 15 minutes
   features:
-    - Betting Quizzes
-    - Betting History
+    - Real-time Odds Analysis
+    - Historical Performance
+    - AI Insights
+    - Custom Models
+    - Personalized Recommendations
     - Betting Pattern Analysis
     - Risk Profile Assessment
-    - Preference-Based Alerts
-    - Betting History Tracking
-    - Deal Stage Management
   integrations:
-    - machina-ai
+    - sportradar
   status: available
-  value: template-quizzes
+  value: "sportingbet-blog"
   version: 1.0.0
 
 datasets:
@@ -26,11 +26,15 @@ datasets:
   - type: "connector"
     path: "../connector-perplexity/api-perplexity.yml"
   - type: "connector"
+    path: "../connector-sportingbet/api-sportingbet.yml"
+  - type: "connector"
     path: "../connector-sportradar-soccer/api-sportradar-soccer.yml"
+  - type: "connector"
+    path: "../connector-stability/sdk-stability.yml"
+  - type: "connector"
+    path: "../connector-storage/sdk-storage.yml"
 
   # sportradar-soccer-setup
-  - type: "workflow"
-    path: "../sportradar-soccer/workflow-reset-schedule.yml"
   - type: "workflow"
     path: "../sportradar-soccer/workflow-sync-competitions.yml"
   - type: "workflow"
@@ -42,34 +46,41 @@ datasets:
   - type: "workflow"
     path: "../sportradar-soccer/workflow-sync-standings.yml"
 
-  # quizzes-by-game
+  # sportingbet-api
   - type: "workflow"
-    path: "quizzes-by-game.yml"
+    path: "../connector-sportingbet/sync-fixtures.yml"
 
-  # quizzes-by-topic
+  # reporter-briefing
   - type: "workflow"
-    path: "quizzes-by-topic.yml"
+    path: "reporter-briefing.yml"
 
-  # reporter-websearch
-  - type: "workflow"
-    path: "../reporter-websearch/workflow-reporter-websearch.yml"
-
-  # reporter-summary
-  - type: "workflow"
-    path: "../reporter-summary/workflow-reporter-summary.yml"
-
-  # reporter-briefing-en
+  # reporter-image
   - type: "prompts"
-    path: "../reporter-briefing-en/prompt-reporter-briefing-en.yml"
+    path: "../reporter-image/prompt-reporter-image.yml"
   - type: "workflow"
-    path: "../reporter-briefing-en/workflow-reporter-briefing-en.yml"
+    path: "../reporter-image/workflow-image-preview.yml"
 
-  # documents setup
+  # research-team
   - type: "workflow"
-    path: "_folders.yml"
+    path: "research-team.yml"
+
+  # research-news
+  - type: "workflow"
+    path: "research-news.yml"
+
+  # prompts
   - type: "prompts"
     path: "_prompts.yml"
+
+  # populate-folders
+  - type: "workflow"
+    path: "_folders.yml"
+
+  # populate-content
   - type: "agent"
     path: "_populate.yml"
+
+  # populate-scheduler
   - type: "agent"
     path: "_scheduler.yml"
+

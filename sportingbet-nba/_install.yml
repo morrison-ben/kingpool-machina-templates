@@ -1,9 +1,8 @@
 setup:
-  title: "NBA Reporter"
+  title: "Sportingbet NBA"
   description: AI-powered NBA reporter with personalized recommendations based on betting history.
   category:
-    - betting-fantasy
-    - crm-fan-data
+    - special-templates
   estimatedTime: 15 minutes
   features:
     - Real-time Odds Analysis
@@ -15,12 +14,11 @@ setup:
     - Risk Profile Assessment
   integrations:
     - sportradar
-    - machina-vectordb
-    - machina-ai
   status: available
+  value: "sportradar-nba"
   version: 1.0.0
 
-  datasets:
+datasets:
 
   # connectors & workflows
   - type: "connector"
@@ -29,6 +27,10 @@ setup:
     path: "../connector-perplexity/api-perplexity.yml"
   - type: "connector"
     path: "../connector-sportradar/api-sr-nba.yml"
+  - type: "connector"
+    path: "../connector-sportradar/api-sr-soccer.yml"
+  - type: "connector"
+    path: "../connector-sportingbet/api-sportingbet.yml"
   - type: "connector"
     path: "../connector-stability/sdk-stability.yml"
   - type: "connector"

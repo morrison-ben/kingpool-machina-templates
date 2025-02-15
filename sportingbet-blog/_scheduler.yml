@@ -1,0 +1,37 @@
+agent:
+  name: "scheduler-workflow"
+  title: "Scheduler Configuration"
+  description: "Agent responsible for scheduling workflows."
+  context:
+    config-frequency: 1
+  workflows:
+
+    # Reporter Image Preview
+    - name: "workflow-reporter-image-preview"
+      description: "Reporter Image Preview"
+      outputs:
+        reporter-image-preview: "$.get('events')"
+
+    # # Reporter Websearch
+    # - name: "workflow-reporter-websearch"
+    #   description: "Reporter Websearch"
+    #   outputs:
+    #     reporter-websearch: "$.get('events')"
+
+    # # Reporter Summary
+    # - name: "workflow-reporter-summary"
+    #   description: "Reporter Summary"
+    #   outputs:
+    #     reporter-summary: "$.get('events')"
+
+    # # Reporter Briefing
+    # - name: "workflow-reporter-briefing-en"
+    #   description: "Reporter Briefing English"
+    #   outputs:
+    #     reporter-briefing-en: "$.get('events')"
+
+    # # Quizzes by Game
+    # - name: "quizzes-by-game"
+    #   description: "Quizzes by Game"
+    #   outputs:
+    #     quizzes-by-game: "$.get('events')"

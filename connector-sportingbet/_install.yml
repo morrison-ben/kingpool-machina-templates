@@ -1,5 +1,5 @@
 setup:
-  title: SportingBet Sports API
+  title: Sportingbet API
   description: Connect to the SportingBet Sports API to access fixtures, competitions, odds and live data across multiple sports and countries.
   category:
     - data-acquisition
