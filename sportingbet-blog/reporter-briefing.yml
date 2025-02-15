@@ -114,76 +114,6 @@ workflow:
         selected-fixture-id: "$.get('documents')[0].get('value', {}).get('id', {}).get('entityId') if $.get('documents') else None"
         similarity-score: "$.get('documents')[0].get('similarity') if $.get('documents') else None"
 
-    # # 3 research-team-news (home team)
-    # - type: "connector"
-    #   name: "fetch-perplexity-api"
-    #   condition: "$.get('event_exists') is True"
-    #   connector:
-    #     name: "api-perplexity"
-    #     command: "post-chat/completions"
-    #   inputs:
-    #     body: |
-    #       {
-    #         'model': $.get('perplexity_model'),
-    #         'messages': [
-    #           {
-    #             'role': 'system',
-    #             'content': $.get('system_message')
-    #           },{
-    #             'role': 'user',
-    #             'content': f"Create a news report about the {$.get('event_selected').get('sport_event', {}).get('competitors', [])[0].get('name')} team in the {$.get('event_selected').get('sport_event', {}).get('sport_event_context', []).get('competition', {}).get('name')}"
-    #           }
-    #         ],
-    #         'max_tokens': $.get('perplexity_max_tokens'),
-    #         'temperature': $.get('perplexity_temperature'),
-    #         'top_p': $.get('perplexity_top_p'),
-    #         'return_citations': $.get('return_citations', True),
-    #         'return_images': $.get('return_images', False),
-    #         'return_related_questions': $.get('return_related_questions', True),
-    #         'search_recency_filter': $.get('search_recency_filter', 'week'),
-    #         'top_k': $.get('top_k', 0),
-    #         'stream': $.get('stream', False),
-    #         'presence_penalty': $.get('presence_penalty', 0),
-    #         'frequency_penalty': $.get('frequency_penalty', 1)
-    #       }
-    #   outputs:
-    #     result-home-news: "$.get('choices')[0].get('message').get('content')"
-
-    # # 4 research-team-news (away team)
-    # - type: "connector"
-    #   name: "fetch-perplexity-api"
-    #   condition: "$.get('event_exists') is True"
-    #   connector:
-    #     name: "api-perplexity"
-    #     command: "post-chat/completions"
-    #   inputs:
-    #     body: |
-    #       {
-    #         'model': $.get('perplexity_model'),
-    #         'messages': [
-    #           {
-    #             'role': 'system',
-    #             'content': $.get('system_message')
-    #           },{
-    #             'role': 'user',
-    #             'content': f"Create a news report about the {$.get('event_selected').get('sport_event', {}).get('competitors', [])[1].get('name')} team in the {$.get('event_selected').get('sport_event', {}).get('sport_event_context', []).get('competition', {}).get('name')}"
-    #           }
-    #         ],
-    #         'max_tokens': $.get('perplexity_max_tokens'),
-    #         'temperature': $.get('perplexity_temperature'),
-    #         'top_p': $.get('perplexity_top_p'),
-    #         'return_citations': $.get('return_citations', True),
-    #         'return_images': $.get('return_images', False),
-    #         'return_related_questions': $.get('return_related_questions', True),
-    #         'search_recency_filter': $.get('search_recency_filter', 'week'),
-    #         'top_k': $.get('top_k', 0),
-    #         'stream': $.get('stream', False),
-    #         'presence_penalty': $.get('presence_penalty', 0),
-    #         'frequency_penalty': $.get('frequency_penalty', 1)
-    #       }
-    #   outputs:
-    #     result-away-news: "$.get('choices')[0].get('message').get('content')"
-    
     # 4 research-game-news
     - type: "connector"
       name: "fetch-perplexity-api"
@@ -316,7 +246,7 @@ workflow:
         command: "invoke_prompt"
         model: "gpt-4o"
       inputs:
-        start_time: "$.get('event-selected').get('start_time')"
+        start_time: "$.get('event_selected').get('start_time')"
         content-snippets: |
           [
             *$.get('research-home-news', {}).get('snippets', []),
@@ -325,6 +255,26 @@ workflow:
           ]
       outputs:
         content-preview-br: "$"
+
+    # 3 prompt-reporter-preview-en
+    - type: "prompt"
+      name: "prompt-reporter-preview-en"
+      description: "Generate a preview for the upcoming game"
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        start_time: "$.get('event_selected').get('start_time')"
+        content-snippets: |
+          [
+            *$.get('research-home-news', {}).get('snippets', []),
+            *$.get('research-away-news', {}).get('snippets', []),
+            *$.get('research-match-odds', {}).get('snippets', [])
+          ]
+      outputs:
+        content-preview-en: "$"
 
     # 4 update-event-preview-br
     - type: "document"
@@ -346,6 +296,27 @@ workflow:
         document_type: "'content-preview'"
         event_code: "$.get('event_code')"
         language: "'br'"
+
+    # 4 update-event-preview-en
+    - type: "document"
+      name: "update-event-preview-en"
+      description: "Update the document."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        content-preview: |
+          {
+            **$.get('content-preview-en', {}),
+            'execution': datetime.utcnow(),
+            'status': 'active'
+          }
+      metadata:
+        document_type: "'content-preview'"
+        event_code: "$.get('event_code')"
+        language: "'en'"
 
     # 8 version-control-success
     - type: "document"
