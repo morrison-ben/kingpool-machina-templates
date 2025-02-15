@@ -3,7 +3,7 @@ workflow:
   title: "Sync Competitions"
   description: "Workflow to synchronize competitions from SportRadar API to Machina."
   context-variables:
-    api-sr-soccer-v4:
+    api-sportradar-soccer:
       api_key: "$TEMP_CONTEXT_VARIABLE_SPORTRADAR_SOCCER_V4_API_KEY"
   outputs:
     competitions: "$.get('competitions')"
@@ -35,7 +35,7 @@ workflow:
       name: "task-load-competitions"
       description: "Get Competitions from SportRadar"
       connector:
-        name: "api-sr-soccer-v4"
+        name: "api-sportradar-soccer"
         command: "get-competitions.json"
       condition: "$.get('should_update') == True"
       inputs:

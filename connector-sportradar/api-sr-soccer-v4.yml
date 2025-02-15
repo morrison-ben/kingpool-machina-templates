@@ -1,5 +1,0 @@
-connector:
-  name: "api-sr-soccer-v4"
-  description: "SportRadar API - Soccer v4"
-  filename: "api-sr-soccer-v4.json"
-  filetype: "restapi"

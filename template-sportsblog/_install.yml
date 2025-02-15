@@ -1,21 +1,23 @@
 setup:
   title: "Sports Blog"
-  description: AI-powered sports blog with personalized recommendations based on betting history.
+  description: AI-powered sports blog with personalized recommendations based on pré match odds and historical performance.
   category:
-    - betting-fantasy
-    - crm-fan-data
+    - content-creation
   estimatedTime: 15 minutes
   features:
-    - Real-time Odds Analysis
-    - Historical Performance
-    - AI Insights
-    - Custom Models
-    - Personalized Recommendations
-    - Betting Pattern Analysis
-    - Risk Profile Assessment
-    - Preference-Based Alerts
-    - Betting History Tracking
-    - Deal Stage Management
+    - Personalized recommendations based on pré match odds and historical performance
+    - AI-powered insights and analysis
+    - Customizable content creation
+    - Social media integration
+    - User engagement tracking
+    - Content scheduling and publishing 
+    - AI-powered content generation
+    - Personalized recommendations based on pré match odds and historical performance
+    - AI-powered insights and analysis
+    - Customizable content creation
+    - Social media integration
+    - User engagement tracking
+    - Content scheduling and publishing 
   integrations:
     - genius-sports
     - machina-vectordb
@@ -31,7 +33,7 @@ setup:
   - type: "connector"
     path: "../connector-perplexity/api-perplexity.yml"
   - type: "connector"
-    path: "../connector-sportradar/api-sr-soccer-v4.yml"
+    path: "../connector-sportradar-soccer/api-sportradar-soccer.yml"
   - type: "connector"
     path: "../connector-stability/sdk-stability.yml"
   - type: "connector"

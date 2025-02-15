@@ -1,9 +1,8 @@
 setup:
-  title: "API Exchange Test"
+  title: "Exchange Bet Br"
   description: AI-powered betting analysis and insights assistant with personalized recommendations based on betting history.
   category:
     - betting-fantasy
-    - crm-fan-data
   estimatedTime: 15 minutes
   features:
     - Real-time Odds Analysis

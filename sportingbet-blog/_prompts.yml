@@ -1,0 +1,304 @@
+prompts:
+
+  # research-team-history
+  - type: "prompt"
+    title: "Research Team History"
+    name: "research-team-history"
+    description: |
+      You are creating a comprehensive historical briefing about a sports competition or event.
+      
+      Provide key historical information and notable facts about the topic, including:
+      1. Origin and evolution of the competition
+      2. Most successful teams/athletes
+      3. Memorable moments and iconic matches
+      4. Record holders and significant achievements
+      5. Historical impact and cultural significance
+      6. Interesting traditions and unique features
+      
+      Focus on providing engaging, well-researched facts that capture the essence and history of the competition.
+    schema:
+      title: "ResearchTeamHistory"
+      description: "This schema defines the structure for generating a historical sports briefing."
+      type: "object"
+      properties:
+        rating:
+          type: "array"
+          description: "An array of ratings evaluating different historical aspects of the team's legacy and importance."
+          items:
+            type: "object"
+            properties:
+              category:
+                type: "string"
+                description: "The category being rated: 'Titles Won', 'Competition Consistency', 'Legendary Figures', 'Fan Base & Culture', 'Historic Matches', or 'Traditional Weight'"
+                enum: [
+                  "Titles Won",
+                  "Competition Consistency", 
+                  "Legendary Figures",
+                  "Fan Base & Culture",
+                  "Historic Matches",
+                  "Traditional Weight"
+                ]
+              score:
+                type: "number"
+                description: "Rating score from 0.0 to 10 indicating the team's strength in this category"
+              analysis:
+                type: "string"
+                description: "Detailed analysis explaining the rating, including specific examples and historical facts that justify the score"
+          minItems: 6
+          maxItems: 6
+        snippets:
+          type: "array"
+          description: "An array of snippets covering different aspects of the team's history."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The category of historical information (e.g., 'Club Formation', 'Major Honours', 'Legendary Players', 'Historic Seasons', 'Stadium History')."
+              content:
+                type: "string"
+                description: "Detailed historical facts and information about the specific aspect of the team's history."
+              confidence:
+                type: "number"
+                description: "The confidence score for the historical accuracy of the information (0.0 to 1.0)."
+            required: ["title", "content", "confidence"]
+          minItems: 10
+          maxItems: 10
+
+  # research-team-news
+  - type: "prompt"
+    title: "Research Team News"
+    name: "research-team-news"
+    description: |
+      You are creating a comprehensive historical briefing about a sports competition or event.
+      
+      Provide key historical information and notable facts about the topic, including:
+      1. Origin and evolution of the competition
+      2. Most successful teams/athletes
+      3. Memorable moments and iconic matches
+      4. Record holders and significant achievements
+      5. Historical impact and cultural significance
+      6. Interesting traditions and unique features
+      
+      Focus on providing engaging, well-researched facts that capture the essence and history of the competition.
+    schema:
+      title: "ResearchTeamNews"
+      description: "This schema defines the structure for generating a news report about a sports team."
+      type: "object"
+      properties:
+        rating:
+          type: "array"
+          description: "An array of ratings evaluating different aspects of the team's current situation."
+          items:
+            type: "object"
+            properties:
+              category:
+                type: "string"
+                description: "The category being rated: 'Current Form', 'Squad Depth', 'Team Morale', 'Tactical Performance', 'Injury Situation', or 'Fan Sentiment'"
+                enum: [
+                  "Current Form",
+                  "Squad Depth",
+                  "Team Morale",
+                  "Tactical Performance",
+                  "Injury Situation",
+                  "Fan Sentiment"
+                ]
+              score:
+                type: "number"
+                description: "Rating score from 0.0 to 10 indicating the team's current strength in this category"
+              analysis:
+                type: "string"
+                description: "Detailed analysis explaining the rating, including specific examples and recent facts that justify the score"
+          minItems: 6
+          maxItems: 6
+        snippets:
+          type: "array"
+          description: "An array of snippets covering different aspects of the team's current news and situation."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The category of news information (e.g., 'Match Reports', 'Training Updates', 'Press Conference Highlights', 'Squad Updates', 'Upcoming Fixtures')."
+              content:
+                type: "string"
+                description: "Detailed current information and recent developments about the specific aspect of the team's situation."
+              confidence:
+                type: "number"
+                description: "The confidence score for the accuracy of the news information (0.0 to 1.0)."
+            required: ["title", "content", "confidence"]
+          minItems: 10
+          maxItems: 10
+
+  # research-match-odds
+  - type: "prompt"
+    title: "Research Match Odds"
+    name: "research-match-odds"
+    description: |
+      You are analyzing betting odds and market trends for an upcoming sports match.
+      
+      Provide comprehensive analysis of the betting markets, including:
+      1. Current odds across major bookmakers
+      2. Historical odds movement and trends
+      3. Key factors affecting the odds (team news, form, head-to-head records)
+      4. Popular betting markets and their value
+      5. Statistical insights relevant to betting markets
+      6. Expert opinions and market sentiment
+      
+      Focus on providing objective analysis of betting opportunities while highlighting important factors that could influence the match outcome.
+    schema:
+      title: "ResearchMatchOdds"
+      description: "This schema defines the structure for generating a comprehensive odds analysis report for a sports match."
+      type: "object"
+      properties:
+        rating:
+          type: "array"
+          description: "An array of ratings evaluating different aspects of the betting markets."
+          items:
+            type: "object"
+            properties:
+              category:
+                type: "string"
+                description: "The category being rated: 'Home Win Value', 'Draw Value', 'Away Win Value', 'Goals Markets', 'Special Markets', or 'Market Confidence'"
+                enum: [
+                  "Home Win Value",
+                  "Draw Value",
+                  "Away Win Value",
+                  "Goals Markets",
+                  "Special Markets",
+                  "Market Confidence"
+                ]
+              score:
+                type: "number"
+                description: "Rating score from 0.0 to 10 indicating the perceived value in this market category"
+              analysis:
+                type: "string"
+                description: "Detailed analysis explaining the rating, including specific odds, trends, and factors that justify the score"
+          minItems: 6
+          maxItems: 6
+        snippets:
+          type: "array"
+          description: "An array of snippets covering different aspects of the match odds analysis."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The category of odds information (e.g., 'Match Winner Odds', 'Goals Markets', 'Asian Handicap', 'Key Statistics', 'Bookmaker Comparison')."
+              content:
+                type: "string"
+                description: "Detailed analysis of the specific betting market, including current odds, trends, and relevant factors."
+              confidence:
+                type: "number"
+                description: "The confidence score for the accuracy of the odds analysis (0.0 to 1.0)."
+            required: ["title", "content", "confidence"]
+          minItems: 10
+          maxItems: 10
+
+  # prompt-reporter-preview-br
+  - type: "prompt"
+    title: "Blog Reporter Game Preview"
+    name: "prompt-reporter-preview-br"
+    description: "Este prompt gera o título, subtítulo e slug para um post do blog em português brasileiro sobre uma partida que ainda não ocorreu. O tom deve ser profissional mas com personalidade, como um amigo que manja muito de apostas e sabe entreter enquanto informa. Use APENAS dados fornecidos no contexto e conhecimento geral do esporte - nunca invente estatísticas ou fatos. O horário da partida (start_time) deve ser convertido de GMT para Horário de Brasília (GMT-3)."
+    schema:
+      title: "PostBlogPreviaConteudo"
+      description: "Este schema define a estrutura para gerar os elementos do título de um post do blog em português brasileiro sobre uma partida que ainda não ocorreu, baseando-se EXCLUSIVAMENTE nos dados fornecidos e conhecimento geral do esporte."
+      type: "object"
+      properties:
+        title:
+          type: "string"
+          description: "Crie um título SEO-friendly que combine: (1) Termos de busca populares para apostas (ex: 'palpite', 'dicas', 'previsão'); (2) Nome dos times e competição; (3) Elemento que gere interesse natural (ex: clássico, revanche, duelo decisivo). O título deve ter entre 50-60 caracteres e soar como algo que as pessoas compartilhariam naturalmente. Use apenas fatos confirmados."
+        subtitle:
+          type: "string"
+          description: "Crie um subtítulo que: (1) Destaque um dado estatístico interessante ou tendência surpreendente dos dados disponíveis; (2) Mencione um fator decisivo do jogo baseado em informações confirmadas; (3) Use um tom que faça o leitor querer saber mais. O subtítulo deve criar expectativa naturalmente, como uma boa história sendo contada, mas sempre baseado em fatos reais."
+        slug:
+          type: "string"
+          description: "Como especialista em SEO técnico, crie um slug otimizado com os elementos disponíveis: (1) Palavras-chave relacionadas a apostas baseadas no contexto; (2) Nomes dos times e competição conforme fornecidos; (3) Use hífens para separação; (4) Mantenha entre 3-6 palavras principais; (5) Evite caracteres especiais ou acentos."
+        content:
+          type: "string"
+          description: |
+            Atue como um analista de apostas que realmente entende do assunto e sabe contar uma boa história. Imagine aquele amigo que todo mundo respeita porque ele manja muito, mas também sabe entreter enquanto explica. Use APENAS dados concretos fornecidos no contexto e conhecimento geral do esporte - NUNCA invente estatísticas, resultados ou informações não fornecidas.
+
+            IMPORTANTE: Ao analisar dados e fazer sugestões:
+            - Use APENAS estatísticas e informações explicitamente fornecidas no contexto
+            - Não invente resultados de jogos anteriores
+            - Não crie estatísticas fictícias
+            - Não faça suposições sobre lesões ou escalações sem confirmação
+            - Use seu conhecimento geral do esporte apenas para contextualizar dados reais
+            - Se faltar alguma informação importante, foque nas que você tem disponíveis
+            - Seja criativo na narrativa, mas factual nos dados
+            - Converta o horário do jogo (start_time) de GMT para Horário de Brasília (GMT-3)
+
+            Estrutura do conteúdo (não inclua os comentários no output, apenas siga a estrutura):
+
+            // Primeiro parágrafo: Use o campo start_time (convertendo de GMT para GMT-3) para informar "DD de Mês, às HH:MM - Horário de Brasília", junto com competição e contexto do jogo. Comece forte, como quem está contando uma história que vale a pena ouvir.
+            // Segundo parágrafo: Importância da partida e situação dos times. Use analogias interessantes ou observações espertas que façam sentido.
+
+            ## ⚔️ Panorama da Partida
+
+            // Parágrafo analisando o momento atual dos times usando apenas dados confirmados. Seja direto mas mantenha o texto fluido e interessante.
+
+            - **Desempenho do Mandante**: [Apenas resultados e dados confirmados + observação inteligente sobre eles]
+            - **Momento do Visitante**: [Apenas dados verificados + comentário baseado neles]
+            - **Contexto da Competição**: [Situação real na tabela + análise do momento]
+
+            ## 📊 Análise Estatística
+
+            // Parágrafo transformando os números disponíveis em narrativa. Foque nos padrões que os dados reais mostram.
+
+            - **Confrontos Diretos**: [Apenas histórico confirmado + padrões reais]
+            - **Tendências Ofensivas**: [Estatísticas disponíveis + análise delas]
+            - **Padrões Defensivos**: [Dados defensivos confirmados + conclusões]
+
+            ## 🔍 Fatores Decisivos
+
+            // Parágrafo conectando apenas pontos confirmados. Use analogias para clarificar dados reais.
+
+            - **Força em Casa/Fora**: [Números confirmados + análise contextual]
+            - **Ausências e Retornos**: [Apenas desfalques/retornos confirmados + impacto]
+            - **Fatores Externos**: [Condições confirmadas + influência nas apostas]
+
+            ## 🎯 Sugestão Principal
+
+            // Parágrafo direto sobre a melhor aposta baseada apenas nos dados disponíveis.
+
+            - **Mercado Recomendado**: [Aposta específica + odds reais + justificativa baseada em dados]
+            - **Justificativa Estatística**: [Apenas dados confirmados que suportam a escolha]
+            - **Análise de Valor**: [Análise das odds baseada em dados reais]
+
+            ## 💡 Mercados Alternativos
+
+            // Parágrafo sobre outras oportunidades identificadas nos dados disponíveis.
+
+            - **Gols no Jogo**: [Mercado + odds reais + justificativa baseada em dados]
+            - **Resultado Final**: [Mercado + odds reais + análise fundamentada]
+
+            ---
+
+            // Parágrafo final conectando os pontos principais com personalidade, mas sempre baseado em dados reais.
+
+            Diretrizes de Estilo:
+            1. Use apenas dados reais para contar a história
+            2. Faça observações baseadas em fatos confirmados
+            3. Mantenha o texto fluido e natural
+            4. Use analogias que clarificam dados reais
+            5. Encontre padrões nos dados disponíveis
+            6. Seja direto e mantenha o interesse
+            7. Faça comparações baseadas em fatos
+            8. Use humor natural quando apropriado
+            9. Mantenha o foco nas apostas
+            10. Escreva como expert que preza pela precisão" 
+
+  # verify-selected-fixture
+  - type: "prompt"
+    title: "Verify Selected Fixture"
+    name: "verify-selected-fixture"
+    description: "Given two fixture titles and their similarity score, determine if they refer to the same match. Consider that even with high similarity scores (>0.50), the fixtures might be different matches. Verify the competition and teams carefully.\n\nPositive Example:\nTitle1: 'England Premier League - West Ham United - Brentford'\nTitle2: 'England Premier League 24/25: 25 - West Ham United v Brentford FC'\nResult: TRUE (same teams and competition despite different formatting)\n\nNegative Example:\nTitle1: 'England Premier League - Manchester City - Liverpool'\nTitle2: 'England Premier League 24/25: 25 - Liverpool FC v Wolverhampton Wanderers'\nSimilarity: 0.52\nResult: FALSE (different matches - teams don't match exactly)"
+    schema:
+      title: "FixtureVerification"
+      description: "Verify if two fixtures are the same match by comparing team names and competition. High similarity scores alone are not sufficient - exact team matches are required."
+      type: "object"
+      properties:
+        is-match:
+          type: "boolean"
+          description: "Should be TRUE only if both titles refer to exactly the same match (same teams and competition). Return FALSE if there's any doubt or if teams don't match exactly, even with high similarity scores."

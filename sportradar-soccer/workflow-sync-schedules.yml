@@ -3,7 +3,7 @@ workflow:
   title: "Sync Schedules"
   description: "Workflow to synchronize a season schedules from SportRadar API to Machina."
   context-variables:
-    api-sr-soccer-v4:
+    api-sportradar-soccer:
       api_key: "$TEMP_CONTEXT_VARIABLE_SPORTRADAR_SOCCER_V4_API_KEY"
   inputs:
     season_id: "$.get('season_id')"
@@ -58,7 +58,7 @@ workflow:
       name: "load-schedules"
       description: "Get a season schedules from SportRadar"
       connector:
-        name: "api-sr-soccer-v4"
+        name: "api-sportradar-soccer"
         command: "get-seasons/{season_id}/{data_type}"
         command_attribute:
           season_id: "$.get('season_id')"

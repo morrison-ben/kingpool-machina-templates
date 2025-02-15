@@ -1,0 +1,65 @@
+workflow:
+  name: "sportingbet-sync-fixtures"
+  title: "Sync Fixtures"
+  description: "Workflow to synchronize a season schedules from Sportingbet API to Machina."
+  context-variables:
+    debugger:
+      enabled: true
+    api-sportingbet:
+      Bwin-AccessId: "$TEMP_CONTEXT_VARIABLE_BWIN_ACCESS_ID"
+      Bwin-AccessIdToken: "$TEMP_CONTEXT_VARIABLE_BWIN_ACCESS_ID_TOKEN"
+    sdk-openai:
+      api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
+  inputs:
+    country: "$.get('country')"
+    competitionIds: "$.get('competitionIds')"
+    sportId: "$.get('sportId')"
+  outputs:
+    fixtures: "$.get('fixtures')"
+    workflow-status: "$.get('workflow-status')"
+  tasks:
+
+    # 1 load-fixtures
+    - type: "connector"
+      name: "load-fixtures"
+      description: "Get a season fixtures from Sportingbet"
+      connector:
+        name: "api-sportingbet"
+        command: "get-offer/api/{sportId}/{country}/fixtureIndex"
+        command_attribute:
+          country: "$.get('country')"
+          sportId: "$.get('sportId')"
+      inputs:
+        competitionIds: "$.get('competitionIds')" 
+      outputs:
+        fixtures: "$"
+        bulk-fixtures: |
+          [
+            {
+              **f,
+              'title': f"{f.get('region', {}).get('name', {}).get('text', '')} {f.get('competition', {}).get('name', {}).get('text', '')} - {f.get('name', {}).get('text', '')}",
+            }
+            for f in $.get('items', [])
+            if f.get('type') == 'PairGame' and f.get('state') == 'Not started'
+          ]
+        workflow-status: "'executed'"
+
+    # 2 bulk-save-fixtures
+    - type: "document"
+      name: "bulk-save-fixtures"
+      description: "Bulk save the fixtures."
+      config:
+        action: "bulk-save"
+        embed-vector: true
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      document_name: "game-fixture"
+      documents:
+        items: "$.get('parsedItems')"
+      inputs:
+        parsedItems: |
+          [
+            *$.get('bulk-fixtures', [])
+          ]

@@ -1,5 +1,0 @@
-connector:
-  name: "api-sr-nfl"
-  description: "SportRadar API - NFL v7"
-  filename: "api-sr-nfl.json"
-  filetype: "restapi"

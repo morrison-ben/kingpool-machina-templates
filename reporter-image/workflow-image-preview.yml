@@ -15,6 +15,7 @@ workflow:
     events: "$.get('events')"
     workflow-status: "$.get('event-exists') is True and 'executed' or 'skipped'"
   tasks:
+  
     # 0 load-event-by-code
     - type: "document"
       name: "load-event-by-code"
@@ -31,8 +32,8 @@ workflow:
         event-exists: "len($.get('documents', [])) > 0"
         event-selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
         image_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('image_count', 0) if $.get('documents') else None"
-        season_code: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('sport_event_context', {}).get('season', {}).get('id', '') if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+
     # 1 load-event
     - type: "document"
       name: "load-event-prelive"
@@ -43,11 +44,10 @@ workflow:
         search-limit: 1
         search-vector: false
       filters:
-        value.sport_event_status.status: "{'$in': ['not_started']}"
-        value.version_control.reporter_image_preview: "{'$exists': False}"
-        value.version_control.reporter_summary_status: "'processed'"
+        value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
         value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=72)}"
-        value.processing: "{'$ne': True}"
+        value.version_control.processing: "{'$ne': True}"
+        value.version_control.reporter_image_preview: "{'$exists': False}"
       inputs:
         name: "'schedule'"
       outputs:
@@ -55,8 +55,8 @@ workflow:
         event-exists: "len($.get('documents', [])) > 0"
         event-selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
         image_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('image_count', 0) if $.get('documents') else None"
-        season_code: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('sport_event_context', {}).get('season', {}).get('id', '') if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+
     # 1 update-event-status
     - type: "document"
       name: "update-event-preevent-start"
@@ -70,14 +70,15 @@ workflow:
         schedule: |
           {
             **$.get('event-selected'),
-            'processing': True,
             'version_control': {
               **$.get('event-selected').get('version_control', {}),
+              'processing': True,
               'reporter_image_preview': 'processing'
             }
           }
       metadata:
         event_code: "$.get('event_code')"
+
     # 2 prompt-image-briefing
     - type: "prompt"
       name: "prompt-image-briefing"
@@ -99,6 +100,7 @@ workflow:
             "style_preset": (None, "digital-art"),
             "output_format": (None, "webp")
           }
+
     # 3 generate image
     - type: "connector"
       name: "generate image"
@@ -112,6 +114,7 @@ workflow:
       outputs:
         final_filename: f"image-preview-{$.get('final_filename')}"
         full_filepath: "$.get('full_filepath')"
+
     # 4 store image
     - type: "connector"
       name: "store image"
@@ -124,6 +127,7 @@ workflow:
         full_filepath: "$.get('full_filepath')"
       outputs:
         image_path: "$.get('data')"
+
     # 5 update-image-preview
     - type: "document"
       name: "update-image-preview"
@@ -145,8 +149,8 @@ workflow:
       metadata:
         document_type: "'image-preview'"
         event_code: "$.get('event_code')"
-        season_code: "$.get('season_code')"
         language: "'en'"
+
     # 6 update-event-preevent
     - type: "document"
       name: "update-event-preevent-end"
@@ -160,9 +164,9 @@ workflow:
         schedule: |
           {
             **$.get('event-selected'),
-            'processing': False,
             'version_control': {
               **$.get('event-selected').get('version_control', {}),
+              'processing': False,
               'image_count': $.get('image_count', 0) + 1,
               'reporter_image_preview': 'processed',
               'updated': datetime.utcnow()

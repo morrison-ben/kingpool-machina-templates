@@ -1,0 +1,76 @@
+agent:
+  name: "template-sportsblog-scheduler"
+  title: "Agent Scheduler"
+  description: "Agent responsible for scheduling workflows."
+  context:
+    config-frequency: 1
+  workflows:
+
+    # Sync Games
+    - name: "workflow-sync-games"
+      description: "Sync Games"
+      inputs:
+        season_year: "'2024'"
+        season_type: "'REG'"
+      outputs:
+        sync-games-status: "$.get('workflow-status', False)"
+
+    # # Reporter Summary
+    # - name: "workflow-reporter-summary"
+    #   description: "Reporter Summary"
+    #   outputs:
+    #     reporter-summary-status: "$.get('workflow-status', False)"
+
+    # # Reporter Websearch
+    # - name: "workflow-reporter-websearch"
+    #   description: "Reporter Websearch"
+    #   outputs:
+    #     reporter-websearch-status: "$.get('workflow-status', False)"
+
+    # # Reporter Briefing
+    # - name: "workflow-reporter-briefing-en"
+    #   description: "Reporter Briefing English"
+    #   outputs:
+    #     reporter-briefing-en-status: "$.get('workflow-status', False)"
+
+    # # Reporter Image Preview
+    # - name: "workflow-reporter-image-preview"
+    #   description: "Reporter Image Preview"
+    #   outputs:
+    #     reporter-image-preview-status: "$.get('workflow-status', False)"
+
+    # # Reporter Preview BR
+    # - name: "workflow-reporter-preview-br"
+    #   description: "Reporter Preview BR"
+    #   outputs:
+    #     reporter-preview-br-status: "$.get('workflow-status', False)"
+
+    # # Reporter Preview EN
+    # - name: "workflow-reporter-preview-en"
+    #   description: "Reporter Preview EN"
+    #   outputs:
+    #     reporter-preview-en-status: "$.get('workflow-status', False)"
+
+    # # Reporter Polls BR
+    # - name: "workflow-reporter-polls-br"
+    #   description: "Reporter Polls BR"
+    #   outputs:
+    #     reporter-polls-br-status: "$.get('workflow-status', False)"
+
+    # # Reporter Quizzes BR
+    # - name: "workflow-reporter-quizzes-br"
+    #   description: "Reporter Quizzes BR"
+    #   outputs:
+    #     reporter-quizzes-br-status: "$.get('workflow-status', False)"
+
+    # # Reporter Polls EN
+    # - name: "workflow-reporter-polls-en"
+    #   description: "Reporter Polls EN"
+    #   outputs:
+    #     reporter-polls-en-status: "$.get('workflow-status', False)"
+
+    # # Reporter Quizzes EN
+    # - name: "workflow-reporter-quizzes-en"
+    #   description: "Reporter Quizzes EN"
+    #   outputs:
+    #     reporter-quizzes-en-status: "$.get('workflow-status', False)"

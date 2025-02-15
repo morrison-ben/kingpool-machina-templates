@@ -1,0 +1,5 @@
+connector:
+  name: "api-sportingbet"
+  description: "SportingBet Sports API - Access fixtures, competitions, odds and live scoreboards"
+  filename: "api-sportingbet.json"
+  filetype: "restapi" 
