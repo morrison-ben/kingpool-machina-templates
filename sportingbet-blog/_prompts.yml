@@ -207,7 +207,7 @@ prompts:
       properties:
         title:
           type: "string"
-          description: "Crie um título SEO-friendly que combine: (1) Termos de busca populares para apostas (ex: 'palpite', 'dicas', 'previsão'); (2) Nome dos times e competição; (3) Elemento que gere interesse natural (ex: clássico, revanche, duelo decisivo). O título deve ter entre 50-60 caracteres e soar como algo que as pessoas compartilhariam naturalmente. Use apenas fatos confirmados."
+          description: "Gere um título seguindo o seguinte template: 'Palpites [Time A] x [Time B]: odds do [Nome do Campeonato]'. Use os dados disponíveis para substituir os campos entre colchetes, garantindo que o título contenha as informações essenciais do confronto."
         subtitle:
           type: "string"
           description: "Crie um subtítulo que: (1) Destaque um dado estatístico interessante ou tendência surpreendente dos dados disponíveis; (2) Mencione um fator decisivo do jogo baseado em informações confirmadas; (3) Use um tom que faça o leitor querer saber mais. O subtítulo deve criar expectativa naturalmente, como uma boa história sendo contada, mas sempre baseado em fatos reais."
@@ -219,72 +219,39 @@ prompts:
           description: |
             Atue como um analista de apostas que realmente entende do assunto e sabe contar uma boa história. Imagine aquele amigo que todo mundo respeita porque ele manja muito, mas também sabe entreter enquanto explica. Use APENAS dados concretos fornecidos no contexto e conhecimento geral do esporte - NUNCA invente estatísticas, resultados ou informações não fornecidas.
 
-            IMPORTANTE: Ao analisar dados e fazer sugestões:
+            Estrutura do conteúdo (não inclua os comentários no output, apenas siga a estrutura):
+
+            **História do Jogo:**  
+            Descreva, em até 150 palavras, a visão geral da partida, as implicações na classificação, notícias importantes, a história entre as equipes e encontros recentes.
+            
+            ## As odds para [Time A] x [Time B]
+            
+            Em cerca de 50 palavras, foque em um ou dois aspectos essenciais deste confronto para os apostadores – como notícias de apostas, tendências, mudanças nas odds, momentos de alta/baixa, clima, etc. Evite apenas listar estatísticas.
+            
+            ## [Nome do Time A]
+            
+            Apresente, em até 150 palavras, as últimas notícias da equipe visitante, com ênfase em estatísticas, tendências de apostas, séries de resultados, mudanças na escalação, lesões e rumores que possam impactar o jogo.
+            
+            ## [Nome do Time B]
+            
+            Em até 150 palavras, detalhe as informações da equipe mandante, incluindo notícias recentes, estatísticas, tendências de apostas, sequências de vitórias ou derrotas, alterações na escalação, lesões e rumores relevantes.
+            
+            ## Quem vence, [Time A] ou [Time B]?
+            
+            Forneça uma previsão editorial sobre o placar final esperado.
+            
+            **Diretriz Geral:** Em todas as seções, assegure que os insights estejam sempre respaldados por estatísticas reais e odds da competição, evitando comentários genéricos sem fundamentação.
+            
+            **Regras Adicionais:**
             - Use APENAS estatísticas e informações explicitamente fornecidas no contexto
             - Não invente resultados de jogos anteriores
             - Não crie estatísticas fictícias
             - Não faça suposições sobre lesões ou escalações sem confirmação
             - Use seu conhecimento geral do esporte apenas para contextualizar dados reais
-            - Se faltar alguma informação importante, foque nas que você tem disponíveis
-            - Seja criativo na narrativa, mas factual nos dados
-            - Converta o horário do jogo (start_time) de GMT para Horário de Brasília (GMT-3)
-
-            Estrutura do conteúdo (não inclua os comentários no output, apenas siga a estrutura):
-
-            // Primeiro parágrafo: Use o campo start_time (convertendo de GMT para GMT-3) para informar "DD de Mês, às HH:MM - Horário de Brasília", junto com competição e contexto do jogo. Comece forte, como quem está contando uma história que vale a pena ouvir.
-            // Segundo parágrafo: Importância da partida e situação dos times. Use analogias interessantes ou observações espertas que façam sentido.
-
-            ## ⚔️ Panorama da Partida
-
-            // Parágrafo analisando o momento atual dos times usando apenas dados confirmados. Seja direto mas mantenha o texto fluido e interessante.
-
-            - **Desempenho do Mandante**: [Apenas resultados e dados confirmados + observação inteligente sobre eles]
-            - **Momento do Visitante**: [Apenas dados verificados + comentário baseado neles]
-            - **Contexto da Competição**: [Situação real na tabela + análise do momento]
-
-            ## 📊 Análise Estatística
-
-            // Parágrafo transformando os números disponíveis em narrativa. Foque nos padrões que os dados reais mostram.
-
-            - **Confrontos Diretos**: [Apenas histórico confirmado + padrões reais]
-            - **Tendências Ofensivas**: [Estatísticas disponíveis + análise delas]
-            - **Padrões Defensivos**: [Dados defensivos confirmados + conclusões]
-
-            ## 🔍 Fatores Decisivos
-
-            // Parágrafo conectando apenas pontos confirmados. Use analogias para clarificar dados reais.
-
-            - **Força em Casa/Fora**: [Números confirmados + análise contextual]
-            - **Ausências e Retornos**: [Apenas desfalques/retornos confirmados + impacto]
-            - **Fatores Externos**: [Condições confirmadas + influência nas apostas]
-
-            ## 🎯 Sugestão Principal
-
-            // Parágrafo direto sobre a melhor aposta baseada apenas nos dados disponíveis.
-
-            - **Mercado Recomendado**: [Aposta específica + odds reais + justificativa baseada em dados]
-            - **Justificativa Estatística**: [Apenas dados confirmados que suportam a escolha]
-            - **Análise de Valor**: [Análise das odds baseada em dados reais]
-
-            ## 💡 Mercados Alternativos
-
-            // Parágrafo sobre outras oportunidades identificadas nos dados disponíveis.
-
-            - **Gols no Jogo**: [Mercado + odds reais + justificativa baseada em dados]
-            - **Resultado Final**: [Mercado + odds reais + análise fundamentada]
-
-            Diretrizes de Estilo:
-            1. Use apenas dados reais para contar a história
-            2. Faça observações baseadas em fatos confirmados
-            3. Mantenha o texto fluido e natural
-            4. Use analogias que clarificam dados reais
-            5. Encontre padrões nos dados disponíveis
-            6. Seja direto e mantenha o interesse
-            7. Faça comparações baseadas em fatos
-            8. Use humor natural quando apropriado
-            9. Mantenha o foco nas apostas
-            10. Escreva como expert que preza pela precisão" 
-
+            - Se informações importantes estiverem ausentes, foque no que está disponível
+            - Seja criativo na narrativa, mas factual com os dados
+            - Converta o horário do jogo (start_time) de GMT para o horário local
+            
   # prompt-reporter-preview-en
   - type: "prompt"
     title: "Blog Reporter Game Preview"
@@ -297,7 +264,7 @@ prompts:
       properties:
         title:
           type: "string"
-          description: "Create a SEO-friendly title combining: (1) Popular betting search terms (e.g., 'prediction', 'tips', 'forecast'); (2) Team names and competition; (3) Element that generates natural interest (e.g., derby, revenge, crucial match). Title should be 50-60 characters and sound naturally shareable. Use only confirmed facts."
+          description: "Generate a title following this template: 'Betting Tips for [Team A] vs [Team B]: odds from [Competition Name]'. Use the available data to replace the placeholders appropriately, ensuring the title conveys the essential details of the match."
         subtitle:
           type: "string"
           description: "Create a subtitle that: (1) Highlights an interesting statistic or surprising trend from available data; (2) Mentions a decisive match factor based on confirmed information; (3) Uses a tone that makes readers want to know more. The subtitle should naturally create anticipation, like a good story being told, but always based on real facts."
@@ -307,9 +274,32 @@ prompts:
         content:
           type: "string"
           description: |
-            Act as a betting analyst who truly understands the subject and knows how to tell a good story. Imagine that friend everyone respects because they're knowledgeable but also knows how to entertain while explaining. Use ONLY concrete data provided in the context and general sport knowledge - NEVER invent statistics, results, or information not provided.
+            Act as a betting analyst who truly understands the subject and knows how to tell a good story. Imagine that friend everyone respects because they're knowledgeable, but also know how to entertain while explaining. Use ONLY concrete data provided in the context and general sport knowledge - NEVER invent statistics, results, or information that is not provided.
 
-            IMPORTANT: When analyzing data and making suggestions:
+            Content structure (do not include the comments in the output, just follow the structure):
+
+            **Game Overview:**  
+            In up to 150 words, describe the overall story of the match, its implications on the standings, important news, the history between the teams, and recent encounters.
+            
+            ## Odds for [Team A] vs [Team B]
+            
+            In around 50 words, focus on one or two key aspects of the matchup that bettors should be aware of – such as betting news, trends, odds changes, high/low moments, weather, etc. Avoid merely listing statistics.
+            
+            ## [Team A]
+            
+            In up to 150 words, discuss what is happening specifically with the away team, including the latest team news, statistics, betting trends, winning or losing streaks, lineup changes, injuries, and rumors that could impact the match.
+            
+            ## [Team B]
+            
+            In up to 150 words, detail the current situation of the home team, covering recent news, statistics, betting trends, winning or losing streaks, lineup changes, injuries, and any relevant rumors.
+            
+            ## Who wins, [Team A] or [Team B]?
+            
+            Provide an editorial prediction of the expected final score.
+            
+            **General Guideline:** In every section, ensure that insights are always supported by actual statistics and competition odds, avoiding generic commentary without proper data.
+            
+            **Additional Rules:**
             - Use ONLY statistics and information explicitly provided in the context
             - Don't invent previous game results
             - Don't create fictional statistics
@@ -319,61 +309,6 @@ prompts:
             - Be creative in narrative, but factual with data
             - Convert match time (start_time) from GMT to local time
 
-            Content structure (don't include comments in output, just follow the structure):
-
-            // First paragraph: Use start_time field to inform "Month DD, at HH:MM - Local Time", along with competition and match context. Start strong, like someone telling a story worth hearing.
-            // Second paragraph: Match importance and team situations. Use interesting analogies or smart observations that make sense.
-
-            ## ⚔️ Match Overview
-
-            // Paragraph analyzing teams' current moment using only confirmed data. Be direct but keep text fluid and interesting.
-
-            - **Home Team Performance**: [Only confirmed results and data + smart observation about them]
-            - **Away Team Form**: [Only verified data + comment based on them]
-            - **Competition Context**: [Real table situation + moment analysis]
-
-            ## 📊 Statistical Analysis
-
-            // Paragraph turning available numbers into narrative. Focus on patterns that real data shows.
-
-            - **Head-to-Head**: [Only confirmed history + real patterns]
-            - **Offensive Trends**: [Available statistics + analysis]
-            - **Defensive Patterns**: [Confirmed defensive data + conclusions]
-
-            ## 🔍 Key Factors
-
-            // Paragraph connecting only confirmed points. Use analogies to clarify real data.
-
-            - **Home/Away Strength**: [Confirmed numbers + contextual analysis]
-            - **Team News**: [Only confirmed absences/returns + impact]
-            - **External Factors**: [Confirmed conditions + betting influence]
-
-            ## 🎯 Main Betting Tip
-
-            // Direct paragraph about best bet based only on available data.
-
-            - **Recommended Market**: [Specific bet + real odds + data-based justification]
-            - **Statistical Justification**: [Only confirmed data supporting the choice]
-            - **Value Analysis**: [Odds analysis based on real data]
-
-            ## 💡 Alternative Markets
-
-            // Paragraph about other opportunities identified in available data.
-
-            - **Goals Markets**: [Market + real odds + data-based justification]
-            - **Match Result**: [Market + real odds + grounded analysis]
-
-            Style Guidelines:
-            1. Use only real data to tell the story
-            2. Make observations based on confirmed facts
-            3. Keep text fluid and natural
-            4. Use analogies that clarify real data
-            5. Find patterns in available data
-            6. Be direct and maintain interest
-            7. Make comparisons based on facts
-            8. Use natural humor when appropriate
-            9. Keep focus on betting
-            10. Write as an expert who values accuracy"
 
   # verify-selected-fixture
   - type: "prompt"
