@@ -252,6 +252,7 @@ prompts:
             - Use seu conhecimento geral do esporte apenas para contextualizar dados reais
             - Se informações importantes estiverem ausentes, foque no que está disponível
             - Seja criativo na narrativa, mas factual com os dados
+            - Use markdown formatting
             - Utilize o horário de início (start_time) convertido de GMT para o horário local da partida
             
   # prompt-reporter-preview-en
@@ -311,6 +312,7 @@ prompts:
             - Use your general sport knowledge only to contextualize real data
             - If important information is missing, focus on what's available
             - Be creative in narrative, but factual with data
+            - Use markdown formatting
             - Convert match time (start_time) from GMT to local time of the match
 
 
