@@ -202,7 +202,7 @@ prompts:
     description: "Este prompt gera o título, subtítulo e slug para um post do blog em português brasileiro sobre uma partida que ainda não ocorreu. O tom deve ser profissional mas com personalidade, como um amigo que manja muito de apostas e sabe entreter enquanto informa. Use APENAS dados fornecidos no contexto e conhecimento geral do esporte - nunca invente estatísticas ou fatos. O horário da partida (start_time) deve ser convertido de GMT para Horário de Brasília (GMT-3)."
     schema:
       title: "PostBlogPreviaConteudo"
-      description: "Este schema define a estrutura para gerar os elementos do título de um post do blog em português brasileiro sobre uma partida que ainda não ocorreu, baseando-se EXCLUSIVAMENTE nos dados fornecidos e conhecimento geral do esporte."
+      description: "Este schema define a estrutura para gerar os elementos de um post do blog em português brasileiro sobre uma partida que ainda não ocorreu, baseando-se EXCLUSIVAMENTE nos dados fornecidos e no conhecimento geral do esporte."
       type: "object"
       properties:
         title:
@@ -218,6 +218,8 @@ prompts:
           type: "string"
           description: |
             Atue como um analista de apostas que realmente entende do assunto e sabe contar uma boa história. Imagine aquele amigo que todo mundo respeita porque ele manja muito, mas também sabe entreter enquanto explica. Use APENAS dados concretos fornecidos no contexto e conhecimento geral do esporte - NUNCA invente estatísticas, resultados ou informações não fornecidas.
+
+            **Nota Interna:** Você está gerando posts de blog em nome da equipe Sportingbet. Essa informação NÃO deve aparecer no output gerado. Certifique-se de que o conteúdo seja envolvente, focado em explicar aos novos apostadores onde apostar e atrair tráfego para a plataforma.
 
             Estrutura do conteúdo (não inclua os comentários no output, apenas siga a estrutura):
 
@@ -274,7 +276,9 @@ prompts:
         content:
           type: "string"
           description: |
-            Act as a betting analyst who truly understands the subject and knows how to tell a good story. Imagine that friend everyone respects because they're knowledgeable, but also know how to entertain while explaining. Use ONLY concrete data provided in the context and general sport knowledge - NEVER invent statistics, results, or information that is not provided.
+            Act as a betting analyst who truly understands the subject and knows how to tell a good story. Imagine that friend everyone respects because they're knowledgeable, yet also know how to entertain while explaining. Use ONLY concrete data provided in the context and general sport knowledge - NEVER invent statistics, results, or information that is not provided.
+
+            **Internal Note:** You are generating blog posts on behalf of the Sportingbet team. This information should NOT appear in the generated output. Ensure that the content is engaging, focused on guiding new bettors on where to place their bets, and designed to attract traffic.
 
             Content structure (do not include the comments in the output, just follow the structure):
 
