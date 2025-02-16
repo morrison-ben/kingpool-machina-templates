@@ -11,7 +11,7 @@ workflow:
     event_code: "$.get('event_code') or None"
   outputs:
     events: "$.get('events')"
-    workflow-status: "$.get('event_exists') is None and 'skipped' or 'executed'"
+    workflow-status: "$.get('event_exists') is not True and 'skipped' or 'executed'"
   tasks:
     
     # 0 load-event-by-code
@@ -31,6 +31,10 @@ workflow:
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
         research_team_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('research_team_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+        team_home_name: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[0].get('name') if $.get('documents') else None"
+        team_away_name: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[1].get('name') if $.get('documents') else None"
+        team_home_id: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[0].get('id') if $.get('documents') else None"
+        team_away_id: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[1].get('id') if $.get('documents') else None"
 
     # 1 load-event-by-schedule
     - type: "document"
@@ -55,6 +59,10 @@ workflow:
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
         research_team_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('research_team_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+        team_home_name: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[0].get('name') if $.get('documents') else None"
+        team_away_name: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[1].get('name') if $.get('documents') else None"
+        team_home_id: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[0].get('id') if $.get('documents') else None"
+        team_away_id: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[1].get('id') if $.get('documents') else None"
 
     # 2 version-control-update
     - type: "document"
@@ -92,6 +100,20 @@ workflow:
         team: "$.get('event_selected').get('sport_event', {}).get('competitors', [])[0]"
       outputs:
         research-team-history-home: "$"
+        research-team-history-home-bulk: |
+          [
+            {
+              'subject': '$.(title)',
+              'text': c.get('content', ''),
+              'title': f"$.(team_home_name) - {c.get('title', '')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'team_id': '$.(team_home_id)',
+                'language': 'en'
+              }
+            }
+            for c in $.get('snippets', [])
+          ]
 
     # 4 research-team-history (away team)
     - type: "prompt"
@@ -107,8 +129,87 @@ workflow:
         team: "$.get('event_selected').get('sport_event', {}).get('competitors', [])[1]"
       outputs:
         research-team-history-away: "$"
+        research-team-history-away-bulk: |
+          [
+            {
+              'subject': '$.(title)',
+              'text': c.get('content', ''),
+              'title': f"$.(team_away_name) - {c.get('title', '')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'team_id': '$.(team_away_id)',
+                'language': 'en'
+              }
+            }
+            for c in $.get('snippets', [])
+          ]
         
-    # 5 version-control-success
+    # 5 update-documents (home team)
+    - type: "document"
+      name: "update-documents-home"
+      description: "Update the documents."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        team-history: |
+          {
+            "execution": datetime.utcnow(),
+            "content": $.get('research-team-history-home'),
+            "title": f"{$.get('team_home_name')} History",
+            "status": 'active'
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+        team_id: "$.get('team_home_id')"
+
+    # 6 update-documents (away team)
+    - type: "document"
+      name: "update-documents-away"
+      description: "Update the documents."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        team-history: |
+          {
+            "execution": datetime.utcnow(),
+            "content": $.get('research-team-history-away'),
+            "title": f"{$.get('team_away_name')} History",
+            "status": 'active'
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+        team_id: "$.get('team_away_id')"
+    
+    # 7 update-snippets
+    - type: "document"
+      name: "update-snippets"
+      condition: "$.get('event_exists') is True"
+      description: "Update the snippets."
+      config:
+        action: "bulk-save"
+        embed-vector: true
+        force-update: true
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      document_name: "content-snippet"
+      documents:
+        items: "$.get('parsed-items')"
+      inputs:
+        parsed-items: |
+          [
+            *$.get('research-team-history-home-bulk', []),
+            *$.get('research-team-history-away-bulk', []),
+          ]
+    
+    # 8 version-control-success
     - type: "document"
       name: "version-control-success"
       description: "Update the events document version control."
@@ -132,7 +233,7 @@ workflow:
       metadata:
         event_code: "$.get('event_code')"
 
-    # 6 version-control-failure
+    # 9 version-control-failure
     - type: "document"
       name: "version-control-failure"
       description: "Update the events document version control."
