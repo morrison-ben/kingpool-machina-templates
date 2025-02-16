@@ -79,9 +79,9 @@ workflow:
       metadata:
         event_code: "$.get('event_code')"
 
-    # 3 prompt-image-briefing
+    # 3 prompt-image-soccer
     - type: "prompt"
-      name: "prompt-reporter-image-soccer"
+      name: "prompt-image-soccer"
       description: "Generate an image briefing for a soccer match."
       condition: "$.get('event-exists') is True"
       connector:
