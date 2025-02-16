@@ -1,12 +1,10 @@
 workflow:
-  name: "reporter-briefing"
-  title: "Reporter Briefing"
-  description: "Workflow to produce briefing in English."
+  name: "reporter-odds"
+  title: "Reporter Odds"
+  description: "Workflow to produce odds analysis."
   context-variables:
     debugger:
       enabled: true
-    api-perplexity:
-      basicAuth: "$TEMP_CONTEXT_VARIABLE_PERPLEXITY_API_KEY"
     api-sportingbet:
       Bwin-AccessId: "$TEMP_CONTEXT_VARIABLE_BWIN_ACCESS_ID"
       Bwin-AccessIdToken: "$TEMP_CONTEXT_VARIABLE_BWIN_ACCESS_ID_TOKEN"
@@ -14,14 +12,10 @@ workflow:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
   inputs:
     event_code: "$.get('event_code') or None"
-    perplexity_model: "$.get('perplexity_model', 'llama-3.1-sonar-small-128k-online')"
-    perplexity_max_tokens: "$.get('perplexity_max_tokens', 10000)"
-    perplexity_top_p: "$.get('perplexity_top_p', 0.9)"
-    perplexity_temperature: "$.get('perplexity_temperature', 0.2)"
-    system_message: "$.get('system_message', 'Please create a comprehensive pre-match report focused on the specified team. Include: - Recent team form and performance trends - Key player statistics and notable performances - Historical performance against the upcoming opponent - Significant team records and milestones that could be achieved in this match - Injury updates and expected lineup changes - Teams playing style and tactical approaches - Notable achievements and records from this season - Any relevant historical context or interesting facts about the team. Focus on information that provides valuable context for the upcoming match.')"
   outputs:
     events: "$.get('events')"
     workflow-status: "$.get('selected-fixture-exists') is not True and ($.get('event_exists') is not True and 'skipped' or 'failed') or 'executed'"
+  
   tasks:
     
     # 0 load-event-by-code
@@ -39,7 +33,7 @@ workflow:
       outputs:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        reporter_briefing_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_briefing_count', 0) if $.get('documents') else None"
+        reporter_odds_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_odds_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
 
     # 1 load-event-by-schedule
@@ -55,7 +49,7 @@ workflow:
         value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
         value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=72)}"
         value.version_control.processing: "{'$ne': True}"
-        value.version_control.reporter_briefing_status: "{'$exists': False}"
+        value.version_control.reporter_odds_status: "{'$exists': False}"
         # value.version_control.updated: "{'$lt': datetime.utcnow() - timedelta(minutes=2)}"
       inputs:
         name: "'schedule'"
@@ -63,7 +57,7 @@ workflow:
         event_code: "$.get('documents')[0].get('value').get('sport_event', {}).get('id') if $.get('documents') else None"
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        reporter_briefing_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_briefing_count', 0) if $.get('documents') else None"
+        reporter_odds_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_odds_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
 
     # 2 version-control-update
@@ -82,7 +76,7 @@ workflow:
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': True,
-              'reporter_briefing_status': 'processing'
+              'reporter_odds_status': 'processing'
             }
           }
       metadata:
@@ -114,73 +108,6 @@ workflow:
         selected-fixture-id: "$.get('documents')[0].get('value', {}).get('id', {}).get('entityId') if $.get('documents') else None"
         similarity-score: "$.get('documents')[0].get('similarity') if $.get('documents') else None"
 
-    # 4 research-game-news
-    - type: "connector"
-      name: "fetch-perplexity-api"
-      condition: "$.get('event_exists') is True"
-      connector:
-        name: "api-perplexity"
-        command: "post-chat/completions"
-      inputs:
-        body: |
-          {
-            'model': $.get('perplexity_model'),
-            'messages': [
-              {
-                'role': 'system',
-                'content': $.get('system_message')
-              },{
-                'role': 'user',
-                'content': f"Create a news report about the game {$.get('title')}"
-              }
-            ],
-            'max_tokens': $.get('perplexity_max_tokens'),
-            'temperature': $.get('perplexity_temperature'),
-            'top_p': $.get('perplexity_top_p'),
-            'return_citations': $.get('return_citations', True),
-            'return_images': $.get('return_images', False),
-            'return_related_questions': $.get('return_related_questions', True),
-            'search_recency_filter': $.get('search_recency_filter', 'week'),
-            'top_k': $.get('top_k', 0),
-            'stream': $.get('stream', False),
-            'presence_penalty': $.get('presence_penalty', 0),
-            'frequency_penalty': $.get('frequency_penalty', 1)
-          }
-      outputs:
-        result-game-news: "$.get('choices')[0].get('message').get('content')"
-
-    # 5 research-home-news-rating (home team)
-    - type: "prompt"
-      name: "research-team-news"
-      description: "Generate research team news."
-      condition: "$.get('event_exists') is True"
-      connector:
-        name: "sdk-openai"
-        command: "invoke_prompt"
-        model: "gpt-4o"
-      inputs:
-        title: "$.get('title')"
-        team: "$.get('event_selected').get('sport_event', {}).get('competitors', [])[0]"
-        news: "$.get('result-home-news')"
-      outputs:
-        research-game-news: "$"
-
-    # 6 research-away-news-rating (away team)
-    - type: "prompt"
-      name: "research-team-news"
-      description: "Generate research team news."
-      condition: "$.get('event_exists') is True"
-      connector:
-        name: "sdk-openai"
-        command: "invoke_prompt"
-        model: "gpt-4o"
-      inputs:
-        title: "$.get('title')"
-        team: "$.get('event_selected').get('sport_event', {}).get('competitors', [])[1]"
-        news: "$.get('result-away-news')"
-      outputs:
-        research-game-news: "$"
-
     # 4 verify-selected-fixture
     - type: "prompt"
       name: "verify-selected-fixture"
@@ -201,6 +128,7 @@ workflow:
     - type: "connector"
       name: "load-market-by-fixture"
       description: "Get a market by fixture from Sportingbet"
+      condition: "$.get('event_exists') is True and $.get('selected-fixture-exists') is True"
       connector:
         name: "api-sportingbet"
         command: "get-offer/api/{sportId}/{country}/fixtures"
@@ -221,7 +149,7 @@ workflow:
             if m.get('marketType') == 'Over/Under' or m.get('marketSubType') == '2Up3wayPricing'
           ]
 
-    # 7 research-match-odds
+    # 6 research-match-odds
     - type: "prompt"
       name: "research-match-odds"
       description: "Research match odds."
@@ -235,90 +163,60 @@ workflow:
         markets: "$.get('bulk-markets')"
       outputs:
         research-match-odds: "$"
-
-    # 3 prompt-reporter-preview-br
-    - type: "prompt"
-      name: "prompt-reporter-preview-br"
-      description: "Generate a preview for the upcoming game"
-      condition: "$.get('event_exists') is True"
-      connector:
-        name: "sdk-openai"
-        command: "invoke_prompt"
-        model: "gpt-4o"
-      inputs:
-        start_time: "$.get('event_selected').get('start_time')"
-        content-snippets: |
+        research-match-odds-bulk: |
           [
-            *$.get('research-home-news', {}).get('snippets', []),
-            *$.get('research-away-news', {}).get('snippets', []),
-            *$.get('research-match-odds', {}).get('snippets', [])
+            {
+              'subject': '$.(title)',
+              'text': c.get('content', ''),
+              'title': f"$.(title) - {c.get('title', '')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'language': 'en'
+              }
+            }
+            for c in $.get('snippets', [])
           ]
-      outputs:
-        content-preview-br: "$"
 
-    # 3 prompt-reporter-preview-en
-    - type: "prompt"
-      name: "prompt-reporter-preview-en"
-      description: "Generate a preview for the upcoming game"
-      condition: "$.get('event_exists') is True"
-      connector:
-        name: "sdk-openai"
-        command: "invoke_prompt"
-        model: "gpt-4o"
-      inputs:
-        start_time: "$.get('event_selected').get('start_time')"
-        content-snippets: |
-          [
-            *$.get('research-home-news', {}).get('snippets', []),
-            *$.get('research-away-news', {}).get('snippets', []),
-            *$.get('research-match-odds', {}).get('snippets', [])
-          ]
-      outputs:
-        content-preview-en: "$"
-
-    # 4 update-event-preview-br
+    # 7 update-documents
     - type: "document"
-      name: "update-event-preview-br"
-      description: "Update the document."
-      condition: "$.get('event_exists') is True"
+      name: "update-documents-odds"
+      description: "Update the documents."
+      condition: "$.get('event_exists') is True and $.get('selected-fixture-exists') is True"
       config:
         action: "update"
         embed-vector: false
         force-update: true
       documents:
-        content-preview: |
+        market-odds: |
           {
-            **$.get('content-preview-br', {}),
-            'execution': datetime.utcnow(),
-            'status': 'active'
+            "execution": datetime.utcnow(),
+            "content": $.get('research-match-odds'),
+            "title": f"{$.get('title')} - Market Odds",
+            "status": 'active'
           }
       metadata:
-        document_type: "'content-preview'"
         event_code: "$.get('event_code')"
-        language: "'br'"
-
-    # 4 update-event-preview-en
+    
+    # 8 update-snippets
     - type: "document"
-      name: "update-event-preview-en"
-      description: "Update the document."
+      name: "update-snippets"
       condition: "$.get('event_exists') is True"
+      description: "Update the snippets."
       config:
-        action: "update"
-        embed-vector: false
+        action: "bulk-save"
+        embed-vector: true
         force-update: true
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      document_name: "content-snippet"
       documents:
-        content-preview: |
-          {
-            **$.get('content-preview-en', {}),
-            'execution': datetime.utcnow(),
-            'status': 'active'
-          }
-      metadata:
-        document_type: "'content-preview'"
-        event_code: "$.get('event_code')"
-        language: "'en'"
+        items: "$.get('parsed-items')"
+      inputs:
+        parsed-items: "$.get('research-match-odds-bulk')"
 
-    # 8 version-control-success
+    # 9 version-control-success
     - type: "document"
       name: "version-control-success"
       description: "Update the events document version control."
@@ -335,15 +233,15 @@ workflow:
               **$.get('event_selected').get('version_control', {}),
               'game-fixture-id': $.get('selected-fixture-id'),
               'processing': False,
-              'reporter_briefing_count': $.get('reporter_briefing_count', 0) + 1,
-              'reporter_briefing_status': 'processed',
+              'reporter_odds_count': $.get('reporter_odds_count', 0) + 1,
+              'reporter_odds_status': 'processed',
               'updated': datetime.utcnow()
             }
           }
       metadata:
         event_code: "$.get('event_code')"
 
-    # 9 version-control-failure
+    # 10 version-control-failure
     - type: "document"
       name: "version-control-failure"
       description: "Update the events document version control."
@@ -359,7 +257,7 @@ workflow:
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': False,
-              'reporter_briefing_failed': $.get('reporter_briefing_count', 0) + 1,
+              'reporter_odds_failed': $.get('reporter_odds_count', 0) + 1,
               'updated': datetime.utcnow()
             }
           }

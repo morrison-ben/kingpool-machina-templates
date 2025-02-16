@@ -5,13 +5,10 @@ setup:
     - special-templates
   estimatedTime: 15 minutes
   features:
-    - Real-time Odds Analysis
-    - Historical Performance
-    - AI Insights
-    - Custom Models
-    - Personalized Recommendations
-    - Betting Pattern Analysis
-    - Risk Profile Assessment
+    - AI Agent to generate personalized recommendations based on betting history.
+    - AI Reporter to generate articles, briefings, and snippets.
+    - AI Image Generator to generate images for the blog, using a soccer match as context.
+    - AI Researcher to generate semantic snippets to enrich the articles.
   integrations:
     - sportradar
   status: available
@@ -50,27 +47,29 @@ datasets:
   - type: "workflow"
     path: "../connector-sportingbet/sync-fixtures.yml"
 
-  # reporter-briefing
+  # reporter-editor
   - type: "workflow"
-    path: "reporter-briefing.yml"
+    path: "reporter-editor.yml"
 
   # reporter-image
-  - type: "prompts"
-    path: "../reporter-image/prompt-reporter-image.yml"
   - type: "workflow"
-    path: "../reporter-image/workflow-image-preview.yml"
-
-  # research-team
-  - type: "workflow"
-    path: "research-team.yml"
+    path: "reporter-image.yml"
 
   # research-news
   - type: "workflow"
     path: "research-news.yml"
 
-  # prompts
-  - type: "prompts"
-    path: "_prompts.yml"
+  # reporter-odds
+  - type: "workflow"
+    path: "reporter-odds.yml"
+
+  # reporter-stats
+  - type: "workflow"
+    path: "reporter-stats.yml"
+
+  # research-team
+  - type: "workflow"
+    path: "research-team.yml"
 
   # populate-folders
   - type: "workflow"
@@ -79,6 +78,10 @@ datasets:
   # populate-content
   - type: "agent"
     path: "_populate.yml"
+
+  # prompts
+  - type: "prompts"
+    path: "_prompts.yml"
 
   # populate-scheduler
   - type: "agent"

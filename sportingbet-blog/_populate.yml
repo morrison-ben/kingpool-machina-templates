@@ -24,7 +24,8 @@ agent:
       description: "sync-seasons"
       condition: "$.get('setup-register') is not True"
       inputs:
-        competition_id: "'sr:competition:17'"
+        # competition_id: "'sr:competition:17'"
+        competition_id: "'sr:competition:155'"
       outputs:
         sync-seasons-status: "$.get('workflow-status', False)"
 
@@ -32,7 +33,8 @@ agent:
       description: "sync-standings"
       condition: "$.get('setup-register') is not True"
       inputs:
-        season_id: "'sr:season:118689'"
+        # season_id: "'sr:season:118689'"
+        season_id: "'sr:season:127421'"
       outputs:
         sync-standings-status: "$.get('workflow-status', False)"
 
@@ -40,16 +42,54 @@ agent:
       description: "sync-schedules"
       condition: "$.get('setup-register') is not True"
       inputs:
-        season_id: "'sr:season:118689'"
+        # season_id: "'sr:season:118689'"
+        season_id: "'sr:season:127421'"
       outputs:
         sync-schedules-status: "$.get('workflow-status', False)"
 
+    # sportingbet-sync-fixtures
     - name: "sportingbet-sync-fixtures"
       description: "sync-fixtures"
       condition: "$.get('setup-register') is not True"
       inputs:
         country: "'br'"
-        competitionIds: "'102841'"
+        # competitionIds: "'102841'"
+        competitionIds: "'102540'"
         sportId: "'4'"
       outputs:
         sync-fixtures-status: "$.get('workflow-status', False)"
+
+    # # reporter-image
+    # - name: "reporter-image"
+    #   description: "reporter-image"
+    #   condition: "$.get('setup-register') is not True"
+    #   outputs:
+    #     reporter-image-status: "$.get('workflow-status', False)"
+
+    # # research-news
+    # - name: "research-news"
+    #   description: "research-news"
+    #   condition: "$.get('setup-register') is not True"
+    #   outputs:
+    #     research-news-status: "$.get('workflow-status', False)"
+
+    # # reporter-odds
+    # - name: "reporter-odds"
+    #   description: "reporter-odds"
+    #   condition: "$.get('setup-register') is not True"
+    #   outputs:
+    #     reporter-odds-status: "$.get('workflow-status', False)"
+
+    # # reporter-stats
+    # - name: "reporter-stats"
+    #   description: "reporter-stats"
+    #   condition: "$.get('setup-register') is not True"
+    #   outputs:
+    #     reporter-stats-status: "$.get('workflow-status', False)"
+
+    # # research-team
+    # - name: "research-team"
+    #   description: "research-team"
+    #   condition: "$.get('setup-register') is not True"
+    #   outputs:
+    #     research-team-status: "$.get('workflow-status', False)"

@@ -15,10 +15,10 @@ workflow:
     perplexity_max_tokens: "$.get('perplexity_max_tokens', 10000)"
     perplexity_top_p: "$.get('perplexity_top_p', 0.9)"
     perplexity_temperature: "$.get('perplexity_temperature', 0.2)"
-    system_message: "$.get('system_message', 'Please create a comprehensive pre-match report focused on the specified team. Include: - Recent team form and performance trends - Key player statistics and notable performances - Historical performance against the upcoming opponent - Significant team records and milestones that could be achieved in this match - Injury updates and expected lineup changes - Teams playing style and tactical approaches - Notable achievements and records from this season - Any relevant historical context or interesting facts about the team. Focus on information that provides valuable context for the upcoming match.')"
+    system_message: "$.get('system_message', 'Please create a comprehensive news report focused on the specified team. Include: - Recent team form and performance trends - Key player statistics and notable performances - Historical performance against the upcoming opponent - Significant team records and milestones that could be achieved in this match - Injury updates and expected lineup changes - Teams playing style and tactical approaches - Notable achievements and records from this season - Any relevant historical context or interesting facts about the team. Focus on information that provides valuable context for the upcoming match.')"
   outputs:
     events: "$.get('events')"
-    workflow-status: "$.get('event_exists') is None and 'skipped' or 'executed'"
+    workflow-status: "$.get('event_exists') is not True and 'skipped' or 'executed'"
   tasks:
     
     # 0 load-event-by-code
@@ -37,6 +37,10 @@ workflow:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
         research_news_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('research_news_count', 0) if $.get('documents') else None"
+        team_home_id: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[0].get('id')"
+        team_home_name: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[0].get('name')"
+        team_away_id: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[1].get('id')"
+        team_away_name: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[1].get('name')"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
 
     # 1 load-event-by-schedule
@@ -61,6 +65,10 @@ workflow:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
         research_news_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('research_news_count', 0) if $.get('documents') else None"
+        team_home_id: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[0].get('id')"
+        team_away_id: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[1].get('id')"
+        team_home_name: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[0].get('name')"
+        team_away_name: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[1].get('name')"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
 
     # 2 version-control-update
@@ -102,7 +110,7 @@ workflow:
                 'content': $.get('system_message')
               },{
                 'role': 'user',
-                'content': f"Create a news report about the {$.get('event_selected').get('sport_event', {}).get('competitors', [])[0].get('name')} team in the {$.get('event_selected').get('sport_event', {}).get('sport_event_context', []).get('competition', {}).get('name')}"
+                'content': f"Create a news report about {$.get('team_home_name')}"
               }
             ],
             'max_tokens': $.get('perplexity_max_tokens'),
@@ -137,7 +145,7 @@ workflow:
                 'content': $.get('system_message')
               },{
                 'role': 'user',
-                'content': f"Create a news report about the {$.get('event_selected').get('sport_event', {}).get('competitors', [])[1].get('name')} team in the {$.get('event_selected').get('sport_event', {}).get('sport_event_context', []).get('competition', {}).get('name')}"
+                'content': f"Create a news report about {$.get('team_away_name')}"
               }
             ],
             'max_tokens': $.get('perplexity_max_tokens'),
@@ -170,6 +178,20 @@ workflow:
         news: "$.get('result-home-news')"
       outputs:
         research-home-news: "$"
+        research-home-news-bulk: |
+          [
+            {
+              'subject': '$.(title)',
+              'text': c.get('content', ''),
+              'title': f"$.(team_home_name) - {c.get('title', '')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'team_id': '$.(team_home_id)',
+                'language': 'en'
+              }
+            }
+            for c in $.get('snippets', [])
+          ]
 
     # 6 research-away-news-rating (away team)
     - type: "prompt"
@@ -186,8 +208,87 @@ workflow:
         news: "$.get('result-away-news')"
       outputs:
         research-away-news: "$"
+        research-away-news-bulk: |
+          [
+            {
+              'subject': '$.(title)',
+              'text': c.get('content', ''),
+              'title': f"$.(team_away_name) - {c.get('title', '')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'team_id': '$.(team_away_id)',
+                'language': 'en'
+              }
+            }
+            for c in $.get('snippets', [])
+          ]
 
-    # 5 version-control-success
+    # 7 update-documents (home team)
+    - type: "document"
+      name: "update-documents-home"
+      description: "Update the documents."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        team-news: |
+          {
+            "execution": datetime.utcnow(),
+            "content": $.get('research-home-news'),
+            "title": f"{$.get('team_home_name')} Latest News",
+            "status": 'active'
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+        team_id: "$.get('team_home_id')"
+
+    # 8 update-documents (away team)
+    - type: "document"
+      name: "update-documents-away"
+      description: "Update the documents."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        team-news: |
+          {
+            "execution": datetime.utcnow(),
+            "content": $.get('research-away-news'),
+            "title": f"{$.get('team_away_name')} Latest News",
+            "status": 'active'
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+        team_id: "$.get('team_away_id')"
+    
+    # 9 update-snippets
+    - type: "document"
+      name: "update-snippets"
+      condition: "$.get('event_exists') is True"
+      description: "Update the snippets."
+      config:
+        action: "bulk-save"
+        embed-vector: true
+        force-update: true
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      document_name: "content-snippet"
+      documents:
+        items: "$.get('parsed-items')"
+      inputs:
+        parsed-items: |
+          [
+            *$.get('research-home-news-bulk', []),
+            *$.get('research-away-news-bulk', []),
+          ]
+    
+    # 10 version-control-success
     - type: "document"
       name: "version-control-success"
       description: "Update the events document version control."
@@ -211,7 +312,7 @@ workflow:
       metadata:
         event_code: "$.get('event_code')"
 
-    # 6 version-control-failure
+    # 11 version-control-failure
     - type: "document"
       name: "version-control-failure"
       description: "Update the events document version control."

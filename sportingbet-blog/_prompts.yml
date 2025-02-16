@@ -62,25 +62,14 @@ prompts:
                 type: "number"
                 description: "The confidence score for the historical accuracy of the information (0.0 to 1.0)."
             required: ["title", "content", "confidence"]
-          minItems: 10
+          minItems: 3
           maxItems: 10
 
   # research-team-news
   - type: "prompt"
     title: "Research Team News"
     name: "research-team-news"
-    description: |
-      You are creating a comprehensive historical briefing about a sports competition or event.
-      
-      Provide key historical information and notable facts about the topic, including:
-      1. Origin and evolution of the competition
-      2. Most successful teams/athletes
-      3. Memorable moments and iconic matches
-      4. Record holders and significant achievements
-      5. Historical impact and cultural significance
-      6. Interesting traditions and unique features
-      
-      Focus on providing engaging, well-researched facts that capture the essence and history of the competition.
+    description: "This prompt generates a news report about a sports team."
     schema:
       title: "ResearchTeamNews"
       description: "This schema defines the structure for generating a news report about a sports team."
@@ -119,7 +108,7 @@ prompts:
             properties:
               title:
                 type: "string"
-                description: "The category of news information (e.g., 'Match Reports', 'Training Updates', 'Press Conference Highlights', 'Squad Updates', 'Upcoming Fixtures')."
+                description: "The category of news information."
               content:
                 type: "string"
                 description: "Detailed current information and recent developments about the specific aspect of the team's situation."
@@ -127,7 +116,7 @@ prompts:
                 type: "number"
                 description: "The confidence score for the accuracy of the news information (0.0 to 1.0)."
             required: ["title", "content", "confidence"]
-          minItems: 10
+          minItems: 3
           maxItems: 10
 
   # research-match-odds
@@ -192,7 +181,7 @@ prompts:
                 type: "number"
                 description: "The confidence score for the accuracy of the odds analysis (0.0 to 1.0)."
             required: ["title", "content", "confidence"]
-          minItems: 10
+          minItems: 3
           maxItems: 10
 
   # prompt-reporter-preview-br
@@ -374,6 +363,106 @@ prompts:
             8. Use natural humor when appropriate
             9. Keep focus on betting
             10. Write as an expert who values accuracy"
+
+  # prompt-reporter-image-soccer
+  - type: "prompt"
+    title: "Reporter Image - Soccer"
+    name: "prompt-reporter-image-soccer"
+    description: "This schema defines the structure to generate a detailed image briefing for a soccer match."
+    schema:
+      title: "ReporterImageBriefing"
+      description: "This schema defines the structure to generate a detailed image briefing for a soccer match."
+      type: "object"
+      properties:
+        image-briefing:
+          type: "string"
+          description: "Create a prompt for a blog image, following these instructions and the context below: The image should capture the excitement and energy of a major soccer match, in a semi-realistic style with vibrant, bold colors and dynamic lighting. The scene should be set in a context that showcases the passion and dedication of the fans, such as a packed stadium, a lively fan zone, a city street filled with supporters, etc, be creative here. Incorporate creative visual elements that convey the intensity and drama of the event, while maintaining a consistent visual language that is characterized by: a bold and bright color palette, sharp lines and geometric shapes, high-contrast lighting with deep shadows, and a mix of textured and smooth surfaces. The visual style should be modern, edgy, and attention-grabbing, with a sense of energy and movement that draws the viewer in. The image should be perfect for a sports betting blog, evoking the thrill of the game and the rush of placing a bet."
+
+  # prompt-reporter-image-stadium
+  - type: "prompt"
+    title: "Reporter Image - Stadium"
+    name: "prompt-reporter-image-stadium"
+    description: "This schema defines the structure to generate a detailed image briefing for a soccer match stadium."
+    schema:
+      title: "ImageBriefingStadium"
+      description: "This schema defines the structure to generate a detailed image briefing for a soccer match."
+      type: "object"
+      properties:
+        image-briefing:
+          type: "string"
+          description: "Create a prompt for a blog image, following these instructions and the context below: The image should show an external view of a soccer stadium from the top of a hill overlooking it. The stadium is packed to full capacity, with the supporters colors clearly visible in banners, lights, and the crowd. The surrounding area should feature fans heading toward the stadium, adding to the excitement. The style should be semi-realistic, with vibrant colors to capture the lively and energetic atmosphere of the event."
+
+  # prompt-reporter-image-referee
+  - type: "prompt"
+    title: "Reporter Image - Referee"
+    name: "prompt-reporter-image-referee"
+    description: "This schema defines the structure to generate a detailed image briefing for a soccer match referee."
+    schema:
+      title: "ImageBriefingReferee"
+      description: "This schema defines the structure to generate a detailed image briefing for a soccer match."
+      type: "object"
+      properties:
+        image-briefing:
+          type: "string"
+          description: "Create a prompt for a blog image, following these instructions and the context below: The image should show a soccer referee in a dramatic moment on the field, with a determined expression as they hold up a red or yellow card. The referee should be wearing the traditional black uniform and be positioned in the foreground against a blurred stadium background filled with spectators. The lighting should highlight the authority and intensity of the moment, with the referee's stance conveying confidence and decisiveness. The style should be semi-realistic, capturing the tension and gravity of an important disciplinary decision during a match."
+
+  # prompt-reporter-standings
+  - type: "prompt"
+    title: "Reporter Standings"
+    name: "prompt-reporter-standings"
+    description: "This schema defines the structure to generate a detailed standings analysis comparing two teams' positions and performance in their competition."
+    schema:
+      title: "ReporterStandings"
+      description: "This schema defines the structure to generate a comparative standings analysis for two teams in a soccer match."
+      type: "object"
+      properties:
+        snippets:
+          type: "array"
+          description: "An array of snippets analyzing the teams' standings and recent performance."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The category of standings analysis (e.g., league positions comparison, form analysis, points gap, etc)."
+              content:
+                type: "string"
+                description: "Detailed comparative analysis of both teams' standings situation, including positions, points, recent form, and relevant performance metrics."
+              confidence:
+                type: "number"
+                description: "The confidence score for the accuracy of the standings analysis (0.0 to 1.0)."
+            required: ["title", "content", "confidence"]
+          minItems: 3
+          maxItems: 10
+
+  # prompt-reporter-comparison
+  - type: "prompt"
+    title: "Reporter Comparison"
+    name: "prompt-reporter-comparison"
+    description: "This schema defines the structure to generate a detailed comparison analysis between two teams' standings and recent performance."  
+    schema:
+      title: "ReporterComparison"
+      description: "This schema defines the structure to generate a detailed comparison analysis between two teams' standings and recent performance."
+      type: "object"
+      properties:
+        snippets:
+          type: "array"
+          description: "An array of snippets analyzing the teams' comparison."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The category of comparison analysis (e.g., 'Head-to-Head Comparison', 'Recent Form Comparison', 'Points Gap Comparison', etc)."
+              content:
+                type: "string"
+                description: "Detailed comparative analysis of both teams' comparison situation, including standings, recent form, and relevant performance metrics."
+              confidence:
+                type: "number"
+                description: "The confidence score for the accuracy of the comparison analysis (0.0 to 1.0)."
+            required: ["title", "content", "confidence"]
+          minItems: 3
+          maxItems: 10
 
   # verify-selected-fixture
   - type: "prompt"
