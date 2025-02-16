@@ -224,7 +224,7 @@ prompts:
             Estrutura do conteúdo (não inclua os comentários no output, apenas siga a estrutura):
 
             **História do Jogo:**  
-            Descreva, em até 150 palavras, a visão geral da partida, incluindo o horário de início (campo "start_time" convertido de GMT para o horário local), as implicações na classificação, notícias importantes, a história entre as equipes e encontros recentes.
+            Descreva, em até 150 palavras, a visão geral da partida, incluindo a data e o horário de início (campo "start_time" convertido de GMT para o horário local), as implicações na classificação, notícias importantes, a história entre as equipes e encontros recentes.
             
             ## As odds para [Time A] x [Time B]
             
@@ -283,7 +283,7 @@ prompts:
             Content structure (do not include the comments in the output, just follow the structure):
 
             **Game Overview:**  
-            In up to 150 words, describe the overall story of the match, including the match start time (using the "start_time" field converted from GMT to local time), its implications on the standings, important news, the history between the teams, and recent encounters.
+            In up to 150 words, describe the overall story of the match, including the match date and start time (using the "start_time" field converted from GMT to local time), its implications on the standings, important news, the history between the teams, and recent encounters.
             
             ## Odds for [Team A] vs [Team B]
             
