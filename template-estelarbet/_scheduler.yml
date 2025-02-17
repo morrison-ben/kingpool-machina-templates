@@ -1,0 +1,43 @@
+agent:
+  name: "scheduler-workflow"
+  title: "Scheduler Configuration"
+  description: "Agent responsible for scheduling workflows."
+  context:
+    config-frequency: 1
+  workflows:
+        
+    # Reporter Editor
+    - name: "reporter-editor"
+      description: "Reporter Editor"
+      outputs:
+        reporter-editor: "$.get('workflow-status', False)"
+
+    # Reporter Image
+    - name: "reporter-image-soccer"
+      description: "Reporter Image - Soccer"
+      outputs:
+        reporter-image-soccer: "$.get('workflow-status', False)"
+
+    # Reporter Odds
+    - name: "reporter-odds"
+      description: "Reporter Odds"
+      outputs:
+        reporter-odds: "$.get('workflow-status', False)"
+
+    # Reporter Stats
+    - name: "reporter-stats"
+      description: "Reporter Stats"
+      outputs:
+        reporter-stats: "$.get('workflow-status', False)"
+
+    # Reporter Team History
+    - name: "research-team"
+      description: "Reporter Team History"
+      outputs:
+        reporter-team-history: "$.get('workflow-status', False)"
+
+    # Reporter Team News
+    - name: "research-news"
+      description: "Reporter Team News"
+      outputs:
+        reporter-team-news: "$.get('workflow-status', False)"
