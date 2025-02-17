@@ -45,7 +45,7 @@ prompts:
   # reporter-preview-es
   - type: "prompt"
     title: "Blog Reporter Game Preview"
-    name: "prompt-reporter-preview-es"
+    name: "prompt-reporter-article-es"
     description: "This prompt generates the title, subtitle, and slug for a blog post in Spanish about an upcoming match. The tone should be professional yet personable, like a knowledgeable friend who understands betting and knows how to inform while entertaining. Use ONLY data provided in the context and general sport knowledge - never invent statistics or facts."
     schema:
       title: "ContenidoVistaPreviaBlog"

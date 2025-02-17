@@ -280,7 +280,7 @@ workflow:
     - type: "document"
       name: "version-control-failure"
       description: "Update the events document version control."
-      condition: "$.get('event_exists') is False"
+      condition: "$.get('event_exists') is not True"
       config:
         action: "update"
         embed-vector: false

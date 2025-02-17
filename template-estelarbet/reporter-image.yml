@@ -31,7 +31,7 @@ workflow:
       outputs:
         event-exists: "len($.get('documents', [])) > 0"
         event-selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        image_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('image_count', 0) if $.get('documents') else None"
+        reporter_image_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_image_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
 
     # 1 load-event-by-schedule
@@ -47,14 +47,14 @@ workflow:
         value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
         value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=72)}"
         value.version_control.processing: "{'$ne': True}"
-        value.version_control.reporter_image_preview: "{'$exists': False}"
+        value.version_control.reporter_image_status: "{'$exists': False}"
       inputs:
         name: "'schedule'"
       outputs:
         event_code: "$.get('documents')[0].get('value').get('sport_event', {}).get('id') if $.get('documents') else None"
         event-exists: "len($.get('documents', [])) > 0"
         event-selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        image_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('image_count', 0) if $.get('documents') else None"
+        reporter_image_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_image_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
 
     # 2 version-control-start
@@ -73,7 +73,7 @@ workflow:
             'version_control': {
               **$.get('event-selected').get('version_control', {}),
               'processing': True,
-              'reporter_image_preview': 'processing'
+              'reporter_image_status': 'processing'
             }
           }
       metadata:
@@ -154,7 +154,7 @@ workflow:
     - type: "document"
       name: "version-control-end"
       description: "Update the events document preevent."
-      condition: "$.get('event-exists') is True"
+      condition: "$.get('event-exists') is not True"
       config:
         action: "update"
         embed-vector: false
@@ -166,8 +166,8 @@ workflow:
             'version_control': {
               **$.get('event-selected').get('version_control', {}),
               'processing': False,
-              'image_count': $.get('image_count', 0) + 1,
-              'reporter_image_preview': 'processed',
+              'reporter_image_count': $.get('reporter_image_count', 0) + 1,
+              'reporter_image_status': 'processed',
               'updated': datetime.utcnow()
             }
           }
