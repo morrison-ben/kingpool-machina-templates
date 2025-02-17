@@ -65,15 +65,16 @@ agent:
       outputs:
         sync-seasons-status: "$.get('workflow-status', False)"
 
-    # sync-standings
-    - name: "workflow-sync-standings"
-      description: "sync-standings"
+    # sync la liga schedules
+    - name: "workflow-sync-schedules"
+      description: "sync-schedules"
       condition: "$.get('setup-register') is not True"
       inputs:
-        season_id: "'sr:season:118975'"
+        season_id: "'sr:season:118691'"
       outputs:
-        sync-standings-status: "$.get('workflow-status', False)"
+        sync-schedules-status: "$.get('workflow-status', False)"
 
+    # sync serie A schedules
     - name: "workflow-sync-schedules"
       description: "sync-schedules"
       condition: "$.get('setup-register') is not True"
@@ -82,13 +83,73 @@ agent:
       outputs:
         sync-schedules-status: "$.get('workflow-status', False)"
 
-    # sportingbet-sync-fixtures
+    # sync bundesliga schedules
+    - name: "workflow-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:118693'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
+
+    # sync premier league schedules
+    - name: "workflow-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:118689'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
+
+    # sync copa chile schedules
+    - name: "workflow-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:127907'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
+
+    # sportingbet-sync-la liga fixtures
+    - name: "sportingbet-sync-fixtures"
+      description: "sync-fixtures"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102829'"
+        sportId: "'4'"
+      outputs:
+        sync-fixtures-status: "$.get('workflow-status', False)"
+
+    # sportingbet-sync-serie A fixtures
     - name: "sportingbet-sync-fixtures"
       description: "sync-fixtures"
       condition: "$.get('setup-register') is not True"
       inputs:
         country: "'br'"
         competitionIds: "'102846'"
+        sportId: "'4'"
+      outputs:
+        sync-fixtures-status: "$.get('workflow-status', False)"
+
+    # sportingbet-sync-bundesliga fixtures
+    - name: "sportingbet-sync-fixtures"
+      description: "sync-fixtures"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102842'"
+        sportId: "'4'"
+      outputs:
+        sync-fixtures-status: "$.get('workflow-status', False)"
+
+    # sportingbet-sync-premier league fixtures
+    - name: "sportingbet-sync-fixtures"
+      description: "sync-fixtures"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102841'"
         sportId: "'4'"
       outputs:
         sync-fixtures-status: "$.get('workflow-status', False)"

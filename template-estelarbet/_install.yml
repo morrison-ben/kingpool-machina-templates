@@ -35,8 +35,6 @@ datasets:
   - type: "workflow"
     path: "../sportradar-soccer/workflow-sync-competitions.yml"
   - type: "workflow"
-    path: "../sportradar-soccer/workflow-sync-probabilities.yml"
-  - type: "workflow"
     path: "../sportradar-soccer/workflow-sync-schedules.yml"
   - type: "workflow"
     path: "../sportradar-soccer/workflow-sync-seasons.yml"
