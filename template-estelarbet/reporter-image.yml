@@ -154,7 +154,7 @@ workflow:
     - type: "document"
       name: "version-control-end"
       description: "Update the events document preevent."
-      condition: "$.get('event-exists') is not True"
+      condition: "$.get('event-exists') is True"
       config:
         action: "update"
         embed-vector: false

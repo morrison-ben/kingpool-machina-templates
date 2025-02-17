@@ -311,27 +311,3 @@ workflow:
           }
       metadata:
         event_code: "$.get('event_code')"
-
-    # 11 version-control-failure
-    - type: "document"
-      name: "version-control-failure"
-      description: "Update the events document version control."
-      condition: "$.get('event_exists') is not True"
-      config:
-        action: "update"
-        embed-vector: false
-        force-update: true
-      documents:
-        schedule: |
-          {
-            **$.get('event_selected'),
-            'version_control': {
-              **$.get('event_selected').get('version_control', {}),
-              'processing': False,
-              'research_news_failed': $.get('research_news_count', 0) + 1,
-              'updated': datetime.utcnow()
-            }
-          }
-      metadata:
-        event_code: "$.get('event_code')"
-
