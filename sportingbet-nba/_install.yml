@@ -15,7 +15,7 @@ setup:
   integrations:
     - sportradar
   status: available
-  value: "sportradar-nba"
+  value: "sportingbet-nba"
   version: 1.0.0
 
 datasets:
