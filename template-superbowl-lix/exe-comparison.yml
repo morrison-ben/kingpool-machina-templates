@@ -3,7 +3,7 @@ workflow:
   title: "Reporter Comparisons"
   description: "Workflow to produce comparisons."
   context-variables:
-    api-sr-nfl:
+    api-sportradar-nfl:
       sportradar_api_key: "$TEMP_CONTEXT_VARIABLE_SPORTRADAR_SOCCER_V4_API_KEY"
     sdk-openai:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
@@ -108,7 +108,7 @@ workflow:
       name: "fetch-player-1"
       description: "Get a player 1 from SportRadar"
       connector:
-        name: "api-sr-nfl"
+        name: "api-sportradar-nfl"
         command: "get-players/{player_id}/{data_type}"
         command_attribute:
           player_id: "$.get('player1_id')"
@@ -148,7 +148,7 @@ workflow:
       name: "fetch-player-2"
       description: "Get a player 2 from SportRadar"
       connector:
-        name: "api-sr-nfl"
+        name: "api-sportradar-nfl"
         command: "get-players/{player_id}/{data_type}"
         command_attribute:
           player_id: "$.get('player2_id')"

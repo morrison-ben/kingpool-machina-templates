@@ -3,7 +3,7 @@ workflow:
   title: "Sync Teams"
   description: "Workflow to synchronize teams from SportRadar NFL API to Machina."
   context-variables:
-    api-sr-nfl:
+    api-sportradar-nfl:
       sportradar_api_key: "$TEMP_CONTEXT_VARIABLE_SPORTRADAR_SOCCER_V4_API_KEY"
     sdk-openai:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
@@ -87,7 +87,7 @@ workflow:
       description: "Get Sport_Events/Summary from SportRadar"
       condition: "$.get('event_exists') is True"
       connector:
-        name: "api-sr-nfl"
+        name: "api-sportradar-nfl"
         command: "get-teams/{team_id}/{data_type}"
         command_attribute:
           data_type: "'profile.json'"
@@ -115,7 +115,7 @@ workflow:
       description: "Get Sport_Events/Summary from SportRadar"
       condition: "$.get('event_exists') is True"
       connector:
-        name: "api-sr-nfl"
+        name: "api-sportradar-nfl"
         command: "get-teams/{team_id}/{data_type}"
         command_attribute:
           data_type: "'profile.json'"
@@ -143,7 +143,7 @@ workflow:
       description: "Get Sport_Events/Stats from SportRadar"
       condition: "$.get('event_exists') is True"
       connector:
-        name: "api-sr-nfl"
+        name: "api-sportradar-nfl"
         command: "get-seasons/{season_year}/{season_type}/teams/{team_id}/{data_type}"
         command_attribute:
           data_type: "'statistics.json'"
@@ -161,7 +161,7 @@ workflow:
       description: "Get Sport_Events/Stats from SportRadar"
       condition: "$.get('event_exists') is True"
       connector:
-        name: "api-sr-nfl"
+        name: "api-sportradar-nfl"
         command: "get-seasons/{season_year}/{season_type}/teams/{team_id}/{data_type}"
         command_attribute:
           data_type: "'statistics.json'"

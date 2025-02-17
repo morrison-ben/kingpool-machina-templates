@@ -3,7 +3,7 @@ workflow:
   title: "Sync Games"
   description: "Workflow to synchronize a season games from Superbowl LIX API to Machina."
   context-variables:
-    api-sr-nfl:
+    api-sportradar-nfl:
       api_key: "$TEMP_CONTEXT_VARIABLE_SPORTRADAR_SOCCER_V4_API_KEY"
   inputs:
     season_year: "$.get('season_year', '2024')"
@@ -37,7 +37,7 @@ workflow:
       name: "load-games"
       description: "Get a season games from SportRadar"
       connector:
-        name: "api-sr-nfl"
+        name: "api-sportradar-nfl"
         command: "get-games/{season_year}/{season_type}/{data_type}"
         command_attribute:
           season_year: "$.get('season_year')"
