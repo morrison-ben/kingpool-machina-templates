@@ -3,7 +3,7 @@ workflow:
   title: "Reporter Summary"
   description: "Workflow to produce summary content."
   context-variables:
-    api-sr-nba:
+    api-sportradar-nba:
       sportradar_api_key: "$TEMP_CONTEXT_VARIABLE_SPORTRADAR_SOCCER_V4_API_KEY"
     sdk-openai:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
@@ -81,7 +81,7 @@ workflow:
       description: "Get Sport_Events/Summary from SportRadar"
       condition: "$.get('event_exists') is True"
       connector:
-        name: "api-sr-nba"
+        name: "api-sportradar-nba"
         command: "get-games/{game_id}/{data_type}"
         command_attribute:
           data_type: "'summary.json'"

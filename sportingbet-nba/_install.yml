@@ -26,7 +26,7 @@ datasets:
   - type: "connector"
     path: "../connector-perplexity/api-perplexity.yml"
   - type: "connector"
-    path: "../connector-sportradar/api-sr-nba.yml"
+    path: "../connector-sportradar/api-sportradar-nba.yml"
   - type: "connector"
     path: "../connector-sportradar/api-sr-soccer.yml"
   - type: "connector"
