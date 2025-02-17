@@ -50,7 +50,7 @@ workflow:
         search-vector: false
       filters:
         value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
-        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=72)}"
+        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=144)}"
         value.version_control.processing: "{'$ne': True}"
         value.version_control.reporter_stats_status: "{'$exists': False}"
         # value.version_control.updated: "{'$lt': datetime.utcnow() - timedelta(minutes=2)}"
