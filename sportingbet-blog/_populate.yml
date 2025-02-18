@@ -58,38 +58,3 @@ agent:
         sportId: "'4'"
       outputs:
         sync-fixtures-status: "$.get('workflow-status', False)"
-
-    # # reporter-image
-    # - name: "reporter-image"
-    #   description: "reporter-image"
-    #   condition: "$.get('setup-register') is not True"
-    #   outputs:
-    #     reporter-image-status: "$.get('workflow-status', False)"
-
-    # # research-news
-    # - name: "research-news"
-    #   description: "research-news"
-    #   condition: "$.get('setup-register') is not True"
-    #   outputs:
-    #     research-news-status: "$.get('workflow-status', False)"
-
-    # # reporter-odds
-    # - name: "reporter-odds"
-    #   description: "reporter-odds"
-    #   condition: "$.get('setup-register') is not True"
-    #   outputs:
-    #     reporter-odds-status: "$.get('workflow-status', False)"
-
-    # # reporter-stats
-    # - name: "reporter-stats"
-    #   description: "reporter-stats"
-    #   condition: "$.get('setup-register') is not True"
-    #   outputs:
-    #     reporter-stats-status: "$.get('workflow-status', False)"
-
-    # # research-team
-    # - name: "research-team"
-    #   description: "research-team"
-    #   condition: "$.get('setup-register') is not True"
-    #   outputs:
-    #     research-team-status: "$.get('workflow-status', False)"

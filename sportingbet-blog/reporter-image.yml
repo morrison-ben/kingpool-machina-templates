@@ -31,7 +31,7 @@ workflow:
       outputs:
         event-exists: "len($.get('documents', [])) > 0"
         event-selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        image_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('image_count', 0) if $.get('documents') else None"
+        reporter_image_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_image_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
 
     # 1 load-event-by-schedule
@@ -45,7 +45,7 @@ workflow:
         search-vector: false
       filters:
         value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
-        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=72)}"
+        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=144)}"
         value.version_control.processing: "{'$ne': True}"
         value.version_control.reporter_image_preview: "{'$exists': False}"
       inputs:
@@ -54,7 +54,7 @@ workflow:
         event_code: "$.get('documents')[0].get('value').get('sport_event', {}).get('id') if $.get('documents') else None"
         event-exists: "len($.get('documents', [])) > 0"
         event-selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        image_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('image_count', 0) if $.get('documents') else None"
+        reporter_image_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_image_count', 0) if $.get('documents') else None"
         title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
 
     # 2 version-control-start
@@ -166,10 +166,10 @@ workflow:
             'version_control': {
               **$.get('event-selected').get('version_control', {}),
               'processing': False,
-              'image_count': $.get('image_count', 0) + 1,
+              'reporter_image_count': $.get('reporter_image_count', 0) + 1,
               'reporter_image_preview': 'processed',
               'updated': datetime.utcnow()
             }
           }
       metadata:
-        event_code: "$.get('event-selected').get('sport_event', {}).get('id')"
+        event_code: "$.get('event_code')"

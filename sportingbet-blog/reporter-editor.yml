@@ -44,7 +44,7 @@ workflow:
         search-vector: false
       filters:
         value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
-        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=72)}"
+        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=144)}"
         value.version_control.processing: "{'$ne': True}"
         value.version_control.reporter_editor_status: "{'$exists': False}"
         value.version_control.reporter_odds_status: "'processed'"
@@ -313,29 +313,6 @@ workflow:
               'processing': False,
               'reporter_editor_count': $.get('reporter_editor_count', 0) + 1,
               'reporter_editor_status': 'processed',
-              'updated': datetime.utcnow()
-            }
-          }
-      metadata:
-        event_code: "$.get('event_code')"
-
-    # 13 version-control-failure
-    - type: "document"
-      name: "version-control-failure"
-      description: "Update the events document version control."
-      condition: "$.get('event_exists') is False"
-      config:
-        action: "update"
-        embed-vector: false
-        force-update: true
-      documents:
-        schedule: |
-          {
-            **$.get('event_selected'),
-            'version_control': {
-              **$.get('event_selected').get('version_control', {}),
-              'processing': False,
-              'reporter_editor_failed': $.get('reporter_editor_count', 0) + 1,
               'updated': datetime.utcnow()
             }
           }

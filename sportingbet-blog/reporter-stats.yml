@@ -50,7 +50,7 @@ workflow:
         search-vector: false
       filters:
         value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
-        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=72)}"
+        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=144)}"
         value.version_control.processing: "{'$ne': True}"
         value.version_control.reporter_stats_status: "{'$exists': False}"
         # value.version_control.updated: "{'$lt': datetime.utcnow() - timedelta(minutes=2)}"
@@ -291,33 +291,9 @@ workflow:
             **$.get('event_selected'),
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
-              'game-fixture-id': $.get('selected-fixture-id'),
               'processing': False,
               'reporter_stats_count': $.get('reporter_stats_count', 0) + 1,
               'reporter_stats_status': 'processed',
-              'updated': datetime.utcnow()
-            }
-          }
-      metadata:
-        event_code: "$.get('event_code')"
-
-    # 12 version-control-failure
-    - type: "document"
-      name: "version-control-failure"
-      description: "Update the events document version control."
-      condition: "$.get('event_exists') is not True"
-      config:
-        action: "update"
-        embed-vector: false
-        force-update: true
-      documents:
-        schedule: |
-          {
-            **$.get('event_selected'),
-            'version_control': {
-              **$.get('event_selected').get('version_control', {}),
-              'processing': False,
-              'reporter_stats_failed': $.get('reporter_stats_count', 0) + 1,
               'updated': datetime.utcnow()
             }
           }
