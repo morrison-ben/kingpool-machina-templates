@@ -29,15 +29,6 @@ agent:
       outputs:
         sync-seasons-status: "$.get('workflow-status', False)"
 
-    - name: "workflow-sync-standings"
-      description: "sync-standings"
-      condition: "$.get('setup-register') is not True"
-      inputs:
-        # season_id: "'sr:season:118689'"
-        season_id: "'sr:season:127421'"
-      outputs:
-        sync-standings-status: "$.get('workflow-status', False)"
-
     - name: "workflow-sync-schedules"
       description: "sync-schedules"
       condition: "$.get('setup-register') is not True"
