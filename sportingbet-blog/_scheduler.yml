@@ -6,6 +6,46 @@ agent:
     config-frequency: 1
   workflows:
         
+    # sportingbet-sync-la liga fixtures
+    - name: "sportingbet-sync-fixtures"
+      description: "sync-fixtures"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102829'"
+        sportId: "'4'"
+      outputs:
+        sync-fixtures-la-liga-status: "$.get('workflow-status', False)"
+
+    # sportingbet-sync-serie A fixtures
+    - name: "sportingbet-sync-fixtures"
+      description: "sync-fixtures"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102846'"
+        sportId: "'4'"
+      outputs:
+        sync-fixtures-serie-a-status: "$.get('workflow-status', False)"
+
+    # sportingbet-sync-bundesliga fixtures
+    - name: "sportingbet-sync-fixtures"
+      description: "sync-fixtures"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102842'"
+        sportId: "'4'"
+      outputs:
+        sync-fixtures-bundesliga-status: "$.get('workflow-status', False)"
+
+    # sportingbet-sync-premier league fixtures
+    - name: "sportingbet-sync-fixtures"
+      description: "sync-fixtures"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102841'"
+        sportId: "'4'"
+      outputs:
+        sync-fixtures-premier-league-status: "$.get('workflow-status', False)"
+
     # Reporter Editor
     - name: "reporter-editor"
       description: "Reporter Editor"

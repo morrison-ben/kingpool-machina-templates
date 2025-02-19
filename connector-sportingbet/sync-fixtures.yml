@@ -16,13 +16,33 @@ workflow:
     sportId: "$.get('sportId')"
   outputs:
     fixtures: "$.get('fixtures')"
-    workflow-status: "$.get('workflow-status')"
+    workflow-status: "$.get('workflow-status', 'skipped')"
   tasks:
+
+    # 0 version-control-load
+    - type: "document"
+      name: "version-control-load"
+      description: "Load the version controller"
+      condition: "$.get('competitionIds') is not None"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+        search-sorters: ["updated", 1]
+      filters:
+        metadata.country: "$.get('country')"
+        metadata.competitionIds: "$.get('competitionIds')"
+        metadata.sportId: "$.get('sportId')"
+      inputs:
+        name: "'sync-fixtures-controller'"
+      outputs:
+        is_updated: "$.get('documents')[0].get('updated', datetime.utcnow() - timedelta(minutes=30)) > datetime.utcnow() - timedelta(minutes=3) if $.get('documents') else None"
 
     # 1 load-fixtures
     - type: "connector"
       name: "load-fixtures"
       description: "Get a season fixtures from Sportingbet"
+      condition: "$.get('competitionIds') is not None and $.get('is_updated') is not True"
       connector:
         name: "api-sportingbet"
         command: "get-offer/api/{sportId}/{country}/fixtureIndex"
@@ -48,6 +68,7 @@ workflow:
     - type: "document"
       name: "bulk-save-fixtures"
       description: "Bulk save the fixtures."
+      condition: "$.get('competitionIds') is not None and $.get('is_updated') is not True"
       config:
         action: "bulk-save"
         embed-vector: true
@@ -63,3 +84,25 @@ workflow:
           [
             *$.get('bulk-fixtures', [])
           ]
+
+    # 3 version-control-update
+    - type: "document"
+      name: "version-control-update"
+      description: "Update the version controller"
+      condition: "$.get('competitionIds') is not None and $.get('is_updated') is not True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        sync-fixtures-controller: |
+          {
+            'version_control': {
+              'sync_count': $.get('sync_count', 0) + 1,
+              'updated': datetime.utcnow()
+            }
+          }
+      metadata:
+        country: "$.get('country')"
+        competitionIds: "$.get('competitionIds')"
+        sportId: "$.get('sportId')"
