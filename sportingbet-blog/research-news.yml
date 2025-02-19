@@ -33,6 +33,8 @@ workflow:
         search-sorters: ["updated", 1]
       filters:
         value.sport_event.id: "$.get('event_code')"
+      inputs:
+        name: "'schedule'"
       outputs:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"

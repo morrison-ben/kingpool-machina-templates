@@ -20,32 +20,92 @@ agent:
       outputs:
         sync-competitions-status: "$.get('workflow-status', False)"
 
+    # sync la liga
     - name: "workflow-sync-seasons"
       description: "sync-seasons"
       condition: "$.get('setup-register') is not True"
       inputs:
-        # competition_id: "'sr:competition:17'"
+        competition_id: "'sr:competition:8'"
+      outputs:
+        sync-seasons-status: "$.get('workflow-status', False)"
+
+    # sync serie A
+    - name: "workflow-sync-seasons"
+      description: "sync-seasons"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        competition_id: "'sr:competition:23'"
+      outputs:
+        sync-seasons-status: "$.get('workflow-status', False)"
+
+    # sync bundesliga
+    - name: "workflow-sync-seasons"
+      description: "sync-seasons"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        competition_id: "'sr:competition:35'"
+      outputs:
+        sync-seasons-status: "$.get('workflow-status', False)"
+
+    # sync premier league
+    - name: "workflow-sync-seasons"
+      description: "sync-seasons"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        competition_id: "'sr:competition:17'"
+      outputs:
+        sync-seasons-status: "$.get('workflow-status', False)"
+
+    # sync argentina seasons
+    - name: "workflow-sync-seasons"
+      description: "sync-seasons"
+      condition: "$.get('setup-register') is not True"
+      inputs:
         competition_id: "'sr:competition:155'"
       outputs:
         sync-seasons-status: "$.get('workflow-status', False)"
 
+    # sync la liga schedules
     - name: "workflow-sync-schedules"
       description: "sync-schedules"
       condition: "$.get('setup-register') is not True"
       inputs:
-        # season_id: "'sr:season:118689'"
-        season_id: "'sr:season:127421'"
+        season_id: "'sr:season:118691'"
       outputs:
         sync-schedules-status: "$.get('workflow-status', False)"
 
-    # sportingbet-sync-fixtures
-    - name: "sportingbet-sync-fixtures"
-      description: "sync-fixtures"
+    # sync serie A schedules
+    - name: "workflow-sync-schedules"
+      description: "sync-schedules"
       condition: "$.get('setup-register') is not True"
       inputs:
-        country: "'br'"
-        # competitionIds: "'102841'"
-        competitionIds: "'102540'"
-        sportId: "'4'"
+        season_id: "'sr:season:118975'"
       outputs:
-        sync-fixtures-status: "$.get('workflow-status', False)"
+        sync-schedules-status: "$.get('workflow-status', False)"
+
+    # sync bundesliga schedules
+    - name: "workflow-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:118693'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
+
+    # sync premier league schedules
+    - name: "workflow-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:118689'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
+
+    # sync argentina schedules
+    - name: "workflow-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:127421'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"

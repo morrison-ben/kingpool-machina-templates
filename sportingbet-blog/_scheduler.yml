@@ -46,6 +46,16 @@ agent:
       outputs:
         sync-fixtures-premier-league-status: "$.get('workflow-status', False)"
 
+    # sportingbet-sync-argentina fixtures
+    - name: "sportingbet-sync-fixtures"
+      description: "sync-fixtures"
+      inputs:
+        country: "'ar'"
+        competitionIds: "'102540'"
+        sportId: "'4'"
+      outputs:
+        sync-fixtures-argentina-status: "$.get('workflow-status', False)"
+        
     # Reporter Editor
     - name: "reporter-editor"
       description: "Reporter Editor"

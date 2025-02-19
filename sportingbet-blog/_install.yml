@@ -27,9 +27,19 @@ datasets:
   - type: "connector"
     path: "../connector-sportradar-soccer/api-sportradar-soccer.yml"
   - type: "connector"
+    path: "../connector-sportradar-nba/api-sportradar-nba.yml"
+  - type: "connector"
     path: "../connector-stability/sdk-stability.yml"
   - type: "connector"
     path: "../connector-storage/sdk-storage.yml"
+
+  # sportingbet-api
+  - type: "workflow"
+    path: "../connector-sportingbet/sync-fixtures.yml"
+
+  # sportradar-nba-setup
+  - type: "workflow"
+    path: "../connector-sportradar-nba/sync-games.yml"
 
   # sportradar-soccer-setup
   - type: "workflow"
@@ -41,9 +51,9 @@ datasets:
   - type: "workflow"
     path: "../sportradar-soccer/workflow-sync-standings.yml"
 
-  # sportingbet-api
-  - type: "workflow"
-    path: "../connector-sportingbet/sync-fixtures.yml"
+  # sportradar-soccer-transformers
+  - type: "transformers"
+    path: "../sportradar-soccer/_transformers.yml"
 
   # reporter-editor
   - type: "workflow"

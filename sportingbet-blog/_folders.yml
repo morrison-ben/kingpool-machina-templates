@@ -2,6 +2,8 @@ workflow:
   name: "populate-folders"
   title: "Setup Folders"
   description: "Setup Folders"
+  inputs:
+    force-setup: "$.get('force-setup') == 'true'"
   outputs:
     setup-register: "$.get('setup-register')"
     workflow-status: "$.get('setup-register') is True and 'skipped' or 'executed'"
@@ -24,7 +26,7 @@ workflow:
     - type: "document"
       name: "install-documents"
       description: "Install documents."
-      condition: "$.get('setup-register') is not True"
+      condition: "$.get('setup-register') is not True or $.get('force-setup') is True"
       config:
         action: "update"
         embed-vector: false
@@ -71,7 +73,7 @@ workflow:
                   "description": "The schedules synced from the Sportradar API.",
                   "category": "Catalogue",
                   "metadata": {
-                    "name": ["schedules","schedule"]
+                    "name": ["nba-game", "nba-games", "schedules", "schedule"]
                   },
                   "sorters": ['_id', -1],
                   "view": "list"
