@@ -56,9 +56,9 @@ workflow:
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
         research_team_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('research_team_count', 0) if $.get('documents') else None"
 
-    # 2 sportradar-soccer-transformer
-    - type: "transformer"
-      name: "sportradar-soccer-transformer"
+    # 2 sportradar-soccer-mapping
+    - type: "mapping"
+      name: "sportradar-soccer-mapping"
       description: "Transform the sportradar soccer data"
       condition: "$.get('event_exists') is True"
       inputs:

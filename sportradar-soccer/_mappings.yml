@@ -1,7 +1,7 @@
-transformers:
+mappings:
 
-  - type: "transformer"
-    name: "sportradar-soccer-transformer"
+  - type: "mapping"
+    name: "sportradar-soccer-mapping"
     description: "Transform the sportradar soccer data"
     outputs:
       team_home_name: "$.get('event_selected').get('sport_event', {}).get('competitors', [])[0].get('name')"
