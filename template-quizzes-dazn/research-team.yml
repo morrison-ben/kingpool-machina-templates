@@ -1,0 +1,236 @@
+workflow:
+  name: "research-team"
+  title: "Research Team"
+  description: "Workflow to produce research team."
+  context-variables:
+    debugger:
+      enabled: true
+    sdk-openai:
+      api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
+  inputs:
+    event_code: "$.get('event_code') or None"
+  outputs:
+    events: "$.get('events')"
+    workflow-status: "$.get('event_exists') is not True and 'skipped' or 'executed'"
+  tasks:
+    
+    # 0 load-event-by-code
+    - type: "document"
+      name: "load-event-by-code"
+      description: "Search event (sportradar) by code."
+      condition: "$.get('event_code') is not None"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+        search-sorters: ["updated", 1]
+      filters:
+        value.sport_event.id: "$.get('event_code')"
+      outputs:
+        event_exists: "len($.get('documents', [])) > 0"
+        event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        research_team_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('research_team_count', 0) if $.get('documents') else None"
+        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+        team_home_name: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[0].get('name') if $.get('documents') else None"
+        team_away_name: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[1].get('name') if $.get('documents') else None"
+        team_home_id: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[0].get('id') if $.get('documents') else None"
+        team_away_id: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[1].get('id') if $.get('documents') else None"
+
+    # 1 load-event-by-schedule
+    - type: "document"
+      name: "load-event-by-schedule"
+      description: "Search for schedule events (sportradar)."
+      condition: "$.get('event_exists') is not True"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      filters:
+        value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
+        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=144)}"
+        value.version_control.processing: "{'$ne': True}"
+        value.version_control.research_team_status: "{'$exists': False}"
+        # value.version_control.updated: "{'$lt': datetime.utcnow() - timedelta(minutes=10)}"
+      inputs:
+        name: "'schedule'"
+      outputs:
+        event_code: "$.get('documents')[0].get('value').get('sport_event', {}).get('id') if $.get('documents') else None"
+        event_exists: "len($.get('documents', [])) > 0"
+        event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        research_team_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('research_team_count', 0) if $.get('documents') else None"
+        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+        team_home_name: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[0].get('name') if $.get('documents') else None"
+        team_away_name: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[1].get('name') if $.get('documents') else None"
+        team_home_id: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[0].get('id') if $.get('documents') else None"
+        team_away_id: "$.get('documents')[0].get('value').get('sport_event', {}).get('competitors', [])[1].get('id') if $.get('documents') else None"
+
+    # 2 version-control-update
+    - type: "document"
+      name: "version-control-update"
+      description: "Update the events document version control."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        schedule: |
+          {
+            **$.get('event_selected'),
+            'version_control': {
+              **$.get('event_selected').get('version_control', {}),
+              'processing': True,
+              'research_team_status': 'processing'
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+
+    # 3 research-team-history (home team)
+    - type: "prompt"
+      name: "research-team-history"
+      description: "Generate research team history."
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        title: "$.get('title')"
+        team: "$.get('event_selected').get('sport_event', {}).get('competitors', [])[0]"
+      outputs:
+        research-team-history-home: "$"
+        research-team-history-home-bulk: |
+          [
+            {
+              'subject': '$.(title)',
+              'text': c.get('content', ''),
+              'title': f"$.(team_home_name) - {c.get('title', '')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'team_id': '$.(team_home_id)',
+                'language': 'en'
+              }
+            }
+            for c in $.get('snippets', [])
+          ]
+
+    # 4 research-team-history (away team)
+    - type: "prompt"
+      name: "research-team-history"
+      description: "Generate research team history."
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        title: "$.get('title')"
+        team: "$.get('event_selected').get('sport_event', {}).get('competitors', [])[1]"
+      outputs:
+        research-team-history-away: "$"
+        research-team-history-away-bulk: |
+          [
+            {
+              'subject': '$.(title)',
+              'text': c.get('content', ''),
+              'title': f"$.(team_away_name) - {c.get('title', '')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'team_id': '$.(team_away_id)',
+                'language': 'en'
+              }
+            }
+            for c in $.get('snippets', [])
+          ]
+        
+    # 5 update-documents (home team)
+    - type: "document"
+      name: "update-documents-home"
+      description: "Update the documents."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        team-history: |
+          {
+            "execution": datetime.utcnow(),
+            "content": $.get('research-team-history-home'),
+            "title": f"{$.get('team_home_name')} History",
+            "status": 'active'
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+        team_id: "$.get('team_home_id')"
+        language: "'en'"
+
+    # 6 update-documents (away team)
+    - type: "document"
+      name: "update-documents-away"
+      description: "Update the documents."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        team-history: |
+          {
+            "execution": datetime.utcnow(),
+            "content": $.get('research-team-history-away'),
+            "title": f"{$.get('team_away_name')} History",
+            "status": 'active'
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+        team_id: "$.get('team_away_id')"
+        language: "'en'"
+    
+    # 7 update-snippets
+    - type: "document"
+      name: "update-snippets"
+      condition: "$.get('event_exists') is True"
+      description: "Update the snippets."
+      config:
+        action: "bulk-save"
+        embed-vector: true
+        force-update: true
+      connector:
+        name: "sdk-openai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      document_name: "content-snippet"
+      documents:
+        items: "$.get('parsed-items')"
+      inputs:
+        parsed-items: |
+          [
+            *$.get('research-team-history-home-bulk', []),
+            *$.get('research-team-history-away-bulk', []),
+          ]
+    
+    # 8 version-control-success
+    - type: "document"
+      name: "version-control-success"
+      description: "Update the events document version control."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        schedule: |
+          {
+            **$.get('event_selected'),
+            'version_control': {
+              **$.get('event_selected').get('version_control', {}),
+              'processing': False,
+              'research_team_count': $.get('research_team_count', 0) + 1,
+              'research_team_status': 'processed',
+              'updated': datetime.utcnow()
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"
