@@ -1,0 +1,11 @@
+transformers:
+
+  - type: "transformer"
+    name: "sportradar-soccer-transformer"
+    description: "Transform the sportradar soccer data"
+    outputs:
+      team_home_name: "$.get('event_selected').get('sport_event', {}).get('competitors', [])[0].get('name')"
+      team_away_name: "$.get('event_selected').get('sport_event', {}).get('competitors', [])[1].get('name')"
+      team_home_id: "$.get('event_selected').get('sport_event', {}).get('competitors', [])[0].get('id')"
+      team_away_id: "$.get('event_selected').get('sport_event', {}).get('competitors', [])[1].get('id')"
+      title: "$.get('event_selected').get('title')"

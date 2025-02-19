@@ -1,0 +1,11 @@
+transformers:
+
+  - type: "transformer"
+    name: "sportradar-nba-transformer"
+    description: "Transform the sportradar nba data"
+    outputs:
+      team_home_name: "$.get('event_selected').get('home', {}).get('name')"
+      team_away_name: "$.get('event_selected').get('away', {}).get('name')"
+      team_home_id: "$.get('event_selected').get('home', {}).get('id')"
+      team_away_id: "$.get('event_selected').get('away', {}).get('id')"
+      title: "$.get('event_selected').get('title')"
