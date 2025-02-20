@@ -376,7 +376,7 @@ workflow:
     - type: "document"
       name: "version-control-success-nba-game"
       description: "Update the events document version control."
-      condition: "$.get('event_exists') is True"
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'nba-game'"
       config:
         action: "update"
         embed-vector: false
