@@ -29,41 +29,41 @@ agent:
       outputs:
         sync-seasons-status: "$.get('workflow-status', False)"
 
-    # # sync serie A
-    # - name: "sportradar-soccer-sync-seasons"
-    #   description: "sync-seasons"
-    #   condition: "$.get('setup-register') is not True"
-    #   inputs:
-    #     competition_id: "'sr:competition:23'"
-    #   outputs:
-    #     sync-seasons-status: "$.get('workflow-status', False)"
+    # sync serie A
+    - name: "sportradar-soccer-sync-seasons"
+      description: "sync-seasons"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        competition_id: "'sr:competition:23'"
+      outputs:
+        sync-seasons-status: "$.get('workflow-status', False)"
 
-    # # sync bundesliga
-    # - name: "sportradar-soccer-sync-seasons"
-    #   description: "sync-seasons"
-    #   condition: "$.get('setup-register') is not True"
-    #   inputs:
-    #     competition_id: "'sr:competition:35'"
-    #   outputs:
-    #     sync-seasons-status: "$.get('workflow-status', False)"
+    # sync bundesliga
+    - name: "sportradar-soccer-sync-seasons"
+      description: "sync-seasons"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        competition_id: "'sr:competition:35'"
+      outputs:
+        sync-seasons-status: "$.get('workflow-status', False)"
 
-    # # sync premier league
-    # - name: "sportradar-soccer-sync-seasons"
-    #   description: "sync-seasons"
-    #   condition: "$.get('setup-register') is not True"
-    #   inputs:
-    #     competition_id: "'sr:competition:17'"
-    #   outputs:
-    #     sync-seasons-status: "$.get('workflow-status', False)"
+    # sync premier league
+    - name: "sportradar-soccer-sync-seasons"
+      description: "sync-seasons"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        competition_id: "'sr:competition:17'"
+      outputs:
+        sync-seasons-status: "$.get('workflow-status', False)"
 
-    # # sync argentina seasons
-    # - name: "sportradar-soccer-sync-seasons"
-    #   description: "sync-seasons"
-    #   condition: "$.get('setup-register') is not True"
-    #   inputs:
-    #     competition_id: "'sr:competition:155'"
-    #   outputs:
-    #     sync-seasons-status: "$.get('workflow-status', False)"
+    # sync argentina seasons
+    - name: "sportradar-soccer-sync-seasons"
+      description: "sync-seasons"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        competition_id: "'sr:competition:155'"
+      outputs:
+        sync-seasons-status: "$.get('workflow-status', False)"
 
     # sync la liga schedules
     - name: "sportradar-soccer-sync-schedules"
@@ -74,48 +74,48 @@ agent:
       outputs:
         sync-schedules-status: "$.get('workflow-status', False)"
 
-    # # sync serie A schedules
-    # - name: "sportradar-soccer-sync-schedules"
-    #   description: "sync-schedules"
-    #   condition: "$.get('setup-register') is not True"
-    #   inputs:
-    #     season_id: "'sr:season:118975'"
-    #   outputs:
-    #     sync-schedules-status: "$.get('workflow-status', False)"
+    # sync serie A schedules
+    - name: "sportradar-soccer-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:118975'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
 
-    # # sync bundesliga schedules
-    # - name: "sportradar-soccer-sync-schedules"
-    #   description: "sync-schedules"
-    #   condition: "$.get('setup-register') is not True"
-    #   inputs:
-    #     season_id: "'sr:season:118693'"
-    #   outputs:
-    #     sync-schedules-status: "$.get('workflow-status', False)"
+    # sync bundesliga schedules
+    - name: "sportradar-soccer-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:118693'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
 
-    # # sync premier league schedules
-    # - name: "sportradar-soccer-sync-schedules"
-    #   description: "sync-schedules"
-    #   condition: "$.get('setup-register') is not True"
-    #   inputs:
-    #     season_id: "'sr:season:118689'"
-    #   outputs:
-    #     sync-schedules-status: "$.get('workflow-status', False)"
+    # sync premier league schedules
+    - name: "sportradar-soccer-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:118689'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
 
-    # # sync argentina schedules
-    # - name: "sportradar-soccer-sync-schedules"
-    #   description: "sync-schedules"
-    #   condition: "$.get('setup-register') is not True"
-    #   inputs:
-    #     season_id: "'sr:season:127421'"
-    #   outputs:
-    #     sync-schedules-status: "$.get('workflow-status', False)"
+    # sync argentina schedules
+    - name: "sportradar-soccer-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:127421'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
 
-    # # sync nba schedules
-    # - name: "sportradar-nba-sync-games"
-    #   description: "sync-nba-games"
-    #   condition: "$.get('setup-register') is not True"
-    #   inputs:
-    #     season_type: "'REG'"
-    #     season_year: "'2024'"
-    #   outputs:
-    #     sync-games-status: "$.get('workflow-status', False)"
+    # sync nba schedules
+    - name: "sportradar-nba-sync-games"
+      description: "sync-nba-games"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_type: "'REG'"
+        season_year: "'2024'"
+      outputs:
+        sync-games-status: "$.get('workflow-status', False)"

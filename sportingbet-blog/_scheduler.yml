@@ -26,45 +26,45 @@ agent:
       outputs:
         sync-markets-odds-la-liga-status: "$.get('workflow-status', False)"
 
-    # # sportingbet-sync-serie A fixtures
-    # - name: "sportingbet-sync-markets-odds"
-    #   description: "sync-markets-odds"
-    #   inputs:
-    #     country: "'br'"
-    #     competitionIds: "'102846'"
-    #     sportId: "'4'"
-    #   outputs:
-    #     sync-markets-odds-serie-a-status: "$.get('workflow-status', False)"
+    # sportingbet-sync-serie A fixtures
+    - name: "sportingbet-sync-markets-odds"
+      description: "sync-markets-odds"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102846'"
+        sportId: "'4'"
+      outputs:
+        sync-markets-odds-serie-a-status: "$.get('workflow-status', False)"
 
-    # # sportingbet-sync-bundesliga fixtures
-    # - name: "sportingbet-sync-markets-odds"
-    #   description: "sync-markets-odds"
-    #   inputs:
-    #     country: "'br'"
-    #     competitionIds: "'102842'"
-    #     sportId: "'4'"
-    #   outputs:
-    #     sync-markets-odds-bundesliga-status: "$.get('workflow-status', False)"
+    # sportingbet-sync-bundesliga fixtures
+    - name: "sportingbet-sync-markets-odds"
+      description: "sync-markets-odds"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102842'"
+        sportId: "'4'"
+      outputs:
+        sync-markets-odds-bundesliga-status: "$.get('workflow-status', False)"
 
-    # # sportingbet-sync-premier league fixtures
-    # - name: "sportingbet-sync-markets-odds"
-    #   description: "sync-markets-odds"
-    #   inputs:
-    #     country: "'br'"
-    #     competitionIds: "'102841'"
-    #     sportId: "'4'"
-    #   outputs:
-    #     sync-markets-odds-premier-league-status: "$.get('workflow-status', False)"
+    # sportingbet-sync-premier league fixtures
+    - name: "sportingbet-sync-markets-odds"
+      description: "sync-markets-odds"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102841'"
+        sportId: "'4'"
+      outputs:
+        sync-markets-odds-premier-league-status: "$.get('workflow-status', False)"
 
-    # # sportingbet-sync-argentina fixtures
-    # - name: "sportingbet-sync-markets-odds"
-    #   description: "sync-markets-odds"
-    #   inputs:
-    #     country: "'ar'"
-    #     competitionIds: "'102540'"
-    #     sportId: "'4'"
-    #   outputs:
-    #     sync-markets-odds-argentina-status: "$.get('workflow-status', False)"
+    # sportingbet-sync-argentina fixtures
+    - name: "sportingbet-sync-markets-odds"
+      description: "sync-markets-odds"
+      inputs:
+        country: "'ar'"
+        competitionIds: "'102540'"
+        sportId: "'4'"
+      outputs:
+        sync-markets-odds-argentina-status: "$.get('workflow-status', False)"
         
     # Reporter Editor
     - name: "reporter-article"
