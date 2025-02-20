@@ -1,5 +1,5 @@
 workflow:
-  name: "reporter-image-soccer"
+  name: "reporter-image"
   title: "Reporter Image"
   description: "Workflow to create soccer image preview."
   context-variables:
@@ -25,65 +25,118 @@ workflow:
         action: "search"
         search-limit: 1
         search-vector: false
-        search-sorters: ["updated", 1]
+        search-sorters: ["start_time", 1]
       filters:
         value.sport_event.id: "$.get('event_code')"
+      inputs:
+        name: "{'$in': ['nba-game', 'soccer-game']}"
       outputs:
-        event-exists: "len($.get('documents', [])) > 0"
-        event-selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        reporter_image_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_image_count', 0) if $.get('documents') else None"
-        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+        event_exists: "len($.get('documents', [])) > 0"
+        event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        event_type: "$.get('documents')[0].get('name') if $.get('documents') else None"
 
     # 1 load-event-by-schedule
     - type: "document"
       name: "load-event-by-schedule"
       description: "Search for events in the database."
-      condition: "$.get('event-exists') is not True"
+      condition: "$.get('event_exists') is not True"
       config:
         action: "search"
         search-limit: 1
         search-vector: false
+        search-sorters: ["start_time", 1]
       filters:
-        value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
-        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=144)}"
+        value.start_time: "{'$gt': datetime.utcnow(), '$lt': datetime.utcnow() + timedelta(hours=48)}"
         value.version_control.processing: "{'$ne': True}"
-        value.version_control.reporter_image_preview: "{'$exists': False}"
+        value.version_control.image_status: "{'$exists': False}"
       inputs:
-        name: "'schedule'"
+        name: "{'$in': ['nba-game', 'soccer-game']}"
       outputs:
-        event_code: "$.get('documents')[0].get('value').get('sport_event', {}).get('id') if $.get('documents') else None"
-        event-exists: "len($.get('documents', [])) > 0"
-        event-selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        reporter_image_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_image_count', 0) if $.get('documents') else None"
-        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+        event_exists: "len($.get('documents', [])) > 0"
+        event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        event_type: "$.get('documents')[0].get('name') if $.get('documents') else None"
 
-    # 2 version-control-start
+    # 2 sportradar-nba-mapping
+    - type: "mapping"
+      name: "sportradar-nba-mapping"
+      description: "Transform the sportradar nba data"
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'nba-game'"
+      inputs:
+        event_selected: "$.get('event_selected')"
+      outputs:
+        event_code: "$.get('event_code')"
+        odds_count: "$.get('research_odds_count')"
+        team_home_name: "$.get('team_home_name')"
+        team_away_name: "$.get('team_away_name')"
+        team_home_id: "$.get('team_home_id')"
+        team_away_id: "$.get('team_away_id')"
+        title: "$.get('title')"
+
+    # 3 sportradar-soccer-mapping
+    - type: "mapping"
+      name: "sportradar-soccer-mapping"
+      description: "Transform the sportradar soccer data"
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
+      inputs:
+        event_selected: "$.get('event_selected')"
+      outputs:
+        event_code: "$.get('event_code')"
+        odds_count: "$.get('research_odds_count')"
+        team_home_name: "$.get('team_home_name')"
+        team_away_name: "$.get('team_away_name')"
+        team_home_id: "$.get('team_home_id')"
+        team_away_id: "$.get('team_away_id')"
+        title: "$.get('title')"
+
+    # 4 version-control-update (schedule)
     - type: "document"
-      name: "version-control-start"
-      description: "Update the events document preevent."
-      condition: "$.get('event-exists') is True"
+      name: "version-control-update-schedule"
+      description: "Update the events document version control."
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
       config:
         action: "update"
         embed-vector: false
         force-update: true
       documents:
-        schedule: |
+        soccer-game: |
           {
-            **$.get('event-selected'),
+            **$.get('event_selected'),
             'version_control': {
-              **$.get('event-selected').get('version_control', {}),
+              **$.get('event_selected').get('version_control', {}),
               'processing': True,
-              'reporter_image_preview': 'processing'
+              'image_status': 'processing'
             }
           }
       metadata:
         event_code: "$.get('event_code')"
 
-    # 3 prompt-image-soccer
+    # 5 version-control-update (nba-game)
+    - type: "document"
+      name: "version-control-update-nba-game"
+      description: "Update the events document version control."
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'nba-game'"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        nba-game: |
+          {
+            **$.get('event_selected'),
+            'version_control': {
+              **$.get('event_selected').get('version_control', {}),
+              'processing': True,
+              'image_status': 'processing'
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+
+    # 6 prompt-image-soccer
     - type: "prompt"
       name: "prompt-image-soccer"
       description: "Generate an image briefing for a soccer match."
-      condition: "$.get('event-exists') is True"
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
       connector:
         name: "sdk-openai"
         command: "invoke_prompt"
@@ -101,10 +154,32 @@ workflow:
             "output_format": (None, "webp")
           }
 
-    # 4 generate image
+    # 7 prompt-image-nba-game
+    - type: "prompt"
+      name: "prompt-image-nba-game"
+      description: "Generate an image briefing for a nba game."
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'nba-game'"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        context: "$.get('title')"
+      outputs:
+        image-briefing: "$.get('image-briefing')"
+        configuration: |
+          {
+            "aspect_ratio": (None, "16:9"),
+            "seed": (None, $.get('seed')),
+            "prompt": (None, $.get('image-briefing')),
+            "style_preset": (None, "digital-art"),
+            "output_format": (None, "webp")
+          }
+
+    # 8 generate image
     - type: "connector"
       name: "generate image"
-      condition: "$.get('event-exists') is True"
+      condition: "$.get('event_exists') is True"
       connector:
         name: "sdk-stability"
         command: "generate_image"
@@ -115,10 +190,10 @@ workflow:
         final_filename: f"image-preview-{$.get('final_filename')}"
         full_filepath: "$.get('full_filepath')"
 
-    # 5 store image
+    # 9 store image
     - type: "connector"
       name: "store image"
-      condition: "$.get('event-exists') is True"
+      condition: "$.get('event_exists') is True"
       connector:
         name: "sdk-storage"
         command: "store_image"
@@ -128,11 +203,11 @@ workflow:
       outputs:
         image_path: "$.get('data')"
 
-    # 6 update-image-document
+    # 10 update-image-document
     - type: "document"
       name: "update-image-document"
       description: "Update the document."
-      condition: "$.get('event-exists') is True"
+      condition: "$.get('event_exists') is True"
       config:
         action: "update"
         embed-vector: false
@@ -150,24 +225,48 @@ workflow:
         document_type: "'image-document'"
         event_code: "$.get('event_code')"
 
-    # 7 version-control-end
+    # 11 version-control-success-schedule
     - type: "document"
-      name: "version-control-end"
-      description: "Update the events document preevent."
-      condition: "$.get('event-exists') is True"
+      name: "version-control-success-schedule"
+      description: "Update the events document version control."
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
       config:
         action: "update"
         embed-vector: false
         force-update: true
       documents:
-        schedule: |
+        soccer-game: |
           {
-            **$.get('event-selected'),
+            **$.get('event_selected'),
             'version_control': {
-              **$.get('event-selected').get('version_control', {}),
+              **$.get('event_selected').get('version_control', {}),
               'processing': False,
-              'reporter_image_count': $.get('reporter_image_count', 0) + 1,
-              'reporter_image_preview': 'processed',
+              'image_count': $.get('image_count', 0) + 1,
+              'image_status': 'processed',
+              'updated': datetime.utcnow()
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+    
+    # 12 version-control-success-nba-game
+    - type: "document"
+      name: "version-control-success-nba-game"
+      description: "Update the events document version control."
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'nba-game'"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        nba-game: |
+          {
+            **$.get('event_selected'),
+            'version_control': {
+              **$.get('event_selected').get('version_control', {}),
+              'processing': False,
+              'image_count': $.get('image_count', 0) + 1,
+              'image_status': 'processed',
               'updated': datetime.utcnow()
             }
           }

@@ -1,6 +1,6 @@
 workflow:
-  name: "sportingbet-sync-fixtures"
-  title: "Sync Fixtures"
+  name: "sportingbet-sync-markets-odds"
+  title: "Sync Markets & Odds"
   description: "Workflow to synchronize a season schedules from Sportingbet API to Machina."
   context-variables:
     debugger:
@@ -13,6 +13,7 @@ workflow:
   inputs:
     country: "$.get('country')"
     competitionIds: "$.get('competitionIds')"
+    force-update: "($.get('force-update') == 'true')"
     sportId: "$.get('sportId')"
   outputs:
     fixtures: "$.get('fixtures')"
@@ -34,7 +35,7 @@ workflow:
         metadata.competitionIds: "$.get('competitionIds')"
         metadata.sportId: "$.get('sportId')"
       inputs:
-        name: "'sync-fixtures-controller'"
+        name: "'sync-markets-odds-controller'"
       outputs:
         is_updated: "$.get('documents')[0].get('updated', datetime.utcnow() - timedelta(minutes=120)) > datetime.utcnow() - timedelta(minutes=60) if $.get('documents') else None"
 
@@ -42,7 +43,7 @@ workflow:
     - type: "connector"
       name: "load-fixtures"
       description: "Get a season fixtures from Sportingbet"
-      condition: "$.get('competitionIds') is not None and $.get('is_updated') is not True"
+      condition: "($.get('competitionIds') is not None and $.get('is_updated') is not True) or $.get('force-update') is True"
       connector:
         name: "api-sportingbet"
         command: "get-offer/api/{sportId}/{country}/fixtureIndex"
@@ -60,7 +61,7 @@ workflow:
               'title': f"{f.get('region', {}).get('name', {}).get('text', '')} {f.get('competition', {}).get('name', {}).get('text', '')} - {f.get('name', {}).get('text', '')}",
             }
             for f in $.get('items', [])
-            if f.get('type') == 'PairGame' and f.get('state') == 'Not started'
+            if f.get('type') == 'PairGame'
           ]
         workflow-status: "'executed'"
 
@@ -68,7 +69,7 @@ workflow:
     - type: "document"
       name: "bulk-save-fixtures"
       description: "Bulk save the fixtures."
-      condition: "$.get('competitionIds') is not None and $.get('is_updated') is not True"
+      condition: "($.get('competitionIds') is not None and $.get('is_updated') is not True) or $.get('force-update') is True"
       config:
         action: "bulk-save"
         embed-vector: true
@@ -89,13 +90,13 @@ workflow:
     - type: "document"
       name: "version-control-update"
       description: "Update the version controller"
-      condition: "$.get('competitionIds') is not None and $.get('is_updated') is not True"
+      condition: "($.get('competitionIds') is not None and $.get('is_updated') is not True) or $.get('force-update') is True"
       config:
         action: "update"
         embed-vector: false
         force-update: true
       documents:
-        sync-fixtures-controller: |
+        sync-markets-odds-controller: |
           {
             'version_control': {
               'sync_count': $.get('sync_count', 0) + 1,

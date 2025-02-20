@@ -35,29 +35,25 @@ datasets:
 
   # sportingbet-api
   - type: "workflow"
-    path: "../connector-sportingbet/sync-fixtures.yml"
+    path: "../connector-sportingbet/sync-markets-odds.yml"
 
   # sportradar-nba-setup
   - type: "workflow"
-    path: "../connector-sportradar-nba/sync-games.yml"
+    path: "../connector-sportradar-nba/sync-nba-games.yml"
 
   # sportradar-soccer-setup
   - type: "workflow"
-    path: "../sportradar-soccer/workflow-sync-competitions.yml"
+    path: "../connector-sportradar-soccer/sync-competitions.yml"
   - type: "workflow"
-    path: "../sportradar-soccer/workflow-sync-schedules.yml"
+    path: "../connector-sportradar-soccer/sync-schedules.yml"
   - type: "workflow"
-    path: "../sportradar-soccer/workflow-sync-seasons.yml"
+    path: "../connector-sportradar-soccer/sync-seasons.yml"
   - type: "workflow"
-    path: "../sportradar-soccer/workflow-sync-standings.yml"
-
-  # sportradar-soccer-mappings
-  - type: "mappings"
-    path: "../sportradar-soccer/_mappings.yml"
+    path: "../connector-sportradar-soccer/sync-standings.yml"
 
   # reporter-editor
   - type: "workflow"
-    path: "reporter-editor.yml"
+    path: "reporter-article.yml"
 
   # reporter-image
   - type: "workflow"
@@ -67,13 +63,17 @@ datasets:
   - type: "workflow"
     path: "research-news.yml"
 
-  # reporter-odds
+  # research-odds
   - type: "workflow"
-    path: "reporter-odds.yml"
+    path: "research-odds.yml"
 
-  # reporter-stats
+  # research-stats-nba
   - type: "workflow"
-    path: "reporter-stats.yml"
+    path: "research-stats-nba.yml"
+
+  # research-stats-soccer
+  - type: "workflow"
+    path: "research-stats-soccer.yml"
 
   # research-team
   - type: "workflow"
@@ -83,13 +83,17 @@ datasets:
   - type: "workflow"
     path: "_folders.yml"
 
-  # populate-content
-  - type: "agent"
-    path: "_populate.yml"
-
+  # mappings
+  - type: "mappings"
+    path: "_mappings.yml"
+  
   # prompts
   - type: "prompts"
     path: "_prompts.yml"
+
+  # populate-content
+  - type: "agent"
+    path: "_populate.yml"
 
   # populate-scheduler
   - type: "agent"

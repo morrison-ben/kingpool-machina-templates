@@ -14,19 +14,19 @@ prompts:
           type: "string"
           description: "Create a prompt for a blog image, following these instructions and the context below: The image should capture the excitement and energy of a major soccer match, in a semi-realistic style with vibrant, bold colors and dynamic lighting. The scene should be set in a context that showcases the passion and dedication of the fans, while being mindful of the match location - whether it's a massive modern arena in a major city, an intimate local stadium, or a historic venue with unique character. For larger venues, emphasize the grandeur and scale; for smaller ones, focus on the intimate atmosphere and local flavor. The scene could include a packed stadium, a lively fan zone, a city street filled with supporters, etc, be creative here. Incorporate creative visual elements that convey the intensity and drama of the event, while maintaining a consistent visual language that is characterized by: a bold and bright color palette, sharp lines and geometric shapes, high-contrast lighting with deep shadows, and a mix of textured and smooth surfaces. The visual style should be modern, edgy, and attention-grabbing, with a sense of energy and movement that draws the viewer in. The image should be perfect for a sports betting blog, evoking the thrill of the game and the rush of placing a bet."
 
-  # image-stadium
+  # image-nba-game
   - type: "prompt"
-    title: "Reporter Image - Stadium"
-    name: "prompt-image-stadium"
-    description: "This schema defines the structure to generate a detailed image briefing for a soccer match stadium."
+    title: "Reporter Image - NBA Game"
+    name: "prompt-image-nba-game"
+    description: "This schema defines the structure to generate a detailed image briefing for a nba game."
     schema:
-      title: "ImageBriefingStadium"
-      description: "This schema defines the structure to generate a detailed image briefing for a soccer match."
+      title: "ImageBriefingNBA"
+      description: "This schema defines the structure to generate a detailed image briefing for a nba game."
       type: "object"
       properties:
         image-briefing:
           type: "string"
-          description: "Create a prompt for a blog image, following these instructions and the context below: The image should show an external view of a soccer stadium from the top of a hill overlooking it. The stadium is packed to full capacity, with the supporters colors clearly visible in banners, lights, and the crowd. The surrounding area should feature fans heading toward the stadium, adding to the excitement. The style should be semi-realistic, with vibrant colors to capture the lively and energetic atmosphere of the event."
+          description: "Create a prompt for a blog image, following these instructions and the context below: The image should show an external view of a nba arena from the top of a hill overlooking it. The arena is packed to full capacity, with the supporters colors clearly visible in banners, lights, and the crowd. The surrounding area should feature fans heading toward the arena, adding to the excitement. The style should be semi-realistic, with vibrant colors to capture the lively and energetic atmosphere of the event."
 
   # image-referee
   - type: "prompt"
@@ -64,18 +64,25 @@ prompts:
         content:
           type: "string"
           description: |
-            Atue como um analista de apostas que realmente entende do assunto e sabe contar uma boa história. Imagine aquele amigo que todo mundo respeita porque ele manja muito, mas também sabe entreter enquanto explica. Use APENAS dados concretos fornecidos no contexto e conhecimento geral do esporte - NUNCA invente estatísticas, resultados ou informações não fornecidas.
+            Atue como um analista de apostas que realmente entende do assunto e sabe contar uma boa história. Para evitar conteúdo repetitivo, varie seu estilo de escrita baseado nos seguintes elementos do jogo:
+            
+            - Se é um clássico histórico: foque na rivalidade e tradição
+            - Se é um confronto direto por posição: enfatize a importância na tabela
+            - Se há um artilheiro em destaque: construa a narrativa ao redor dele
+            - Se há um retrospecto recente interessante: use-o como elemento central
+            - Se é um duelo tático interessante: explore as diferentes estratégias
+            - Se há um contexto especial (final, estreia, etc): faça dele o foco principal
 
             **Nota Interna:** Você está gerando posts de blog em nome da equipe Sportingbet. Essa informação NÃO deve aparecer no output gerado. Certifique-se de que o conteúdo seja envolvente, focado em explicar aos novos apostadores onde apostar e atrair tráfego para a plataforma.
 
-            Estrutura do conteúdo (não inclua os comentários no output, apenas siga a estrutura):
+            Estrutura do conteúdo:
 
             **História do Jogo:**  
             Descreva, em até 150 palavras, a visão geral da partida, incluindo a data e o horário de início (campo "start_time" convertido de GMT para o horário local da partida), as implicações na classificação, notícias importantes, a história entre as equipes e encontros recentes.
             
             ## As odds para [Time A] x [Time B]
             
-            Em cerca de 50 palavras, foque em um ou dois aspectos essenciais deste confronto para os apostadores – como notícias de apostas, tendências, mudanças nas odds, momentos de alta/baixa, clima, etc. Evite apenas listar estatísticas.
+            Em cerca de 50 palavras, converse sobre as odds como se estivesse explicando para um amigo em um bar. Destaque uma ou duas oportunidades interessantes de apostas, explicando o porquê de forma natural e envolvente. Evite linguagem muito técnica ou listagem de números.
             
             ## [Nome do Time A]
             
@@ -85,9 +92,13 @@ prompts:
             
             Em até 150 palavras, detalhe as informações da equipe mandante, incluindo notícias recentes, estatísticas, tendências de apostas, classificação da equipe, séries de resultados, mudanças na escalação, lesões e rumores relevantes.
             
+            ## Jogadores para assistir
+
+            Apresente, em até 150 palavras, os jogadores chaves para ambos os times, incluindo jogadores, suas formas e quaisquer estatísticas relevantes.
+
             ## Quem vence, [Time A] ou [Time B]?
             
-            Forneça uma previsão editorial sobre o placar final esperado.
+            Faça uma previsão confiante do resultado, como um especialista que realmente acredita no seu palpite. Escolha um lado e defenda sua posição com convicção, usando os dados disponíveis para justificar. Evite linguagem indecisa como "talvez", "pode ser" ou "no entanto". Em vez disso, use frases assertivas que mostrem certeza na sua análise.
             
             **Diretriz Geral:** Em todas as seções, assegure que os insights estejam sempre respaldados por estatísticas reais e odds da competição, evitando comentários genéricos sem fundamentação.
             
@@ -101,6 +112,13 @@ prompts:
             - Seja criativo na narrativa, mas factual com os dados
             - Use markdown formatting
             - Utilize o horário de início (start_time) convertido de GMT para o horário local da partida
+            
+            **Diretriz Adicional de Variedade:**
+            - Alterne entre diferentes aberturas (estatística, narrativa, pergunta retórica, citação relevante)
+            - Varie a ordem de apresentação das informações quando fizer sentido
+            - Adapte o tom baseado no contexto do jogo (mais sério para jogos decisivos, mais leve para jogos regulares)
+            - Use diferentes transições entre seções
+            - Evite começar parágrafos da mesma forma
             
   # reporter-preview-en
   - type: "prompt"
@@ -124,18 +142,25 @@ prompts:
         content:
           type: "string"
           description: |
-            Act as a betting analyst who truly understands the subject and knows how to tell a good story. Imagine that friend everyone respects because they're knowledgeable, yet also know how to entertain while explaining. Use ONLY concrete data provided in the context and general sport knowledge - NEVER invent statistics, results, or information that is not provided.
+            Act as a betting analyst who truly understands the subject and knows how to tell a good story. For avoiding repetitive content, vary your writing style based on the following elements of the game:
+            
+            - If it's a historic classic: focus on rivalry and tradition
+            - If it's a direct position clash: emphasize importance in the standings
+            - If there's a standout goalscorer: build the narrative around them
+            - If there's a recent interesting retrospective: use it as the central element
+            - If it's an interesting tactical duel: explore different strategies
+            - If there's a special context (final, debut, etc): make it the main focus
 
             **Internal Note:** You are generating blog posts on behalf of the Sportingbet team. This information should NOT appear in the generated output. Ensure that the content is engaging, focused on guiding new bettors on where to place their bets, and designed to attract traffic.
 
-            Content structure (do not include the comments in the output, just follow the structure):
+            Content structure:
 
             **Game Overview:**  
             In up to 150 words, describe the overall story of the match, including the match date and start time (using the "start_time" field converted from GMT to local time of the match), its implications on the standings, important news, the history between the teams, and recent encounters.
             
             ## Odds for [Team A] vs [Team B]
             
-            In around 50 words, focus on one or two key aspects of the matchup that bettors should be aware of – such as betting news, trends, odds changes, high/low moments, weather, etc. Avoid merely listing statistics.
+            In around 50 words, discuss the odds as if you're explaining to a friend at a pub. Highlight one or two interesting betting opportunities, explaining why in a natural and engaging way. Avoid overly technical language or just listing numbers.
             
             ## [Team A]
             
@@ -145,9 +170,13 @@ prompts:
             
             In up to 150 words, detail the current situation of the home team, covering recent news, standings, statistics, betting trends, winning or losing streaks, lineup changes, injuries, and any relevant rumors.
             
+            ## Players to Watch
+
+            In up to 150 words, discuss the players to watch for both teams, including key players, their form, and any relevant statistics.
+
             ## Who wins, [Team A] or [Team B]?
             
-            Provide an editorial prediction of the expected final score.
+            Make a confident prediction, like an expert who truly believes in their pick. Choose a side and stand by it with conviction, using available data to back up your stance. Avoid uncertain language like "maybe", "might" or "however". Instead, use assertive phrases that show confidence in your analysis.
             
             **General Guideline:** In every section, ensure that insights are always supported by actual statistics and competition odds, avoiding generic commentary without proper data.
             
@@ -162,6 +191,13 @@ prompts:
             - Use markdown formatting
             - Convert match time (start_time) from GMT to local time of the match
 
+            **Diretriz Adicional de Variedade:**
+            - Alternate between different openings (statistical, narrative, rhetorical question, relevant quote)
+            - Vary the order of presenting information when it makes sense
+            - Adjust the tone based on the game context (more serious for decisive games, lighter for regular games)
+            - Use different transitions between sections
+            - Avoid starting paragraphs the same way
+            
   # reporter-comparison
   - type: "prompt"
     title: "Reporter Comparison"
@@ -180,15 +216,15 @@ prompts:
             properties:
               title:
                 type: "string"
-                description: "The category of comparison analysis (e.g., 'Head-to-Head Comparison', 'Recent Form Comparison', 'Points Gap Comparison', etc)."
+                description: "The category of comparison analysis (e.g., 'Head-to-Head Comparison', 'Players to Watch', 'Recent Form Comparison', 'Points Gap Comparison', etc)."
               content:
                 type: "string"
-                description: "Detailed comparative analysis of both teams' comparison situation, including standings, recent form, and relevant performance metrics."
+                description: "Detailed comparative analysis of both teams' comparison situation, including standings, players to watch, recent form, and relevant performance metrics."
               confidence:
                 type: "number"
                 description: "The confidence score for the accuracy of the comparison analysis (0.0 to 1.0)."
             required: ["title", "content", "confidence"]
-          minItems: 3
+          minItems: 10
           maxItems: 10
 
   # reporter-standings
@@ -217,7 +253,7 @@ prompts:
                 type: "number"
                 description: "The confidence score for the accuracy of the standings analysis (0.0 to 1.0)."
             required: ["title", "content", "confidence"]
-          minItems: 3
+          minItems: 10
           maxItems: 10
 
   # research-match-odds
@@ -282,7 +318,7 @@ prompts:
                 type: "number"
                 description: "The confidence score for the accuracy of the odds analysis (0.0 to 1.0)."
             required: ["title", "content", "confidence"]
-          minItems: 3
+          minItems: 10
           maxItems: 10
 
   # research-team-history
@@ -347,7 +383,7 @@ prompts:
                 type: "number"
                 description: "The confidence score for the historical accuracy of the information (0.0 to 1.0)."
             required: ["title", "content", "confidence"]
-          minItems: 3
+          minItems: 10
           maxItems: 10
 
   # research-team-news
@@ -401,7 +437,7 @@ prompts:
                 type: "number"
                 description: "The confidence score for the accuracy of the news information (0.0 to 1.0)."
             required: ["title", "content", "confidence"]
-          minItems: 3
+          minItems: 10
           maxItems: 10
 
   # verify-selected-fixture

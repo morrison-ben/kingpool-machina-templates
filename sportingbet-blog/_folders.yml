@@ -73,7 +73,7 @@ workflow:
                   "description": "The schedules synced from the Sportradar API.",
                   "category": "Catalogue",
                   "metadata": {
-                    "name": ["nba-game", "nba-games", "schedules", "schedule"]
+                    "name": ["nba-game", "nba-games", "schedules", "schedule", "soccer-game"]
                   },
                   "sorters": ['_id', -1],
                   "view": "list"
@@ -103,6 +103,7 @@ workflow:
                     "name": [
                       "comparison-analysis",
                       "standings-analysis",
+                      "market-odds",
                       "team-history",
                       "team-news"
                     ]

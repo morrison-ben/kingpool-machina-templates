@@ -1,8 +1,10 @@
 workflow:
-  name: "research-team"
-  title: "Research Team"
-  description: "Workflow to produce research team."
+  name: "research-stats-nba"
+  title: "Research NBA Stats"
+  description: "Workflow to produce NBA stats."
   context-variables:
+    api-sportradar-nba:
+      sportradar_api_key: "$TEMP_CONTEXT_VARIABLE_SPORTRADAR_SOCCER_V4_API_KEY"
     debugger:
       enabled: true
     sdk-openai:
@@ -12,6 +14,7 @@ workflow:
   outputs:
     events: "$.get('events')"
     workflow-status: "$.get('event_exists') is not True and 'skipped' or 'executed'"
+  
   tasks:
     
     # 0 load-event-by-code
@@ -27,7 +30,7 @@ workflow:
       filters:
         value.sport_event.id: "$.get('event_code')"
       inputs:
-        name: "{'$in': ['nba-game', 'soccer-game']}"
+        name: "{'$in': ['nba-game']}"
       outputs:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
@@ -46,9 +49,9 @@ workflow:
       filters:
         value.start_time: "{'$gt': datetime.utcnow(), '$lt': datetime.utcnow() + timedelta(hours=48)}"
         value.version_control.processing: "{'$ne': True}"
-        value.version_control.research_team_status: "{'$exists': False}"
+        value.version_control.research_stats_status: "{'$exists': False}"
       inputs:
-        name: "{'$in': ['nba-game', 'soccer-game']}"
+        name: "{'$in': ['nba-game']}"
       outputs:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
@@ -58,61 +61,25 @@ workflow:
     - type: "mapping"
       name: "sportradar-nba-mapping"
       description: "Transform the sportradar nba data"
-      condition: "$.get('event_exists') is True and $.get('event_type') == 'nba-game'"
+      condition: "$.get('event_exists') is True"
       inputs:
         event_selected: "$.get('event_selected')"
       outputs:
         event_code: "$.get('event_code')"
-        team_count: "$.get('research_team_count')"
+        stats_count: "$.get('research_stats_count')"
+        season_type: "$.get('season_type')"
+        season_year: "$.get('season_year')"
         team_home_name: "$.get('team_home_name')"
         team_away_name: "$.get('team_away_name')"
         team_home_id: "$.get('team_home_id')"
         team_away_id: "$.get('team_away_id')"
         title: "$.get('title')"
 
-    # 3 sportradar-soccer-mapping
-    - type: "mapping"
-      name: "sportradar-soccer-mapping"
-      description: "Transform the sportradar soccer data"
-      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
-      inputs:
-        event_selected: "$.get('event_selected')"
-      outputs:
-        event_code: "$.get('event_code')"
-        team_count: "$.get('research_team_count')"
-        team_home_name: "$.get('team_home_name')"
-        team_away_name: "$.get('team_away_name')"
-        team_home_id: "$.get('team_home_id')"
-        team_away_id: "$.get('team_away_id')"
-        title: "$.get('title')"
-
-    # 4 version-control-update (schedule)
-    - type: "document"
-      name: "version-control-update-schedule"
-      description: "Update the events document version control."
-      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
-      config:
-        action: "update"
-        embed-vector: false
-        force-update: true
-      documents:
-        soccer-game: |
-          {
-            **$.get('event_selected'),
-            'version_control': {
-              **$.get('event_selected').get('version_control', {}),
-              'processing': True,
-              'research_team_status': 'processing'
-            }
-          }
-      metadata:
-        event_code: "$.get('event_code')"
-
-    # 5 version-control-update (nba-game)
+    # 3 version-control-update-nba-game
     - type: "document"
       name: "version-control-update-nba-game"
       description: "Update the events document version control."
-      condition: "$.get('event_exists') is True and $.get('event_type') == 'nba-game'"
+      condition: "$.get('event_exists') is True"
       config:
         action: "update"
         embed-vector: false
@@ -124,16 +91,33 @@ workflow:
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': True,
-              'research_team_status': 'processing'
+              'research_stats_status': 'processing'
             }
           }
       metadata:
         event_code: "$.get('event_code')"
 
-    # 6 research-team-history (home team)
+    # 4 fetch-event-standings
+    - type: "connector"
+      name: "fetch-event-standings"
+      description: "Get a season standings from SportRadar"
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "api-sportradar-nba"
+        command: "get-seasons/{season_year}/{season_type}/{data_type}"
+        command_attribute:
+          season_year: "$.get('season_year')"
+          season_type: "$.get('season_type')"
+          data_type: "'standings.json'"
+      inputs:
+        api_key: "$.get('sportradar_api_key')"
+      outputs:
+        result-standings: "[x for x in $.get('standings') if x.get('type') == 'total']"
+
+    # 5 reporter-standings
     - type: "prompt"
-      name: "research-team-history"
-      description: "Generate research team history."
+      name: "prompt-reporter-standings"
+      description: "Reporter standings."
       condition: "$.get('event_exists') is True"
       connector:
         name: "sdk-openai"
@@ -141,28 +125,63 @@ workflow:
         model: "gpt-4o"
       inputs:
         title: "$.get('title')"
-        team: "$.get('team_home_name')"
+        standings: "$.get('result-standings')"
       outputs:
-        research-team-history-home: "$"
-        research-team-history-home-bulk: |
+        research-standings: "$"
+        research-standings-bulk: |
           [
             {
               'subject': '$.(title)',
               'text': c.get('content', ''),
-              'title': f"$.(team_home_name) - {c.get('title', '')}",
+              'title': f"$.(title) - {c.get('title', '')}",
               'metadata': {
                 'event_code': '$.(event_code)',
-                'team_id': '$.(team_home_id)',
                 'language': 'en'
               }
             }
             for c in $.get('snippets', [])
           ]
 
-    # 7 research-team-history (away team)
+    # 6 fetch-home-competitor
+    - type: "connector"
+      name: "fetch-home-competitor"
+      description: "Get a competitor data from SportRadar" 
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "api-sportradar-nba"
+        command: "get-seasons/{season_year}/{season_type}/teams/{team_id}/{data_type}"
+        command_attribute:
+          season_year: "$.get('season_year')"
+          season_type: "$.get('season_type')"
+          team_id: "$.get('team_home_id')"
+          data_type: "'statistics.json'"
+      inputs:
+        api_key: "$.get('sportradar_api_key')"
+      outputs:
+        result-home-competitor: "$"
+
+    # 7 fetch-away-competitor
+    - type: "connector"
+      name: "fetch-away-competitor"
+      description: "Get a competitor data from SportRadar" 
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "api-sportradar-nba"
+        command: "get-seasons/{season_year}/{season_type}/teams/{team_id}/{data_type}"
+        command_attribute:
+          season_year: "$.get('season_year')"
+          season_type: "$.get('season_type')"
+          team_id: "$.get('team_away_id')"
+          data_type: "'statistics.json'"
+      inputs:
+        api_key: "$.get('sportradar_api_key')"
+      outputs:
+        result-away-competitor: "$"
+
+    # 8 reporter-comparison
     - type: "prompt"
-      name: "research-team-history"
-      description: "Generate research team history."
+      name: "prompt-reporter-comparison"
+      description: "Reporter h2h comparison."
       condition: "$.get('event_exists') is True"
       connector:
         name: "sdk-openai"
@@ -170,48 +189,28 @@ workflow:
         model: "gpt-4o"
       inputs:
         title: "$.get('title')"
-        team: "$.get('team_away_name')"
+        home-competitor: "$.get('result-home-competitor')"
+        away-competitor: "$.get('result-away-competitor')"
+        # comparison: "$.get('result-comparison')"
       outputs:
-        research-team-history-away: "$"
-        research-team-history-away-bulk: |
+        research-comparison: "$"
+        research-comparison-bulk: |
           [
             {
               'subject': '$.(title)',
               'text': c.get('content', ''),
-              'title': f"$.(team_away_name) - {c.get('title', '')}",
+              'title': f"$.(title) - {c.get('title', '')}",
               'metadata': {
                 'event_code': '$.(event_code)',
-                'team_id': '$.(team_away_id)',
                 'language': 'en'
               }
             }
             for c in $.get('snippets', [])
           ]
-        
-    # 8 update-documents (home team)
-    - type: "document"
-      name: "update-documents-home"
-      description: "Update the documents."
-      condition: "$.get('event_exists') is True"
-      config:
-        action: "update"
-        embed-vector: false
-        force-update: true
-      documents:
-        team-history: |
-          {
-            "execution": datetime.utcnow(),
-            "content": $.get('research-team-history-home'),
-            "title": f"{$.get('team_home_name')} History",
-            "status": 'active'
-          }
-      metadata:
-        event_code: "$.get('event_code')"
-        team_id: "$.get('team_home_id')"
 
-    # 9 update-documents (away team)
+    # 9 update-documents
     - type: "document"
-      name: "update-documents-away"
+      name: "update-documents-standings"
       description: "Update the documents."
       condition: "$.get('event_exists') is True"
       config:
@@ -219,16 +218,22 @@ workflow:
         embed-vector: false
         force-update: true
       documents:
-        team-history: |
+        standings-analysis: |
           {
             "execution": datetime.utcnow(),
-            "content": $.get('research-team-history-away'),
-            "title": f"{$.get('team_away_name')} History",
+            "content": $.get('research-standings'),
+            "title": f"{$.get('title')} - Standings Analysis",
+            "status": 'active'
+          }
+        comparison-analysis: |
+          {
+            "execution": datetime.utcnow(),
+            "content": $.get('research-comparison'),
+            "title": f"{$.get('title')} - Comparison Analysis",
             "status": 'active'
           }
       metadata:
         event_code: "$.get('event_code')"
-        team_id: "$.get('team_away_id')"
     
     # 10 update-snippets
     - type: "document"
@@ -249,39 +254,15 @@ workflow:
       inputs:
         parsed-items: |
           [
-            *$.get('research-team-history-home-bulk', []),
-            *$.get('research-team-history-away-bulk', []),
+            *$.get('research-standings-bulk', []),
+            *$.get('research-comparison-bulk', [])
           ]
-    
-    # 11 version-control-success
-    - type: "document"
-      name: "version-control-success-schedule"
-      description: "Update the events document version control."
-      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
-      config:
-        action: "update"
-        embed-vector: false
-        force-update: true
-      documents:
-        soccer-game: |
-          {
-            **$.get('event_selected'),
-            'version_control': {
-              **$.get('event_selected').get('version_control', {}),
-              'processing': False,
-              'research_team_count': $.get('team_count', 0) + 1,
-              'research_team_status': 'processed',
-              'updated': datetime.utcnow()
-            }
-          }
-      metadata:
-        event_code: "$.get('event_code')"
-    
-    # 12 version-control-success-nba-game
+
+    # 11 version-control-success-nba-game
     - type: "document"
       name: "version-control-success-nba-game"
       description: "Update the events document version control."
-      condition: "$.get('event_exists') is True and $.get('event_type') == 'nba-game'"
+      condition: "$.get('event_exists') is True"
       config:
         action: "update"
         embed-vector: false
@@ -293,8 +274,8 @@ workflow:
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': False,
-              'research_team_count': $.get('team_count', 0) + 1,
-              'research_team_status': 'processed',
+              'research_stats_count': $.get('stats_count', 0) + 1,
+              'research_stats_status': 'processed',
               'updated': datetime.utcnow()
             }
           }

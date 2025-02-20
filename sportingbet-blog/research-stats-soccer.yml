@@ -1,7 +1,7 @@
 workflow:
-  name: "reporter-stats"
-  title: "Reporter Stats"
-  description: "Workflow to produce stats."
+  name: "research-stats-soccer"
+  title: "Research Soccer Stats"
+  description: "Workflow to produce soccer stats."
   context-variables:
     api-sportradar-soccer:
       sportradar_api_key: "$TEMP_CONTEXT_VARIABLE_SPORTRADAR_SOCCER_V4_API_KEY"
@@ -26,18 +26,15 @@ workflow:
         action: "search"
         search-limit: 1
         search-vector: false
-        search-sorters: ["updated", 1]
+        search-sorters: ["start_time", 1]
       filters:
         value.sport_event.id: "$.get('event_code')"
+      inputs:
+        name: "{'$in': ['soccer-game']}"
       outputs:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        reporter_stats_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_stats_count', 0) if $.get('documents') else None"
-        season: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('sport_event_context', {}).get('season', {}).get('id', '') if $.get('documents') else None"
-        season_title: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('sport_event_context', {}).get('season', {}).get('name', '') if $.get('documents') else None"
-        team_home_id: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[0].get('id')"
-        team_away_id: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[1].get('id')"
-        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+        event_type: "$.get('documents')[0].get('name') if $.get('documents') else None"
 
     # 1 load-event-by-schedule
     - type: "document"
@@ -48,42 +45,53 @@ workflow:
         action: "search"
         search-limit: 1
         search-vector: false
+        search-sorters: ["start_time", 1]
       filters:
-        value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
-        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=144)}"
+        value.start_time: "{'$gt': datetime.utcnow(), '$lt': datetime.utcnow() + timedelta(hours=48)}"
         value.version_control.processing: "{'$ne': True}"
-        value.version_control.reporter_stats_status: "{'$exists': False}"
-        # value.version_control.updated: "{'$lt': datetime.utcnow() - timedelta(minutes=2)}"
+        value.version_control.research_stats_status: "{'$exists': False}"
       inputs:
-        name: "'schedule'"
+        name: "{'$in': ['soccer-game']}"
       outputs:
-        event_code: "$.get('documents')[0].get('value').get('sport_event', {}).get('id') if $.get('documents') else None"
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        reporter_stats_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_stats_count', 0) if $.get('documents') else None"
-        season: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('sport_event_context', {}).get('season', {}).get('id', '') if $.get('documents') else None"
-        season_title: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('sport_event_context', {}).get('season', {}).get('name', '') if $.get('documents') else None"
-        team_home_id: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[0].get('id')"
-        team_away_id: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[1].get('id')"
-        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+        event_type: "$.get('documents')[0].get('name') if $.get('documents') else None"
 
-    # 2 version-control-update
+    # 3 sportradar-soccer-mapping
+    - type: "mapping"
+      name: "sportradar-soccer-mapping"
+      description: "Transform the sportradar soccer data"
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
+      inputs:
+        event_selected: "$.get('event_selected')"
+      outputs:
+        event_code: "$.get('event_code')"
+        stats_count: "$.get('research_stats_count')"
+        season: "$.get('season')"
+        season_title: "$.get('season_title')"
+        team_home_name: "$.get('team_home_name')"
+        team_away_name: "$.get('team_away_name')"
+        team_home_id: "$.get('team_home_id')"
+        team_away_id: "$.get('team_away_id')"
+        title: "$.get('title')"
+
+    # 4 version-control-update-schedule
     - type: "document"
-      name: "version-control-update"
+      name: "version-control-update-schedule"
       description: "Update the events document version control."
-      condition: "$.get('event_exists') is True"
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
       config:
         action: "update"
         embed-vector: false
         force-update: true
       documents:
-        schedule: |
+        soccer-game: |
           {
             **$.get('event_selected'),
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': True,
-              'reporter_stats_status': 'processing'
+              'research_stats_status': 'processing'
             }
           }
       metadata:
@@ -276,24 +284,24 @@ workflow:
             *$.get('research-comparison-bulk', [])
           ]
 
-    # 11 version-control-success
+    # 11 version-control-success-schedule
     - type: "document"
-      name: "version-control-success"
+      name: "version-control-success-schedule"
       description: "Update the events document version control."
-      condition: "$.get('event_exists') is True"
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
       config:
         action: "update"
         embed-vector: false
         force-update: true
       documents:
-        schedule: |
+        soccer-game: |
           {
             **$.get('event_selected'),
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': False,
-              'reporter_stats_count': $.get('reporter_stats_count', 0) + 1,
-              'reporter_stats_status': 'processed',
+              'research_stats_count': $.get('stats_count', 0) + 1,
+              'research_stats_status': 'processed',
               'updated': datetime.utcnow()
             }
           }

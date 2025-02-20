@@ -1,6 +1,6 @@
 workflow:
-  name: "reporter-editor"
-  title: "Reporter Editor"
+  name: "reporter-article"
+  title: "Reporter Article"
   description: "Workflow to produce an article."
   context-variables:
     debugger:
@@ -24,14 +24,15 @@ workflow:
         action: "search"
         search-limit: 1
         search-vector: false
-        search-sorters: ["updated", 1]
+        search-sorters: ["start_time", 1]
       filters:
         value.sport_event.id: "$.get('event_code')"
+      inputs:
+        name: "{'$in': ['nba-game', 'soccer-game']}"
       outputs:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        reporter_editor_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_editor_count', 0) if $.get('documents') else None"
-        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+        event_type: "$.get('documents')[0].get('name') if $.get('documents') else None"
 
     # 1 load-event-by-schedule
     - type: "document"
@@ -42,48 +43,99 @@ workflow:
         action: "search"
         search-limit: 1
         search-vector: false
+        search-sorters: ["start_time", 1]
       filters:
-        value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
-        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=144)}"
+        value.start_time: "{'$gt': datetime.utcnow(), '$lt': datetime.utcnow() + timedelta(hours=48)}"
         value.version_control.processing: "{'$ne': True}"
-        value.version_control.reporter_editor_status: "{'$exists': False}"
-        value.version_control.reporter_odds_status: "'processed'"
-        value.version_control.reporter_stats_status: "'processed'"
+        value.version_control.article_status: "{'$exists': False}"
+        value.version_control.research_odds_status: "'processed'"
+        value.version_control.research_stats_status: "'processed'"
         value.version_control.research_news_status: "'processed'"
         value.version_control.research_team_status: "'processed'"
-        # value.version_control.updated: "{'$lt': datetime.utcnow() - timedelta(minutes=2)}"
       inputs:
-        name: "'schedule'"
+        name: "{'$in': ['nba-game', 'soccer-game']}"
       outputs:
-        event_code: "$.get('documents')[0].get('value').get('sport_event', {}).get('id') if $.get('documents') else None"
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        reporter_editor_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_editor_count', 0) if $.get('documents') else None"
-        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+        event_type: "$.get('documents')[0].get('name') if $.get('documents') else None"
 
-    # 2 version-control-update
+    # 2 sportradar-nba-mapping
+    - type: "mapping"
+      name: "sportradar-nba-mapping"
+      description: "Transform the sportradar nba data"
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'nba-game'"
+      inputs:
+        event_selected: "$.get('event_selected')"
+      outputs:
+        article_count: "$.get('article_count')"
+        event_code: "$.get('event_code')"
+        team_home_name: "$.get('team_home_name')"
+        team_away_name: "$.get('team_away_name')"
+        team_home_id: "$.get('team_home_id')"
+        team_away_id: "$.get('team_away_id')"
+        title: "$.get('title')"
+
+    # 3 sportradar-soccer-mapping
+    - type: "mapping"
+      name: "sportradar-soccer-mapping"
+      description: "Transform the sportradar soccer data"
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
+      inputs:
+        event_selected: "$.get('event_selected')"
+      outputs:
+        article_count: "$.get('article_count')"
+        event_code: "$.get('event_code')"
+        team_home_name: "$.get('team_home_name')"
+        team_away_name: "$.get('team_away_name')"
+        team_home_id: "$.get('team_home_id')"
+        team_away_id: "$.get('team_away_id')"
+        title: "$.get('title')"
+
+    # 4 version-control-update (schedule)
     - type: "document"
-      name: "version-control-update"
+      name: "version-control-update-schedule"
       description: "Update the events document version control."
-      condition: "$.get('event_exists') is True"
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
       config:
         action: "update"
         embed-vector: false
         force-update: true
       documents:
-        schedule: |
+        soccer-game: |
           {
             **$.get('event_selected'),
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': True,
-              'reporter_editor_status': 'processing'
+              'article_status': 'processing'
             }
           }
       metadata:
         event_code: "$.get('event_code')"
 
-    # 3 load-team-history
+    # 5 version-control-update (nba-game)
+    - type: "document"
+      name: "version-control-update-nba-game"
+      description: "Update the events document version control."
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'nba-game'"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        nba-game: |
+          {
+            **$.get('event_selected'),
+            'version_control': {
+              **$.get('event_selected').get('version_control', {}),
+              'processing': True,
+              'article_status': 'processing'
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+
+    # 6 load-team-history
     - type: "document"
       name: "load-team-history"
       description: "Search for registered team history."
@@ -108,7 +160,7 @@ workflow:
             for s in d.get('value', {}).get('content', {}).get('snippets', [])
           ]
 
-    # 4 load-team-news
+    # 7 load-team-news
     - type: "document"
       name: "load-team-news"
       description: "Search for registered news."
@@ -133,7 +185,7 @@ workflow:
             for s in d.get('value', {}).get('content', {}).get('snippets', [])
           ]
 
-    # 5 load-market-odds
+    # 8 load-market-odds
     - type: "document"
       name: "load-market-odds"
       description: "Search for registered market odds."
@@ -158,7 +210,7 @@ workflow:
             for s in d.get('value', {}).get('content', {}).get('snippets', [])
           ]
 
-    # 6 load-standings
+    # 9 load-standings
     - type: "document"
       name: "load-standings"
       description: "Search for registered standings."
@@ -183,7 +235,7 @@ workflow:
             for s in d.get('value', {}).get('content', {}).get('snippets', [])
           ]
 
-    # 7 load-comparison
+    # 10 load-comparison
     - type: "document"
       name: "load-comparison"
       description: "Search for registered comparison."
@@ -208,7 +260,7 @@ workflow:
             for s in d.get('value', {}).get('content', {}).get('snippets', [])
           ]
 
-    # 8 prompt-reporter-article-br
+    # 11 prompt-reporter-article-br
     - type: "prompt"
       name: "prompt-reporter-preview-br"
       description: "Generate a preview for the upcoming game"
@@ -230,7 +282,7 @@ workflow:
       outputs:
         reporter-article-br: "$"
 
-    # 9 prompt-reporter-article-en
+    # 12 prompt-reporter-article-en
     - type: "prompt"
       name: "prompt-reporter-preview-en"
       description: "Generate a preview for the upcoming game"
@@ -252,7 +304,7 @@ workflow:
       outputs:
         reporter-article-en: "$"
 
-    # 10 update-article-br
+    # 13 update-article-br
     - type: "document"
       name: "update-article-br"
       description: "Update the document."
@@ -271,9 +323,10 @@ workflow:
       metadata:
         document_type: "'content-article'"
         event_code: "$.get('event_code')"
+        event_type: "$.get('event_type')"
         language: "'br'"
 
-    # 11 update-article-en
+    # 14 update-article-en
     - type: "document"
       name: "update-article-en"
       description: "Update the document."
@@ -291,12 +344,37 @@ workflow:
           }
       metadata:
         document_type: "'content-article'"
+        event_type: "$.get('event_type')"
         event_code: "$.get('event_code')"
         language: "'en'"
 
-    # 12 version-control-success
+    # 15 version-control-success-schedule
     - type: "document"
-      name: "version-control-success"
+      name: "version-control-success-schedule"
+      description: "Update the events document version control."
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        soccer-game: |
+          {
+            **$.get('event_selected'),
+            'version_control': {
+              **$.get('event_selected').get('version_control', {}),
+              'processing': False,
+              'article_count': $.get('article_count', 0) + 1,
+              'article_status': 'processed',
+              'updated': datetime.utcnow()
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+    
+    # 16 version-control-success-nba-game
+    - type: "document"
+      name: "version-control-success-nba-game"
       description: "Update the events document version control."
       condition: "$.get('event_exists') is True"
       config:
@@ -304,15 +382,14 @@ workflow:
         embed-vector: false
         force-update: true
       documents:
-        schedule: |
+        nba-game: |
           {
             **$.get('event_selected'),
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
-              'game-fixture-id': $.get('selected-fixture-id'),
               'processing': False,
-              'reporter_editor_count': $.get('reporter_editor_count', 0) + 1,
-              'reporter_editor_status': 'processed',
+              'article_count': $.get('article_count', 0) + 1,
+              'article_status': 'processed',
               'updated': datetime.utcnow()
             }
           }

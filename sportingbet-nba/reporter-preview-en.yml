@@ -40,7 +40,7 @@ workflow:
         search-limit: 1
         search-vector: false
       filters:
-        value.status: "{'$in': ['scheduled']}"
+        value.status: "{'$in': ['soccer-game']}"
         value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=24)}"
         value.version_control.processing: "{'$ne': True}"
         value.version_control.preview_en_status: "{'$exists': False}"

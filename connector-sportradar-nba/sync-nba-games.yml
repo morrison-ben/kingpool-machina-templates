@@ -1,6 +1,6 @@
 workflow:
-  name: "sync-nba-games"
-  title: "Sync NBA Games"
+  name: "sportradar-nba-sync-games"
+  title: "NBA - Sync Games"
   description: "Workflow to synchronize NBA games from SportRadar API to Machina."
   context-variables:
     api-sportradar-nba:
@@ -59,9 +59,10 @@ workflow:
                 'processing': False,
                 'updated': datetime.utcnow()
               },
+              'season_year': '$.(season_year)',
+              'season_type': '$.(season_type)',
               'start_time': datetime.strptime(c.get('scheduled'), '%Y-%m-%dT%H:%M:%SZ'),
-              'title': f"{c.get('home', {}).get('name', '')} v {c.get('away', {}).get('name', '')}",
-              'selected': False
+              'title': f"{c.get('home', {}).get('name', '')} v {c.get('away', {}).get('name', '')}"
             }
             for c in $.get('games')
           ]

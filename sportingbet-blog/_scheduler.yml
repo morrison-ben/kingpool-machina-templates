@@ -6,79 +6,96 @@ agent:
     config-frequency: 1
   workflows:
         
+    # sportingbet-sync-nba fixtures
+    - name: "sportingbet-sync-markets-odds"
+      description: "sync-markets-odds"
+      inputs:
+        country: "'br'"
+        competitionIds: "'6004'"
+        sportId: "'7'"
+      outputs:
+        sync-markets-odds-nba-status: "$.get('workflow-status', False)"
+
     # sportingbet-sync-la liga fixtures
-    - name: "sportingbet-sync-fixtures"
-      description: "sync-fixtures"
+    - name: "sportingbet-sync-markets-odds"
+      description: "sync-markets-odds"
       inputs:
         country: "'br'"
         competitionIds: "'102829'"
         sportId: "'4'"
       outputs:
-        sync-fixtures-la-liga-status: "$.get('workflow-status', False)"
+        sync-markets-odds-la-liga-status: "$.get('workflow-status', False)"
 
-    # sportingbet-sync-serie A fixtures
-    - name: "sportingbet-sync-fixtures"
-      description: "sync-fixtures"
-      inputs:
-        country: "'br'"
-        competitionIds: "'102846'"
-        sportId: "'4'"
-      outputs:
-        sync-fixtures-serie-a-status: "$.get('workflow-status', False)"
+    # # sportingbet-sync-serie A fixtures
+    # - name: "sportingbet-sync-markets-odds"
+    #   description: "sync-markets-odds"
+    #   inputs:
+    #     country: "'br'"
+    #     competitionIds: "'102846'"
+    #     sportId: "'4'"
+    #   outputs:
+    #     sync-markets-odds-serie-a-status: "$.get('workflow-status', False)"
 
-    # sportingbet-sync-bundesliga fixtures
-    - name: "sportingbet-sync-fixtures"
-      description: "sync-fixtures"
-      inputs:
-        country: "'br'"
-        competitionIds: "'102842'"
-        sportId: "'4'"
-      outputs:
-        sync-fixtures-bundesliga-status: "$.get('workflow-status', False)"
+    # # sportingbet-sync-bundesliga fixtures
+    # - name: "sportingbet-sync-markets-odds"
+    #   description: "sync-markets-odds"
+    #   inputs:
+    #     country: "'br'"
+    #     competitionIds: "'102842'"
+    #     sportId: "'4'"
+    #   outputs:
+    #     sync-markets-odds-bundesliga-status: "$.get('workflow-status', False)"
 
-    # sportingbet-sync-premier league fixtures
-    - name: "sportingbet-sync-fixtures"
-      description: "sync-fixtures"
-      inputs:
-        country: "'br'"
-        competitionIds: "'102841'"
-        sportId: "'4'"
-      outputs:
-        sync-fixtures-premier-league-status: "$.get('workflow-status', False)"
+    # # sportingbet-sync-premier league fixtures
+    # - name: "sportingbet-sync-markets-odds"
+    #   description: "sync-markets-odds"
+    #   inputs:
+    #     country: "'br'"
+    #     competitionIds: "'102841'"
+    #     sportId: "'4'"
+    #   outputs:
+    #     sync-markets-odds-premier-league-status: "$.get('workflow-status', False)"
 
-    # sportingbet-sync-argentina fixtures
-    - name: "sportingbet-sync-fixtures"
-      description: "sync-fixtures"
-      inputs:
-        country: "'ar'"
-        competitionIds: "'102540'"
-        sportId: "'4'"
-      outputs:
-        sync-fixtures-argentina-status: "$.get('workflow-status', False)"
+    # # sportingbet-sync-argentina fixtures
+    # - name: "sportingbet-sync-markets-odds"
+    #   description: "sync-markets-odds"
+    #   inputs:
+    #     country: "'ar'"
+    #     competitionIds: "'102540'"
+    #     sportId: "'4'"
+    #   outputs:
+    #     sync-markets-odds-argentina-status: "$.get('workflow-status', False)"
         
     # Reporter Editor
-    - name: "reporter-editor"
-      description: "Reporter Editor"
+    - name: "reporter-article"
+      description: "Reporter Article"
       outputs:
-        reporter-editor: "$.get('workflow-status', False)"
+        reporter-article: "$.get('workflow-status', False)"
 
     # Reporter Image
-    - name: "reporter-image-soccer"
-      description: "Reporter Image - Soccer"
+    - name: "reporter-image"
+      description: "Reporter Image"
       outputs:
-        reporter-image-soccer: "$.get('workflow-status', False)"
+        reporter-image: "$.get('workflow-status', False)"
 
     # Reporter Odds
-    - name: "reporter-odds"
+    - name: "research-odds"
       description: "Reporter Odds"
       outputs:
-        reporter-odds: "$.get('workflow-status', False)"
+        research-odds: "$.get('workflow-status', False)"
 
     # Reporter Stats
-    - name: "reporter-stats"
-      description: "Reporter Stats"
+    - name: "research-stats-soccer"
+      description: "Reporter Soccer Stats"
       outputs:
-        reporter-stats: "$.get('workflow-status', False)"
+        research-stats-soccer: "$.get('workflow-status', False)"
+        research-odds: "$.get('workflow-status', False)"
+
+    # Reporter Stats
+    - name: "research-stats-nba"
+      description: "Reporter NBA Stats"
+      outputs:
+        research-stats-nba: "$.get('workflow-status', False)"
 
     # Reporter Team History
     - name: "research-team"

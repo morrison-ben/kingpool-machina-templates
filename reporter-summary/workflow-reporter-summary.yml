@@ -64,7 +64,7 @@ workflow:
         embed-vector: false
         force-update: true
       documents:
-        schedule: |
+        soccer-game: |
           {
             **$.get('event-selected'),
             'processing': True,
@@ -132,7 +132,7 @@ workflow:
         embed-vector: false
         force-update: true
       documents:
-        schedule: |
+        soccer-game: |
           {
             **$.get('event-selected'),
             'processing': False,

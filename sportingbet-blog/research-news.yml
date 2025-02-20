@@ -30,20 +30,15 @@ workflow:
         action: "search"
         search-limit: 1
         search-vector: false
-        search-sorters: ["updated", 1]
+        search-sorters: ["start_time", 1]
       filters:
         value.sport_event.id: "$.get('event_code')"
       inputs:
-        name: "'schedule'"
+        name: "{'$in': ['nba-game', 'soccer-game']}"
       outputs:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        research_news_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('research_news_count', 0) if $.get('documents') else None"
-        team_home_id: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[0].get('id')"
-        team_home_name: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[0].get('name')"
-        team_away_id: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[1].get('id')"
-        team_away_name: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[1].get('name')"
-        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+        event_type: "$.get('documents')[0].get('name') if $.get('documents') else None"
 
     # 1 load-event-by-schedule
     - type: "document"
@@ -54,36 +49,61 @@ workflow:
         action: "search"
         search-limit: 1
         search-vector: false
+        search-sorters: ["start_time", 1]
       filters:
-        value.sport_event_status.status: "{'$in': ['not_started', 'live']}"
-        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=144)}"
+        value.start_time: "{'$gt': datetime.utcnow(), '$lt': datetime.utcnow() + timedelta(hours=48)}"
         value.version_control.processing: "{'$ne': True}"
         value.version_control.research_news_status: "{'$exists': False}"
-        # value.version_control.updated: "{'$lt': datetime.utcnow() - timedelta(minutes=10)}"
       inputs:
-        name: "'schedule'"
+        name: "{'$in': ['nba-game', 'soccer-game']}"
       outputs:
-        event_code: "$.get('documents')[0].get('value').get('sport_event', {}).get('id') if $.get('documents') else None"
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
-        research_news_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('research_news_count', 0) if $.get('documents') else None"
-        team_home_id: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[0].get('id')"
-        team_away_id: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[1].get('id')"
-        team_home_name: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[0].get('name')"
-        team_away_name: "$.get('documents')[0].get('value', {}).get('sport_event', {}).get('competitors', [])[1].get('name')"
-        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+        event_type: "$.get('documents')[0].get('name') if $.get('documents') else None"
 
-    # 2 version-control-update
+    # 2 sportradar-nba-mapping
+    - type: "mapping"
+      name: "sportradar-nba-mapping"
+      description: "Transform the sportradar nba data"
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'nba-game'"
+      inputs:
+        event_selected: "$.get('event_selected')"
+      outputs:
+        event_code: "$.get('event_code')"
+        news_count: "$.get('research_news_count')"
+        team_home_name: "$.get('team_home_name')"
+        team_away_name: "$.get('team_away_name')"
+        team_home_id: "$.get('team_home_id')"
+        team_away_id: "$.get('team_away_id')"
+        title: "$.get('title')"
+
+    # 3 sportradar-soccer-mapping
+    - type: "mapping"
+      name: "sportradar-soccer-mapping"
+      description: "Transform the sportradar soccer data"
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
+      inputs:
+        event_selected: "$.get('event_selected')"
+      outputs:
+        event_code: "$.get('event_code')"
+        news_count: "$.get('research_news_count')"
+        team_home_name: "$.get('team_home_name')"
+        team_away_name: "$.get('team_away_name')"
+        team_home_id: "$.get('team_home_id')"
+        team_away_id: "$.get('team_away_id')"
+        title: "$.get('title')"
+
+    # 4 version-control-update (schedule)
     - type: "document"
-      name: "version-control-update"
+      name: "version-control-update-schedule"
       description: "Update the events document version control."
-      condition: "$.get('event_exists') is True"
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
       config:
         action: "update"
         embed-vector: false
         force-update: true
       documents:
-        schedule: |
+        soccer-game: |
           {
             **$.get('event_selected'),
             'version_control': {
@@ -95,7 +115,29 @@ workflow:
       metadata:
         event_code: "$.get('event_code')"
 
-    # 3 research-team-news (home team)
+    # 5 version-control-update (nba-game)
+    - type: "document"
+      name: "version-control-update-nba-game"
+      description: "Update the events document version control."
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'nba-game'"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        nba-game: |
+          {
+            **$.get('event_selected'),
+            'version_control': {
+              **$.get('event_selected').get('version_control', {}),
+              'processing': True,
+              'research_news_status': 'processing'
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+
+    # 6 research-team-news (home team)
     - type: "connector"
       name: "fetch-perplexity-api"
       condition: "$.get('event_exists') is True"
@@ -130,7 +172,7 @@ workflow:
       outputs:
         result-home-news: "$.get('choices')[0].get('message').get('content')"
 
-    # 4 research-team-news (away team)
+    # 7 research-team-news (away team)
     - type: "connector"
       name: "fetch-perplexity-api"
       condition: "$.get('event_exists') is True"
@@ -165,7 +207,7 @@ workflow:
       outputs:
         result-away-news: "$.get('choices')[1].get('message').get('content')"
 
-    # 5 research-home-news-rating (home team)
+    # 8 research-home-news-rating (home team)
     - type: "prompt"
       name: "research-team-news"
       description: "Generate research team news."
@@ -176,7 +218,7 @@ workflow:
         model: "gpt-4o"
       inputs:
         title: "$.get('title')"
-        team: "$.get('event_selected').get('sport_event', {}).get('competitors', [])[0]"
+        team: "$.get('team_home_name')"
         news: "$.get('result-home-news')"
       outputs:
         research-home-news: "$"
@@ -195,7 +237,7 @@ workflow:
             for c in $.get('snippets', [])
           ]
 
-    # 6 research-away-news-rating (away team)
+    # 9 research-away-news-rating (away team)
     - type: "prompt"
       name: "research-team-news"
       description: "Generate research team news."
@@ -206,7 +248,7 @@ workflow:
         model: "gpt-4o"
       inputs:
         title: "$.get('title')"
-        team: "$.get('event_selected').get('sport_event', {}).get('competitors', [])[1]"
+        team: "$.get('team_away_name')"
         news: "$.get('result-away-news')"
       outputs:
         research-away-news: "$"
@@ -225,7 +267,7 @@ workflow:
             for c in $.get('snippets', [])
           ]
 
-    # 7 update-documents (home team)
+    # 10 update-documents (home team)
     - type: "document"
       name: "update-documents-home"
       description: "Update the documents."
@@ -246,7 +288,7 @@ workflow:
         event_code: "$.get('event_code')"
         team_id: "$.get('team_home_id')"
 
-    # 8 update-documents (away team)
+    # 11 update-documents (away team)
     - type: "document"
       name: "update-documents-away"
       description: "Update the documents."
@@ -267,7 +309,7 @@ workflow:
         event_code: "$.get('event_code')"
         team_id: "$.get('team_away_id')"
     
-    # 9 update-snippets
+    # 12 update-snippets
     - type: "document"
       name: "update-snippets"
       condition: "$.get('event_exists') is True"
@@ -290,23 +332,47 @@ workflow:
             *$.get('research-away-news-bulk', []),
           ]
     
-    # 10 version-control-success
+    # 13 version-control-success-schedule
     - type: "document"
-      name: "version-control-success"
+      name: "version-control-success-schedule"
       description: "Update the events document version control."
-      condition: "$.get('event_exists') is True"
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'soccer-game'"
       config:
         action: "update"
         embed-vector: false
         force-update: true
       documents:
-        schedule: |
+        soccer-game: |
           {
             **$.get('event_selected'),
             'version_control': {
               **$.get('event_selected').get('version_control', {}),
               'processing': False,
-              'research_news_count': $.get('research_news_count', 0) + 1,
+              'research_news_count': $.get('news_count', 0) + 1,
+              'research_news_status': 'processed',
+              'updated': datetime.utcnow()
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+    
+    # 14 version-control-success-nba-game
+    - type: "document"
+      name: "version-control-success-nba-game"
+      description: "Update the events document version control."
+      condition: "$.get('event_exists') is True and $.get('event_type') == 'nba-game'"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        nba-game: |
+          {
+            **$.get('event_selected'),
+            'version_control': {
+              **$.get('event_selected').get('version_control', {}),
+              'processing': False,
+              'research_news_count': $.get('news_count', 0) + 1,
               'research_news_status': 'processed',
               'updated': datetime.utcnow()
             }
