@@ -98,7 +98,7 @@ prompts:
 
             ## Quem vence, [Time A] ou [Time B]?
             
-            Faça uma previsão confiante do resultado, como um especialista que realmente acredita no seu palpite. Escolha um lado e defenda sua posição com convicção, usando os dados disponíveis para justificar. Evite linguagem indecisa como "talvez", "pode ser" ou "no entanto". Em vez disso, use frases assertivas que mostrem certeza na sua análise.
+            Faça uma previsão confiante do resultado, como um especialista que realmente acredita no seu palpite. Escolha um lado e defenda sua posição com convicção, usando os dados disponíveis para justificar. Inclua uma previsão para o placar. Evite linguagem indecisa como "talvez", "pode ser" ou "no entanto". Em vez disso, use frases assertivas que mostrem certeza na sua análise.
             
             **Diretriz Geral:** Em todas as seções, assegure que os insights estejam sempre respaldados por estatísticas reais e odds da competição, evitando comentários genéricos sem fundamentação.
             
@@ -176,7 +176,7 @@ prompts:
 
             ## Who wins, [Team A] or [Team B]?
             
-            Make a confident prediction, like an expert who truly believes in their pick. Choose a side and stand by it with conviction, using available data to back up your stance. Avoid uncertain language like "maybe", "might" or "however". Instead, use assertive phrases that show confidence in your analysis.
+            Make a confident prediction, like an expert who truly believes in their pick. Choose a side and stand by it with conviction, using available data to back up your stance. Include a prediction for the score.  Avoid uncertain language like "maybe", "might" or "however". Instead, use assertive phrases that show confidence in your analysis.
             
             **General Guideline:** In every section, ensure that insights are always supported by actual statistics and competition odds, avoiding generic commentary without proper data.
             
@@ -191,7 +191,7 @@ prompts:
             - Use markdown formatting
             - Convert match time (start_time) from GMT to local time of the match
 
-            **Diretriz Adicional de Variedade:**
+            **Additional Variety Guidelines:**
             - Alternate between different openings (statistical, narrative, rhetorical question, relevant quote)
             - Vary the order of presenting information when it makes sense
             - Adjust the tone based on the game context (more serious for decisive games, lighter for regular games)
