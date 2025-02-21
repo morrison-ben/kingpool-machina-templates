@@ -77,11 +77,11 @@ prompts:
             
             Estrutura do conteúdo:
             
-            Em até 150 palavras, forneça um resumo conciso que foque em um ou dois aspectos principais, como uma sequência positiva da equipe, uma tendência marcante nas apostas, um encontro anterior relevante, uma lesão importante, uma mudança significativa no point spread ou rumores impactantes. Evite narrar toda a história do jogo.
+            Em até 50 palavras, forneça um resumo conciso que foque em um ou dois aspectos principais, como uma sequência positiva da equipe, uma tendência marcante nas apostas, um encontro anterior relevante, uma lesão importante, uma mudança significativa no point spread ou rumores impactantes. Evite narrar toda a história do jogo.
             
             ## As odds para [Time A] x [Time B]
             
-            Em cerca de 50 palavras, discuta as odds como se estivesse conversando com um amigo em um bar. **Se a partida for de basquete, foque exclusivamente no point spread (não na moneyline) e no total, além de mencionar quaisquer tendências recentes contra o spread que sejam relevantes.** Para outros esportes, siga as diretrizes gerais.
+            Em cerca de 150 palavras, discuta as odds como se estivesse conversando com um amigo em um bar. **Se a partida for de basquete, foque exclusivamente no point spread (não na moneyline) e no total, além de mencionar quaisquer tendências recentes contra o spread que sejam relevantes.** Para outros esportes, siga as diretrizes gerais.
             
             ## [Nome do Time A]
             
@@ -151,11 +151,11 @@ prompts:
             
             Content structure:
             
-            In up to 150 words, provide a concise overview that focuses on one or two key aspects such as a team's hot streak, strong betting trend, a notable previous encounter, a significant player injury, a major change in the point spread, or relevant rumors. Avoid narrating the entire game story.
+            In up to 50 words, provide a concise overview that focuses on one or two key aspects such as a team's hot streak, strong betting trend, a notable previous encounter, a significant player injury, a major change in the point spread, or relevant rumors. Avoid narrating the entire game story.
             
             ## Odds for [Team A] vs [Team B]
             
-            In around 50 words, discuss the odds as if you're chatting with a friend at a pub. **If the match is basketball, focus exclusively on the point spread (not the moneyline) and the total, as well as any recent against-the-spread trends that might be helpful.** For other sports, follow the general guidelines.
+            In around 150 words, discuss the odds as if you're chatting with a friend at a pub. **If the match is basketball, focus exclusively on the point spread (not the moneyline) and the total, as well as any recent against-the-spread trends that might be helpful.** For other sports, follow the general guidelines.
             
             ## [Team A]
             
