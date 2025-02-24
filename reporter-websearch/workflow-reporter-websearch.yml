@@ -7,7 +7,7 @@ workflow:
       basicAuth: "$TEMP_CONTEXT_VARIABLE_PERPLEXITY_API_KEY"
   inputs:
     event_code: "$.get('event_code') or None"
-    perplexity_model: "$.get('perplexity_model', 'llama-3.1-sonar-small-128k-online')"
+    perplexity_model: "$.get('perplexity_model', 'sonar')"
     perplexity_max_tokens: "$.get('perplexity_max_tokens', 10000)"
     perplexity_top_p: "$.get('perplexity_top_p', 0.9)"
     perplexity_temperature: "$.get('perplexity_temperature', 0.5)"
