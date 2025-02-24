@@ -77,7 +77,7 @@ prompts:
             
             Estrutura do conteúdo:
             
-            Em até 50 palavras, forneça um resumo conciso que foque em um ou dois aspectos principais, como uma sequência positiva da equipe, uma tendência marcante nas apostas, um encontro anterior relevante, uma lesão importante, uma mudança significativa no point spread ou rumores impactantes. Evite narrar toda a história do jogo.
+            Em até 50 palavras, forneça um resumo conciso que foque em um ou dois aspectos principais, como uma sequência positiva da equipe, uma tendência marcante nas apostas, um encontro anterior relevante, uma lesão importante, uma mudança significativa no point spread ou rumores impactantes, incluindo a data e o horário de início (campo "start_time" convertido de GMT para o horário local da partida). Evite narrar toda a história do jogo. 
             
             ## As odds para [Time A] x [Time B]
             
@@ -151,7 +151,7 @@ prompts:
             
             Content structure:
             
-            In up to 50 words, provide a concise overview that focuses on one or two key aspects such as a team's hot streak, strong betting trend, a notable previous encounter, a significant player injury, a major change in the point spread, or relevant rumors. Avoid narrating the entire game story.
+            In up to 50 words, provide a concise overview that focuses on one or two key aspects such as a team's hot streak, strong betting trend, a notable previous encounter, a significant player injury, a major change in the point spread, or relevant rumors, including the match date and start time (using the "start_time" field converted from GMT to local time of the match). Avoid narrating the entire game story.
             
             ## Odds for [Team A] vs [Team B]
             
