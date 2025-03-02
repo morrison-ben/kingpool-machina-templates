@@ -1,7 +1,7 @@
 workflow:
-  name: "workflow-chat-completion"
-  title: "Workflow Chat Completion"
-  description: "Workflow to chat completion"
+  name: "thread-executor"
+  title: "Thread Executor"
+  description: "Workflow to execute a thread."
   context-variables:
     sdk-groq:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_GROQ_API_KEY"
@@ -9,7 +9,6 @@ workflow:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
   inputs:
     event_type: "$.get('event_type', 'content-snippet')"
-    prompt_name: "$.get('prompt_name', 'prompt-thread-completion')"
     input_status: "$.get('input_status', 'waiting')"
     output_status: "$.get('output_status', 'idle')"
   outputs:
@@ -85,11 +84,11 @@ workflow:
       outputs:
         documents: "$.get('documents')"
 
-    # Prompt chat completion
+    # thread-executor-prompt
     - type: "prompt"
-      name: "prompt-chat-completion"
-      description: "Chat Completion."
-      condition: "$.get('document_id') is not None and $.get('prompt_name') == 'prompt-thread-completion'"
+      name: "thread-executor-prompt"
+      description: "Thread Executor."
+      condition: "$.get('document_id') is not None"
       connector:
         name: "sdk-groq"
         command: "invoke_prompt"
@@ -107,21 +106,21 @@ workflow:
       outputs:
         content: "$"
 
-    # Prompt bet confirmation
-    - type: "prompt"
-      name: "prompt-bet-confirmation"
-      description: "Bet Confirmation."
-      condition: "$.get('document_id') is not None and $.get('prompt_name') == 'prompt-bet-confirmation'"
-      connector:
-        name: "sdk-openai"
-        command: "invoke_prompt"
-        model: "gpt-4o"
-      inputs:
-        documents: "$.get('documents')"
-        messages: "$.get('messages')"
-        question: "$.get('question')"
-      outputs:
-        content: "$"
+    # # Prompt bet confirmation
+    # - type: "prompt"
+    #   name: "prompt-bet-confirmation"
+    #   description: "Bet Confirmation."
+    #   condition: "$.get('document_id') is not None and $.get('prompt_name') == 'prompt-bet-confirmation'"
+    #   connector:
+    #     name: "sdk-openai"
+    #     command: "invoke_prompt"
+    #     model: "gpt-4o"
+    #   inputs:
+    #     documents: "$.get('documents')"
+    #     messages: "$.get('messages')"
+    #     question: "$.get('question')"
+    #   outputs:
+    #     content: "$"
 
     # Load thread document
     - type: "document"

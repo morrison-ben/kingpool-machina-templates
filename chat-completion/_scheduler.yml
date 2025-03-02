@@ -1,13 +1,13 @@
 agent:
-  name: "agent-chat-completion"
-  title: "Chat Completion"
-  description: "Agent responsible for chat completion."
+  name: "thread-executor-scheduler"
+  title: "Thread Executor Scheduler"
+  description: "Scheduler responsible for thread executor."
   context:
-    config-frequency: 0.1
+    config-frequency: 1
   workflows:
 
-    # Workflow Chat Completion
-    - name: "workflow-chat-completion"
-      description: "Workflow Chat Completion"
+    # Workflow Thread Executor
+    - name: "thread-executor"
+      description: "Workflow Thread Executor"
       outputs:
         chat-completion-status: "$.get('workflow-status', False)"
