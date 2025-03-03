@@ -6,7 +6,7 @@ workflow:
     force-setup: "$.get('force-setup') == 'true'"
   outputs:
     setup-register: "$.get('setup-register')"
-    workflow-status: "$.get('setup-register') is True and 'skipped' or 'executed'"
+    workflow-status: "($.get('setup-register') is True or $.get('force-setup') is True) and 'skipped' or 'executed'"
   tasks:
 
     # load-setup-register

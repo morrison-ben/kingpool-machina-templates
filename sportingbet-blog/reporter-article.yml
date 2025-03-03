@@ -260,6 +260,31 @@ workflow:
             for s in d.get('value', {}).get('content', {}).get('snippets', [])
           ]
 
+    # 11 load-players-to-watch
+    - type: "document"
+      name: "load-players-to-watch"
+      description: "Search for registered players to watch."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      filters:
+        metadata.event_code: "$.get('event_code')"
+      inputs:
+        name: "'players-to-watch'"  
+      outputs:
+        result-players-to-watch: "$.get('documents', [])"
+        result-players-to-watch-snippets: |
+          [
+            {
+              **s,
+              'title': f"{d.get('value', {}).get('title', '')} - {s.get('title', '')}"
+            }
+            for d in $.get('documents', [])
+            for s in d.get('value', {}).get('content', {}).get('snippets', [])
+          ]
+
     # 11 prompt-reporter-article-br
     - type: "prompt"
       name: "prompt-reporter-preview-br"
@@ -277,7 +302,8 @@ workflow:
             *$.get('result-team-news-snippets', []),
             *$.get('result-market-odds-snippets', []),
             *$.get('result-standings-snippets', []),
-            *$.get('result-comparison-snippets', [])
+            *$.get('result-comparison-snippets', []),
+            *$.get('result-players-to-watch-snippets', [])
           ]
       outputs:
         reporter-article-br: "$"
@@ -299,7 +325,8 @@ workflow:
             *$.get('result-team-news-snippets', []),
             *$.get('result-market-odds-snippets', []),
             *$.get('result-standings-snippets', []),
-            *$.get('result-comparison-snippets', [])
+            *$.get('result-comparison-snippets', []),
+            *$.get('result-players-to-watch-snippets', [])
           ]
       outputs:
         reporter-article-en: "$"

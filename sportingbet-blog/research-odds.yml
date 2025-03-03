@@ -267,6 +267,7 @@ workflow:
           {
             "execution": datetime.utcnow(),
             "content": $.get('research-match-odds'),
+            "bulk-markets": $.get('bulk-markets'),
             "title": f"{$.get('title')} - Market Odds",
             "status": 'active'
           }

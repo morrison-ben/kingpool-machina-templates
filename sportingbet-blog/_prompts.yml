@@ -204,16 +204,45 @@ prompts:
             properties:
               title:
                 type: "string"
-                description: "The category of comparison analysis (e.g., 'Head-to-Head Comparison', 'Players to Watch', 'Recent Form Comparison', 'Points Gap Comparison', etc)."
+                description: "The category of comparison analysis (e.g., 'Head-to-Head Comparison', 'Recent Form Comparison', 'Points Gap Comparison', etc)."
               content:
                 type: "string"
-                description: "Detailed comparative analysis of both teams' comparison situation, including standings, players to watch, recent form, and relevant performance metrics."
+                description: "Detailed comparative analysis of both teams' comparison situation, including standings, recent form, and relevant performance metrics."
               confidence:
                 type: "number"
                 description: "The confidence score for the accuracy of the comparison analysis (0.0 to 1.0)."
             required: ["title", "content", "confidence"]
           minItems: 10
           maxItems: 10
+
+  # reporter-players-to-watch
+  - type: "prompt"
+    title: "Reporter Players to Watch"
+    name: "prompt-reporter-players-to-watch"
+    description: "This schema defines the structure to generate a detailed players to watch analysis between two teams."
+    schema:
+      title: "ReporterPlayersToWatch"
+      description: "This schema defines the structure to generate a detailed players to watch analysis between two teams."
+      type: "object"
+      properties:
+        snippets:
+          type: "array"
+          description: "An array of snippets analyzing the players to watch."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The category of players to watch analysis (e.g., 'Players to Watch', 'Key Players', etc)."
+              content:
+                type: "string"
+                description: "Detailed comparative analysis of both teams' players to watch situation, including recent form, and relevant performance metrics."
+              confidence:
+                type: "number"
+                description: "The confidence score for the accuracy of the players to watch analysis (0.0 to 1.0)."
+            required: ["title", "content", "confidence"]
+          minItems: 3
+          maxItems: 3
 
   # reporter-standings
   - type: "prompt"

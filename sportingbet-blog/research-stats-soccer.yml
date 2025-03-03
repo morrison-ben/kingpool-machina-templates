@@ -234,7 +234,52 @@ workflow:
             for c in $.get('snippets', [])
           ]
 
-    # 9 update-documents
+    # # 9 fetch-lineups
+    # - type: "connector"
+    #   name: "fetch-lineups"
+    #   description: "Get a lineups from SportRadar"
+    #   condition: "$.get('event_exists') is True and $.get('season') is not None"
+    #   connector:
+    #     name: "api-sportradar-soccer"
+    #     command: "get-sport_events/{event_code}/{data_type}"
+    #     command_attribute:
+    #       data_type: "'lineups.json'"
+    #       event_code: "$.get('event_code')"
+    #   inputs:
+    #     api_key: "$.get('sportradar_api_key')"
+    #   outputs:
+    #     event-lineups: "$"
+
+    # 10 players-to-watch
+    - type: "prompt"
+      name: "prompt-reporter-players-to-watch"
+      description: "Reporter players to watch."
+      condition: "$.get('event_exists') is True and $.get('season') is not None"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        title: "$.get('title')"
+        home-competitor: "$.get('result-home-competitor')"
+        away-competitor: "$.get('result-away-competitor')"
+      outputs:
+        research-players-to-watch: "$"
+        research-players-to-watch-bulk: |
+          [
+            {
+              'subject': '$.(title)', 
+              'text': c.get('content', ''),
+              'title': f"$.(title) - {c.get('title', '')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'language': 'en'
+              } 
+            }
+            for c in $.get('snippets', [])
+          ]
+
+    # 11 update-documents
     - type: "document"
       name: "update-documents-standings"
       description: "Update the documents."
@@ -258,10 +303,17 @@ workflow:
             "title": f"{$.get('title')} - Comparison Analysis",
             "status": 'active'
           }
+        players-to-watch: |
+          {
+            "execution": datetime.utcnow(),
+            "content": $.get('research-players-to-watch'),
+            "title": f"{$.get('title')} - Players to Watch",
+            "status": 'active'
+          }
       metadata:
         event_code: "$.get('event_code')"
     
-    # 10 update-snippets
+    # 12 update-snippets
     - type: "document"
       name: "update-snippets"
       condition: "$.get('event_exists') is True"
@@ -281,10 +333,11 @@ workflow:
         parsed-items: |
           [
             *$.get('research-standings-bulk', []),
-            *$.get('research-comparison-bulk', [])
+            *$.get('research-comparison-bulk', []),
+            *$.get('research-players-to-watch-bulk', [])
           ]
 
-    # 11 version-control-success-schedule
+    # 13 version-control-success-schedule
     - type: "document"
       name: "version-control-success-schedule"
       description: "Update the events document version control."
