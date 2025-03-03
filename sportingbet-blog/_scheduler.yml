@@ -60,11 +60,81 @@ agent:
     - name: "sportingbet-sync-markets-odds"
       description: "sync-markets-odds"
       inputs:
-        country: "'ar'"
+        country: "'br'"
         competitionIds: "'102540'"
         sportId: "'4'"
       outputs:
         sync-markets-odds-argentina-status: "$.get('workflow-status', False)"
+
+    # sportingbet-sync-brasileiro serie a fixtures
+    - name: "sportingbet-sync-markets-odds"
+      description: "sync-markets-odds"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102838'"
+        sportId: "'4'"
+      outputs:
+        sync-markets-odds-brasileiro-serie-a-status: "$.get('workflow-status', False)"
+
+    # sportingbet-sync-brasileiro serie b fixtures
+    - name: "sportingbet-sync-markets-odds"
+      description: "sync-markets-odds"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102361'"
+        sportId: "'4'"
+      outputs:
+        sync-markets-odds-brasileiro-serie-b-status: "$.get('workflow-status', False)"
+
+    # sportingbet-sync-copa libertadores fixtures
+    - name: "sportingbet-sync-markets-odds"
+      description: "sync-markets-odds"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102827'"
+        sportId: "'4'"
+      outputs:
+        sync-markets-odds-copa-libertadores-status: "$.get('workflow-status', False)"
+
+    # sportingbet-sync-copa sudamericana fixtures
+    - name: "sportingbet-sync-markets-odds"
+      description: "sync-markets-odds"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102696'"
+        sportId: "'4'"
+      outputs:
+        sync-markets-odds-copa-sudamericana-status: "$.get('workflow-status', False)"
+
+    # sportingbet-sync-paulista serie a1 fixtures
+    - name: "sportingbet-sync-markets-odds"
+      description: "sync-markets-odds"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102148'"
+        sportId: "'4'"
+      outputs:
+        sync-markets-odds-paulista-serie-a1-status: "$.get('workflow-status', False)"
+
+    # sportingbet-sync-champions league fixtures
+    - name: "sportingbet-sync-markets-odds"
+      description: "sync-markets-odds"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102855'"
+        sportId: "'4'"
+      outputs:
+        sync-markets-odds-champions-league-status: "$.get('workflow-status', False)"
+
+    # sportingbet-sync-europa league fixtures
+    - name: "sportingbet-sync-markets-odds"
+      description: "sync-markets-odds"
+      inputs:
+        country: "'br'"
+        competitionIds: "'102856'"
+        sportId: "'4'"
+      outputs:
+        sync-markets-odds-europa-league-status: "$.get('workflow-status', False)"
         
     # Reporter Editor
     - name: "reporter-article"

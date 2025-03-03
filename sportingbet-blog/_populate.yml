@@ -119,3 +119,75 @@ agent:
         season_year: "'2024'"
       outputs:
         sync-games-status: "$.get('workflow-status', False)"
+
+    # sync Brasileiro Serie A (Brasileirao A) schedules
+    - name: "sportradar-soccer-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:128461'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
+
+    # sync Brasileiro Serie B (Brasileirao B) schedules
+    - name: "sportradar-soccer-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:128819'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
+
+    # sync CONMEBOL Libertadores schedules
+    - name: "sportradar-soccer-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:127215'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
+
+    # sync CONMEBOL Sudamericana schedules
+    - name: "sportradar-soccer-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:127223'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
+
+    # sync Paulista, Serie A1 (Campeonato Paulista) schedules
+    - name: "sportradar-soccer-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:126795'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
+
+    # sync Premier League schedules (already exists but adding again as requested)
+    - name: "sportradar-soccer-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:118689'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
+
+    # sync UEFA Champions League schedules
+    - name: "sportradar-soccer-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:119239'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
+
+    # sync UEFA Europa League schedules
+    - name: "sportradar-soccer-sync-schedules"
+      description: "sync-schedules"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_id: "'sr:season:119781'"
+      outputs:
+        sync-schedules-status: "$.get('workflow-status', False)"
