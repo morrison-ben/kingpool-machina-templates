@@ -234,23 +234,39 @@ workflow:
             for c in $.get('snippets', [])
           ]
 
-    # # 9 fetch-lineups
-    # - type: "connector"
-    #   name: "fetch-lineups"
-    #   description: "Get a lineups from SportRadar"
-    #   condition: "$.get('event_exists') is True and $.get('season') is not None"
-    #   connector:
-    #     name: "api-sportradar-soccer"
-    #     command: "get-sport_events/{event_code}/{data_type}"
-    #     command_attribute:
-    #       data_type: "'lineups.json'"
-    #       event_code: "$.get('event_code')"
-    #   inputs:
-    #     api_key: "$.get('sportradar_api_key')"
-    #   outputs:
-    #     event-lineups: "$"
+    # 9 fetch-home-competitor-profile
+    - type: "connector"
+      name: "fetch-home-competitor-profile"
+      description: "Get a competitor profile from SportRadar" 
+      condition: "$.get('event_exists') is True and $.get('season') is not None"
+      connector:
+        name: "api-sportradar-soccer"
+        command: "get-competitors/{competitor_id}/{data_type}"
+        command_attribute:
+          competitor_id: "$.get('team_home_id')"
+          data_type: "'profile.json'"
+      inputs:
+        api_key: "$.get('sportradar_api_key')"
+      outputs:
+        result-home-competitor-profile: "$"
 
-    # 10 players-to-watch
+    # 10 fetch-away-competitor-profile
+    - type: "connector"
+      name: "fetch-away-competitor-profile"
+      description: "Get a competitor profile from SportRadar" 
+      condition: "$.get('event_exists') is True and $.get('season') is not None"
+      connector:
+        name: "api-sportradar-soccer"
+        command: "get-competitors/{competitor_id}/{data_type}"
+        command_attribute:
+          competitor_id: "$.get('team_away_id')"
+          data_type: "'profile.json'"
+      inputs:
+        api_key: "$.get('sportradar_api_key')"
+      outputs:
+        result-away-competitor-profile: "$"
+
+    # 11 players-to-watch
     - type: "prompt"
       name: "prompt-reporter-players-to-watch"
       description: "Reporter players to watch."
@@ -263,6 +279,8 @@ workflow:
         title: "$.get('title')"
         home-competitor: "$.get('result-home-competitor')"
         away-competitor: "$.get('result-away-competitor')"
+        home-competitor-profile: "$.get('result-home-competitor-profile')"
+        away-competitor-profile: "$.get('result-away-competitor-profile')"
       outputs:
         research-players-to-watch: "$"
         research-players-to-watch-bulk: |
@@ -279,7 +297,7 @@ workflow:
             for c in $.get('snippets', [])
           ]
 
-    # 11 update-documents
+    # 12 update-documents
     - type: "document"
       name: "update-documents-standings"
       description: "Update the documents."
@@ -313,7 +331,7 @@ workflow:
       metadata:
         event_code: "$.get('event_code')"
     
-    # 12 update-snippets
+    # 13 update-snippets
     - type: "document"
       name: "update-snippets"
       condition: "$.get('event_exists') is True"
@@ -337,7 +355,7 @@ workflow:
             *$.get('research-players-to-watch-bulk', [])
           ]
 
-    # 13 version-control-success-schedule
+    # 14 version-control-success-schedule
     - type: "document"
       name: "version-control-success-schedule"
       description: "Update the events document version control."
