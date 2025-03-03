@@ -7,6 +7,7 @@ workflow:
       api_key: "$TEMP_CONTEXT_VARIABLE_SPORTRADAR_SOCCER_V4_API_KEY"
   inputs:
     season_id: "$.get('season_id')"
+    start: "$.get('start', '0')"
   outputs:
     schedules: "$.get('schedules')"
     workflow-status: "$.get('should_update') is not True and 'skipped' or 'executed'"
@@ -66,6 +67,7 @@ workflow:
       condition: "$.get('should_update') == True and $.get('season') is not None"
       inputs:
         api_key: "$.get('api_key')"
+        start: "$.get('start')"
       outputs:
         schedules: "$.get('schedules')"
         schedules_parsed: |
