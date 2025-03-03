@@ -26,9 +26,21 @@ setup:
   version: 1.0.0
 
 datasets:
+
+  - type: "connector"
+    path: "../connector-groq/sdk-groq.yml"
+  
+  - type: "connector"
+    path: "../connector-openai/sdk-openai.yml"
+
   - type: "prompts"
-    path: "prompt-chat-completion.yml"
+    path: "_prompts.yml"
+
   - type: "workflow"
-    path: "workflow-chat-completion.yml"
+    path: "chat-completions.yml"
+
+  - type: "workflow"
+    path: "thread-executor.yml"
+  
   - type: "agent"
     path: "_scheduler.yml"

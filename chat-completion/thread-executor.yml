@@ -1,15 +1,16 @@
 workflow:
-  name: "workflow-chat-completion"
-  title: "Workflow Chat Completion"
-  description: "Workflow to chat completion"
+  name: "thread-executor"
+  title: "Thread Executor"
+  description: "Workflow to execute a thread."
   context-variables:
+    debugger:
+      enabled: true
     sdk-groq:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_GROQ_API_KEY"
     sdk-openai:
       api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
   inputs:
     event_type: "$.get('event_type', 'content-snippet')"
-    prompt_name: "$.get('prompt_name', 'prompt-thread-completion')"
     input_status: "$.get('input_status', 'waiting')"
     output_status: "$.get('output_status', 'idle')"
   outputs:
@@ -39,6 +40,7 @@ workflow:
       outputs:
         document_id: "$.get('documents')[0]['_id'] if len($.get('documents', [])) > 0 else None"
         document_data: "$.get('documents')[0] if len($.get('documents', [])) > 0 else None"
+        event_code: "$.get('documents')[0].get('metadata', {}).get('event_code', '') if len($.get('documents', [])) > 0 else None"
         messages: "$.get('documents')[0].get('value', {}).get('messages', []) if len($.get('documents', [])) > 0 else None"
         question: "$.get('documents')[0].get('value', {}).get('messages', [])[-1].get('content', '') if len($.get('documents', [])) > 0 else None"
 
@@ -69,50 +71,35 @@ workflow:
       description: "Load similar documents"
       config:
         action: "search"
-        threshold-docs: 5
-        threshold-similarity: 0.01
-        search-limit: 1000
-        search-vector: true
+        # threshold-docs: 5
+        # threshold-similarity: 0.01
+        search-limit: 100
+        search-vector: false
       condition: "$.get('document_id') is not None"
       connector:
         name: "sdk-openai"
         command: "invoke_embedding"
         model: "text-embedding-3-small"
+      filters:
+        metadata.event_code: "$.get('event_code')"
       inputs:
-        name: "$.get('event_type')"
-        search-limit: "'1000'"
-        search-query: "$.get('question')"
+        search-limit: "'100'"
+        # search-query: "$.get('question')"
       outputs:
         documents: "$.get('documents')"
 
-    # Prompt chat completion
+    # thread-executor-prompt
     - type: "prompt"
-      name: "prompt-chat-completion"
-      description: "Chat Completion."
-      condition: "$.get('document_id') is not None and $.get('prompt_name') == 'prompt-thread-completion'"
+      name: "thread-executor-prompt"
+      description: "Thread Executor."
+      condition: "$.get('document_id') is not None"
       connector:
-        name: "sdk-groq"
-        command: "invoke_prompt"
+        # name: "sdk-groq"
+        # command: "invoke_prompt"
         # model: "llama-3.1-8b-instant"
         # model: "llama-3.3-70b-versatile"
         # model: "deepseek-r1-distill-llama-70b"
-        model: "deepseek-r1-distill-llama-70b-specdec"
-        # name: "sdk-openai"
-        # command: "invoke_prompt"
-        # model: "gpt-4o"
-      inputs:
-        documents: "$.get('documents')"
-        messages: "$.get('messages')"
-        question: "$.get('question')"
-      outputs:
-        content: "$"
-
-    # Prompt bet confirmation
-    - type: "prompt"
-      name: "prompt-bet-confirmation"
-      description: "Bet Confirmation."
-      condition: "$.get('document_id') is not None and $.get('prompt_name') == 'prompt-bet-confirmation'"
-      connector:
+        # model: "deepseek-r1-distill-llama-70b-specdec"
         name: "sdk-openai"
         command: "invoke_prompt"
         model: "gpt-4o"
@@ -122,6 +109,22 @@ workflow:
         question: "$.get('question')"
       outputs:
         content: "$"
+
+    # # Prompt bet confirmation
+    # - type: "prompt"
+    #   name: "prompt-bet-confirmation"
+    #   description: "Bet Confirmation."
+    #   condition: "$.get('document_id') is not None and $.get('prompt_name') == 'prompt-bet-confirmation'"
+    #   connector:
+    #     name: "sdk-openai"
+    #     command: "invoke_prompt"
+    #     model: "gpt-4o"
+    #   inputs:
+    #     documents: "$.get('documents')"
+    #     messages: "$.get('messages')"
+    #     question: "$.get('question')"
+    #   outputs:
+    #     content: "$"
 
     # Load thread document
     - type: "document"

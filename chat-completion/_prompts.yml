@@ -1,12 +1,12 @@
 prompts:
 
-  # prompt-chat-completion
+  # thread-executor-prompt
   - type: "prompt"
-    title: "Chat Completion"
-    name: "prompt-chat-completion" 
+    title: "Thread Executor Prompt"
+    name: "thread-executor-prompt" 
     description: "This prompt generates a contextual response to user questions about sports matches, incorporating relevant betting options and follow-up questions."
     schema:
-      title: "ThreadCompletion"
+      title: "ThreadExecutor"
       description: "This schema defines the structure for generating comprehensive responses that include match insights, betting suggestions, and conversation continuity."
       type: "object"
       properties:
@@ -46,3 +46,34 @@ prompts:
         speech_to_avatar:
           type: "string"
           description: "The speech to avatar speak to the user, more conversational and engaging, more like a human talking to the user."
+
+  # chat-completions-prompt
+  - type: "prompt"
+    title: "Chat Completions Prompt"
+    name: "chat-completions-prompt"
+    description: "This prompt generates a chat completion response to user questions."
+    schema:
+      title: "ChatCompletions"
+      description: "This schema defines the structure for generating chat completion responses."
+      type: "object"
+      properties:
+        choices:
+          type: "array"
+          description: "List of chat completion choices."
+          items:
+            type: "object"
+            properties:
+              index:
+                type: "integer" 
+              message:
+                type: "object"
+                properties:
+                  role:
+                    type: "string"
+                    description: "The role of the message."
+                  content:
+                    type: "string"
+                    description: "The content of the message."
+        object:
+          type: "string"
+          description: "The object of the chat completion."

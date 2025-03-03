@@ -1,0 +1,58 @@
+workflow:
+  name: "chat-completions"
+  title: "Chat Completions"
+  description: "Workflow to execute a chat completion."
+  context-variables:
+    sdk-groq:
+      api_key: "$TEMP_CONTEXT_VARIABLE_SDK_GROQ_API_KEY"
+    sdk-openai:
+      api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
+  inputs:
+    messages: "$.get('messages', [])"
+  outputs:
+    choices: "$.get('choices', [])"
+    object: "'chat.completion'"
+    workflow-status: "$.get('choices') is not None and 'executed' or 'skipped'"
+  tasks:
+
+    # # Load similar documents
+    # - type: "document"
+    #   name: "load-similar-documents"
+    #   description: "Load similar documents"
+    #   config:
+    #     action: "search"
+    #     threshold-docs: 5
+    #     threshold-similarity: 0.01
+    #     search-limit: 1000
+    #     search-vector: true
+    #   condition: "$.get('document_id') is not None"
+    #   connector:
+    #     name: "sdk-openai"
+    #     command: "invoke_embedding"
+    #     model: "text-embedding-3-small"
+    #   inputs:
+    #     name: "$.get('event_type')"
+    #     search-limit: "'1000'"
+    #     search-query: "$.get('question')"
+    #   outputs:
+    #     documents: "$.get('documents')"
+
+    # thread-executor-prompt
+    - type: "prompt"
+      name: "chat-completions-prompt"
+      description: "Chat Completions."
+      connector:
+        # name: "sdk-groq"
+        # command: "invoke_prompt"
+        # model: "llama-3.1-8b-instant"
+        # model: "llama-3.3-70b-versatile"
+        # model: "deepseek-r1-distill-llama-70b"
+        # model: "deepseek-r1-distill-llama-70b-specdec"
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        messages: "$.get('messages')"
+      outputs:
+        choices: "$"
+        object: "$"
