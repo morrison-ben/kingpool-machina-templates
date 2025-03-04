@@ -83,6 +83,10 @@ datasets:
   - type: "workflow"
     path: "_folders.yml"
 
+  # populate-content
+  - type: "agent"
+    path: "agent-producer.yml"
+
   # mappings
   - type: "mappings"
     path: "_mappings.yml"
