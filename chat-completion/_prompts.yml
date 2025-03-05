@@ -12,7 +12,7 @@ prompts:
       properties:
         question_answer:
           type: "string"
-          description: "Generate an informative and engaging response that directly addresses the user's question while maintaining a conversational tone."
+          description: "Provide a concise, direct response that answers the user's question with personality but without unnecessary filler. Focus on actionable information, avoid verbosity, and get straight to the point while maintaining an engaging tone."
         is_match_finished:
           type: "boolean"
           description: "Whether the match is finished."

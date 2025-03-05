@@ -14,13 +14,13 @@ agent:
       outputs:
         reporter-team-history: "$.get('workflow-status', False)"
 
-    # Reporter Team News
-    - name: "research-news"
-      description: "Reporter Team News"
-      inputs:
-        event_code: "$.get('event_code')"
-      outputs:
-        reporter-team-news: "$.get('workflow-status', False)"
+    # # Reporter Team News
+    # - name: "research-news"
+    #   description: "Reporter Team News"
+    #   inputs:
+    #     event_code: "$.get('event_code')"
+    #   outputs:
+    #     reporter-team-news: "$.get('workflow-status', False)"
 
     # Reporter Stats
     - name: "research-stats-nba"

@@ -50,8 +50,8 @@ workflow:
         value.version_control.article_status: "{'$exists': False}"
         value.version_control.research_odds_status: "'processed'"
         value.version_control.research_stats_status: "'processed'"
-        value.version_control.research_news_status: "'processed'"
-        value.version_control.research_team_status: "'processed'"
+        # value.version_control.research_news_status: "'processed'"
+        # value.version_control.research_team_status: "'processed'"
       inputs:
         name: "{'$in': ['nba-game', 'soccer-game']}"
       outputs:

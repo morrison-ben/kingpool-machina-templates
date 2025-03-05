@@ -160,7 +160,23 @@ workflow:
       outputs:
         result-home-competitor: "$"
 
-    # 7 fetch-away-competitor
+    # 7 fetch-home-team-profile
+    - type: "connector"
+      name: "fetch-home-team-profile"
+      description: "Get a team profile from SportRadar" 
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "api-sportradar-nba"
+        command: "get-teams/{team_id}/{data_type}"
+        command_attribute:
+          team_id: "$.get('team_home_id')"
+          data_type: "'profile.json'"
+      inputs:
+        api_key: "$.get('sportradar_api_key')"
+      outputs:
+        result-home-team-profile: "$"
+
+    # 8 fetch-away-competitor
     - type: "connector"
       name: "fetch-away-competitor"
       description: "Get a competitor data from SportRadar" 
@@ -178,7 +194,23 @@ workflow:
       outputs:
         result-away-competitor: "$"
 
-    # 8 reporter-comparison
+    # 9 fetch-away-team-profile
+    - type: "connector"
+      name: "fetch-away-team-profile"
+      description: "Get a team profile from SportRadar" 
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "api-sportradar-nba"
+        command: "get-teams/{team_id}/{data_type}"
+        command_attribute:
+          team_id: "$.get('team_away_id')"
+          data_type: "'profile.json'"
+      inputs:
+        api_key: "$.get('sportradar_api_key')"
+      outputs:
+        result-away-team-profile: "$"
+
+    # 10 reporter-comparison
     - type: "prompt"
       name: "prompt-reporter-comparison"
       description: "Reporter h2h comparison."
@@ -208,7 +240,78 @@ workflow:
             for c in $.get('snippets', [])
           ]
 
-    # 9 update-documents
+    # 11 update-team-profile-home
+    - type: "document"
+      name: "update-documents-team-profile-home"
+      description: "Update the documents."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        team-profile: |
+          {
+            "execution": datetime.utcnow(),
+            "content": $.get('result-home-team-profile'),
+            "title": f"{$.get('team_home_name')} - Team Profile",
+            "status": 'active'
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+        team_id: "$.get('team_home_id')"
+
+    # 12 update-team-profile-away
+    - type: "document"
+      name: "update-documents-team-profile-away"
+      description: "Update the documents."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        team-profile: |
+          {
+            "execution": datetime.utcnow(),
+            "content": $.get('result-away-team-profile'),
+            "title": f"{$.get('team_away_name')} - Team Profile",
+            "status": 'active'
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+        team_id: "$.get('team_away_id')"
+
+    # 13 players-to-watch
+    - type: "prompt"
+      name: "prompt-reporter-players-to-watch"
+      description: "Reporter players to watch."
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "sdk-openai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        title: "$.get('title')"
+        home-competitor-profile: "$.get('result-home-team-profile')"
+        away-competitor-profile: "$.get('result-away-team-profile')"
+      outputs:
+        research-players-to-watch: "$"
+        research-players-to-watch-bulk: |
+          [
+            {
+              'subject': '$.(title)', 
+              'text': c.get('content', ''),
+              'title': f"$.(title) - {c.get('title', '')}",
+              'metadata': {
+                'event_code': '$.(event_code)',
+                'language': 'en'
+              } 
+            }
+            for c in $.get('snippets', [])
+          ]
+
+    # 14 update-documents
     - type: "document"
       name: "update-documents-standings"
       description: "Update the documents."
@@ -232,10 +335,17 @@ workflow:
             "title": f"{$.get('title')} - Comparison Analysis",
             "status": 'active'
           }
+        players-to-watch: |
+          {
+            "execution": datetime.utcnow(),
+            "content": $.get('research-players-to-watch'),
+            "title": f"{$.get('title')} - Players to Watch",
+            "status": 'active'
+          }
       metadata:
         event_code: "$.get('event_code')"
     
-    # 10 update-snippets
+    # 15 update-snippets
     - type: "document"
       name: "update-snippets"
       condition: "$.get('event_exists') is True"
@@ -255,10 +365,11 @@ workflow:
         parsed-items: |
           [
             *$.get('research-standings-bulk', []),
-            *$.get('research-comparison-bulk', [])
+            *$.get('research-comparison-bulk', []),
+            *$.get('research-players-to-watch-bulk', [])
           ]
 
-    # 11 version-control-success-nba-game
+    # 16 version-control-success-nba-game
     - type: "document"
       name: "version-control-success-nba-game"
       description: "Update the events document version control."
