@@ -6,12 +6,12 @@ agent:
     config-frequency: 99999999
   workflows:
 
-    # # populate-folders
-    # - name: "populate-folders"
-    #   description: "Setup Folders"
-    #   condition: "$.get('setup-register') is not True"
-    #   outputs:
-    #     setup-register: "$.get('setup-register')"
+    # populate-folders
+    - name: "populate-folders"
+      description: "Setup Folders"
+      condition: "$.get('setup-register') is not True"
+      outputs:
+        setup-register: "$.get('setup-register')"
 
     # sync soccer competitions
     - name: "sportradar-soccer-sync-competitions"
@@ -243,12 +243,12 @@ agent:
 
     ## nba games
 
-    # # sync nba schedules
-    # - name: "sportradar-nba-sync-games"
-    #   description: "sync-nba-games"
-    #   condition: "$.get('setup-register') is not True"
-    #   inputs:
-    #     season_type: "'REG'"
-    #     season_year: "'2024'"
-    #   outputs:
-    #     sync-games-status: "$.get('workflow-status', False)"
+    # sync nba schedules
+    - name: "sportradar-nba-sync-games"
+      description: "sync-nba-games"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_type: "'REG'"
+        season_year: "'2024'"
+      outputs:
+        sync-games-status: "$.get('workflow-status', False)"
