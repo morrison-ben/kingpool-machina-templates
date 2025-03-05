@@ -277,8 +277,6 @@ workflow:
         model: "gpt-4o"
       inputs:
         title: "$.get('title')"
-        home-competitor: "$.get('result-home-competitor')"
-        away-competitor: "$.get('result-away-competitor')"
         home-competitor-profile: "$.get('result-home-competitor-profile')"
         away-competitor-profile: "$.get('result-away-competitor-profile')"
       outputs:
