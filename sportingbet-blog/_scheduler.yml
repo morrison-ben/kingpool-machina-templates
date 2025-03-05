@@ -142,11 +142,11 @@ agent:
       outputs:
         reporter-article: "$.get('workflow-status', False)"
 
-    # Reporter Image
-    - name: "reporter-image"
-      description: "Reporter Image"
-      outputs:
-        reporter-image: "$.get('workflow-status', False)"
+    # # Reporter Image
+    # - name: "reporter-image"
+    #   description: "Reporter Image"
+    #   outputs:
+    #     reporter-image: "$.get('workflow-status', False)"
 
     # Reporter Odds
     - name: "research-odds"
