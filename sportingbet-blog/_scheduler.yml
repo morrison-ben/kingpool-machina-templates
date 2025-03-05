@@ -173,8 +173,8 @@ agent:
       outputs:
         reporter-team-history: "$.get('workflow-status', False)"
 
-    # Reporter Team News
-    - name: "research-news"
-      description: "Reporter Team News"
-      outputs:
-        reporter-team-news: "$.get('workflow-status', False)"
+    # # Reporter Team News
+    # - name: "research-news"
+    #   description: "Reporter Team News"
+    #   outputs:
+    #     reporter-team-news: "$.get('workflow-status', False)"
