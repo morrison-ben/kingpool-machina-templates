@@ -1,0 +1,111 @@
+agent:
+  name: "scheduler-workflow"
+  title: "Scheduler Configuration"
+  description: "Agent responsible for scheduling workflows."
+  context:
+    config-frequency: 0.5
+  workflows:
+        
+    # sportingbet-sync-nba fixtures
+    - name: "sportingbet-sync-markets-odds"
+      description: "sync-markets-odds"
+      inputs:
+        country: "'br'"
+        competitionIds: "'6004'"
+        sportId: "'7'"
+      outputs:
+        sync-markets-odds-nba-status: "$.get('workflow-status', False)"
+        
+    # Reporter Editor
+    - name: "reporter-article"
+      description: "Reporter Article"
+      outputs:
+        reporter-article: "$.get('workflow-status', False)"
+
+    # # Reporter Image
+    # - name: "reporter-image"
+    #   description: "Reporter Image"
+    #   outputs:
+    #     reporter-image: "$.get('workflow-status', False)"
+
+    # Reporter Odds
+    - name: "research-odds"
+      description: "Reporter Odds"
+      outputs:
+        research-odds: "$.get('workflow-status', False)"
+
+    # Reporter Stats NBA
+    - name: "research-stats-nba"
+      description: "Reporter NBA Stats"
+      outputs:
+        research-stats-nba: "$.get('workflow-status', False)"
+
+    # # Reporter Team History
+    # - name: "research-team"
+    #   description: "Reporter Team History"
+    #   outputs:
+    #     reporter-team-history: "$.get('workflow-status', False)"
+
+    # # Reporter Team News
+    # - name: "research-news"
+    #   description: "Reporter Team News"
+    #   outputs:
+    #     reporter-team-news: "$.get('workflow-status', False)"
+
+    # Fantasy-specific workflows (kept for reference but commented out)
+    # # sync-player-stats
+    # - name: "sync-player-stats"
+    #   description: "Sync player statistics"
+    #   inputs:
+    #     update_frequency: "daily"
+    #   outputs:
+    #     sync-player-stats-status: "$.get('workflow-status', False)"
+
+    # # sync-league-standings
+    # - name: "sync-league-standings"
+    #   description: "Sync league standings"
+    #   inputs:
+    #     update_frequency: "daily"
+    #   outputs:
+    #     sync-league-standings-status: "$.get('workflow-status', False)"
+
+    # # sync-matchup-results
+    # - name: "sync-matchup-results"
+    #   description: "Sync matchup results"
+    #   inputs:
+    #     update_frequency: "daily"
+    #   outputs:
+    #     sync-matchup-results-status: "$.get('workflow-status', False)"
+
+    # # generate-team-recommendations
+    # - name: "generate-team-recommendations"
+    #   description: "Generate team recommendations"
+    #   inputs:
+    #     update_frequency: "weekly"
+    #   outputs:
+    #     generate-team-recommendations-status: "$.get('workflow-status', False)"
+
+    # # generate-player-analysis
+    # - name: "generate-player-analysis"
+    #   description: "Generate player analysis"
+    #   inputs:
+    #     update_frequency: "daily"
+    #     player_limit: 20
+    #   outputs:
+    #     generate-player-analysis-status: "$.get('workflow-status', False)"
+
+    # # generate-matchup-predictions
+    # - name: "generate-matchup-predictions"
+    #   description: "Generate matchup predictions"
+    #   inputs:
+    #     update_frequency: "weekly"
+    #   outputs:
+    #     generate-matchup-predictions-status: "$.get('workflow-status', False)"
+
+    # # generate-waiver-wire-recommendations
+    # - name: "generate-waiver-wire-recommendations"
+    #   description: "Generate waiver wire recommendations"
+    #   inputs:
+    #     update_frequency: "weekly"
+    #   outputs:
+    #     generate-waiver-wire-recommendations-status: "$.get('workflow-status', False)" 

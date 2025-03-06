@@ -1,0 +1,60 @@
+setup:
+  title: "Kingpool Fantasy"
+  description: AI-powered fantasy sports platform with personalized recommendations and analytics.
+  category:
+    - special-templates
+  estimatedTime: 15 minutes
+  features:
+    - AI Agent to generate personalized fantasy team recommendations.
+    - AI Analytics to provide insights on player performance and team strategy.
+    - AI Draft Assistant to help users make optimal draft picks.
+    - AI Matchup Analyzer to predict outcomes of fantasy matchups.
+  integrations:
+    - sportradar
+  status: available
+  value: "kingpool-fantasy"
+  version: 1.0.0
+
+datasets:
+
+  # connectors
+  - type: "connector"
+    path: "../connector-openai/sdk-openai.yml"
+  - type: "connector"
+    path: "../connector-perplexity/api-perplexity.yml"
+  - type: "connector"
+    path: "../connector-sportingbet/api-sportingbet.yml"
+  - type: "connector"
+    path: "../connector-sportradar-nba/api-sportradar-nba.yml"
+  - type: "connector"
+    path: "../connector-stability/sdk-stability.yml"
+  - type: "connector"
+    path: "../connector-storage/sdk-storage.yml"
+
+  # sportingbet-api
+  - type: "workflow"
+    path: "../connector-sportingbet/sync-markets-odds.yml"
+
+  # sportradar-nba-setup
+  - type: "workflow"
+    path: "../connector-sportradar-nba/sync-nba-games.yml"
+
+  # populate-folders
+  - type: "workflow"
+    path: "_folders.yml"
+
+  # mappings
+  - type: "mappings"
+    path: "_mappings.yml"
+  
+  # prompts
+  - type: "prompts"
+    path: "_prompts.yml"
+
+  # populate-content
+  - type: "agent"
+    path: "_populate.yml"
+
+  # populate-scheduler
+  - type: "agent"
+    path: "_scheduler.yml" 

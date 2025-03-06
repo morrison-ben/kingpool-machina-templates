@@ -1,0 +1,71 @@
+prompts:
+
+  # image-nba-game
+  - type: "prompt"
+    title: "Reporter Image - NBA Game"
+    name: "prompt-image-nba-game"
+    description: "This schema defines the structure to generate a detailed image briefing for an NBA game."
+    schema:
+      title: "ImageBriefingNBA"
+      description: "This schema defines the structure to generate a detailed image briefing for an NBA game."
+      type: "object"
+      properties:
+        image-briefing:
+          type: "string"
+          description: "Create a prompt for a blog image, following these instructions and the context below: The image should show an external view of an NBA arena from the top of a hill overlooking it. The arena is packed to full capacity, with the supporters' colors clearly visible in banners, lights, and the crowd. The surrounding area should feature fans heading toward the arena, adding to the excitement. The style should be semi-realistic, with vibrant colors to capture the lively and energetic atmosphere of the event."
+
+  # fantasy-team-recommendation
+  - type: "prompt"
+    title: "Fantasy Team Recommendation"
+    name: "prompt-fantasy-team-recommendation"
+    description: "This schema defines the structure to generate fantasy team recommendations."
+    schema:
+      title: "FantasyTeamRecommendation"
+      description: "This schema defines the structure to generate fantasy team recommendations."
+      type: "object"
+      properties:
+        team-recommendation:
+          type: "string"
+          description: "Create a detailed fantasy team recommendation based on the league settings, available players, and user preferences. Include analysis of player statistics, potential value picks, sleepers, and strategic considerations. The recommendation should be personalized to the user's draft position, league scoring system, and roster requirements. Include specific player recommendations for each position, potential trade targets, and waiver wire strategies."
+
+  # fantasy-player-analysis
+  - type: "prompt"
+    title: "Fantasy Player Analysis"
+    name: "prompt-fantasy-player-analysis"
+    description: "This schema defines the structure to generate detailed player analysis for fantasy sports."
+    schema:
+      title: "FantasyPlayerAnalysis"
+      description: "This schema defines the structure to generate detailed player analysis for fantasy sports."
+      type: "object"
+      properties:
+        player-analysis:
+          type: "string"
+          description: "Create a comprehensive analysis of a player's fantasy value. Include recent performance statistics, injury history, matchup considerations, team situation, and projected fantasy points. The analysis should consider the specific fantasy scoring system and league settings. Provide insights on whether to start, sit, trade for, or trade away the player. Include comparisons to similar players and highlight any unique factors that might affect the player's fantasy production."
+
+  # fantasy-matchup-prediction
+  - type: "prompt"
+    title: "Fantasy Matchup Prediction"
+    name: "prompt-fantasy-matchup-prediction"
+    description: "This schema defines the structure to generate fantasy matchup predictions."
+    schema:
+      title: "FantasyMatchupPrediction"
+      description: "This schema defines the structure to generate fantasy matchup predictions."
+      type: "object"
+      properties:
+        matchup-prediction:
+          type: "string"
+          description: "Create a detailed prediction for a fantasy matchup between two teams. Analyze the strengths and weaknesses of each team's roster, considering player matchups, injuries, bye weeks, and recent performance trends. Provide a projected score for each team and identify key players who could determine the outcome. Include strategic advice for lineup optimization, potential waiver wire pickups, and last-minute adjustments that could improve chances of winning."
+
+  # fantasy-draft-strategy
+  - type: "prompt"
+    title: "Fantasy Draft Strategy"
+    name: "prompt-fantasy-draft-strategy"
+    description: "This schema defines the structure to generate fantasy draft strategies."
+    schema:
+      title: "FantasyDraftStrategy"
+      description: "This schema defines the structure to generate fantasy draft strategies."
+      type: "object"
+      properties:
+        draft-strategy:
+          type: "string"
+          description: "Create a comprehensive fantasy draft strategy tailored to the specific league settings, draft position, and scoring system. Include round-by-round recommendations, positional priorities, value-based drafting principles, and specific player targets. The strategy should address different scenarios that might unfold during the draft and provide contingency plans. Include insights on when to target specific positions, how to identify value picks, and how to build a balanced roster that maximizes scoring potential while minimizing risk." 
