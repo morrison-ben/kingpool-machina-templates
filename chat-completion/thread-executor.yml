@@ -73,7 +73,7 @@ workflow:
         action: "search"
         # threshold-docs: 5
         # threshold-similarity: 0.01
-        search-limit: 16
+        search-limit: 12
         search-vector: false
       condition: "$.get('document_id') is not None"
       connector:
@@ -97,8 +97,8 @@ workflow:
         name: "sdk-groq"
         command: "invoke_prompt"
         # model: "deepseek-r1-distill-qwen-32b"
-        model: "llama-3.1-8b-instant"
-        # model: "llama-3.3-70b-versatile"
+        # model: "llama-3.1-8b-instant"
+        model: "llama-3.3-70b-versatile"
         # model: "deepseek-r1-distill-llama-70b"
         # model: "deepseek-r1-distill-llama-70b-specdec"
         #  name: "sdk-openai"
