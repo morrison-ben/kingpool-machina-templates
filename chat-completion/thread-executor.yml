@@ -81,6 +81,7 @@ workflow:
         command: "invoke_embedding"
         model: "text-embedding-3-small"
       filters:
+        name: "'content-snippet'"
         metadata.event_code: "$.get('event_code')"
       inputs:
         search-limit: "'50'"
