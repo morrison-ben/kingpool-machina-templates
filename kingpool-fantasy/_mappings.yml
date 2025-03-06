@@ -9,7 +9,6 @@ mappings:
       event_code: "$.get('event_selected', {}).get('id')"
       image_count: "$.get('event_selected', {}).get('version_control', {}).get('image_count', 0)"
       research_news_count: "$.get('event_selected', {}).get('version_control', {}).get('research_news_count', 0)"
-      research_odds_count: "$.get('event_selected', {}).get('version_control', {}).get('research_odds_count', 0)"
       research_stats_count: "$.get('event_selected', {}).get('version_control', {}).get('research_stats_count', 0)"
       research_team_count: "$.get('event_selected', {}).get('version_control', {}).get('research_team_count', 0)"
       team_home_name: "$.get('event_selected', {}).get('home', {}).get('name')"

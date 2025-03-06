@@ -57,17 +57,6 @@ workflow:
                   "view": "list"
                 },
                 {
-                  "name": "game-fixture",
-                  "title": "NBA Game Fixtures",
-                  "description": "The NBA game fixtures available in the Sportingbet API.",
-                  "category": "Catalogue",
-                  "metadata": {
-                    "name": ["game-fixture"]
-                  },
-                  "sorters": ['_id', -1],
-                  "view": "list"
-                },
-                {
                   "name": "schedules",
                   "title": "NBA Game Schedule",
                   "description": "The NBA schedules synced from the Sportradar API.",
@@ -103,7 +92,6 @@ workflow:
                     "name": [
                       "comparison-analysis",
                       "standings-analysis",
-                      "market-odds",
                       "team-history",
                       "team-news"
                     ]

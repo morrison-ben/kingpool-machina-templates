@@ -6,16 +6,6 @@ agent:
     config-frequency: 0.5
   workflows:
         
-    # sportingbet-sync-nba fixtures
-    - name: "sportingbet-sync-markets-odds"
-      description: "sync-markets-odds"
-      inputs:
-        country: "'br'"
-        competitionIds: "'6004'"
-        sportId: "'7'"
-      outputs:
-        sync-markets-odds-nba-status: "$.get('workflow-status', False)"
-        
     # Reporter Editor
     - name: "reporter-article"
       description: "Reporter Article"
@@ -27,12 +17,6 @@ agent:
     #   description: "Reporter Image"
     #   outputs:
     #     reporter-image: "$.get('workflow-status', False)"
-
-    # Reporter Odds
-    - name: "research-odds"
-      description: "Reporter Odds"
-      outputs:
-        research-odds: "$.get('workflow-status', False)"
 
     # Reporter Stats NBA
     - name: "research-stats-nba"

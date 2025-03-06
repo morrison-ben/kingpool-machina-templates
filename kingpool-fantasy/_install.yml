@@ -23,17 +23,11 @@ datasets:
   - type: "connector"
     path: "../connector-perplexity/api-perplexity.yml"
   - type: "connector"
-    path: "../connector-sportingbet/api-sportingbet.yml"
-  - type: "connector"
     path: "../connector-sportradar-nba/api-sportradar-nba.yml"
   - type: "connector"
     path: "../connector-stability/sdk-stability.yml"
   - type: "connector"
     path: "../connector-storage/sdk-storage.yml"
-
-  # sportingbet-api
-  - type: "workflow"
-    path: "../connector-sportingbet/sync-markets-odds.yml"
 
   # sportradar-nba-setup
   - type: "workflow"
