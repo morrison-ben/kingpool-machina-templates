@@ -73,7 +73,7 @@ workflow:
         action: "search"
         # threshold-docs: 5
         # threshold-similarity: 0.01
-        search-limit: 12
+        # search-limit: 162
         search-vector: false
       condition: "$.get('document_id') is not None"
       connector:
@@ -83,7 +83,7 @@ workflow:
       filters:
         metadata.event_code: "$.get('event_code')"
       inputs:
-        search-limit: "'100'"
+        search-limit: "'10'"
         # search-query: "$.get('question')"
       outputs:
         documents: "$.get('documents')"
