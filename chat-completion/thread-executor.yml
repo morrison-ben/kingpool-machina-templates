@@ -73,7 +73,7 @@ workflow:
         action: "search"
         # threshold-docs: 5
         # threshold-similarity: 0.01
-        search-limit: 100
+        search-limit: 16
         search-vector: false
       condition: "$.get('document_id') is not None"
       connector:
