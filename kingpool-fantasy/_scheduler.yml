@@ -24,17 +24,17 @@ agent:
       outputs:
         research-stats-nba: "$.get('workflow-status', False)"
 
-    # # Reporter Team History
-    # - name: "research-team"
-    #   description: "Reporter Team History"
-    #   outputs:
-    #     reporter-team-history: "$.get('workflow-status', False)"
+    # Reporter Team History
+    - name: "research-team"
+      description: "Reporter Team History"
+      outputs:
+        reporter-team-history: "$.get('workflow-status', False)"
 
-    # # Reporter Team News
-    # - name: "research-news"
-    #   description: "Reporter Team News"
-    #   outputs:
-    #     reporter-team-news: "$.get('workflow-status', False)"
+    # Reporter Team News
+    - name: "research-news"
+      description: "Reporter Team News"
+      outputs:
+        reporter-team-news: "$.get('workflow-status', False)"
 
     # Fantasy-specific workflows (kept for reference but commented out)
     # # sync-player-stats
@@ -45,46 +45,46 @@ agent:
     #   outputs:
     #     sync-player-stats-status: "$.get('workflow-status', False)"
 
-    # # sync-league-standings
-    # - name: "sync-league-standings"
-    #   description: "Sync league standings"
-    #   inputs:
-    #     update_frequency: "daily"
-    #   outputs:
-    #     sync-league-standings-status: "$.get('workflow-status', False)"
+    # sync-league-standings
+    - name: "sync-league-standings"
+      description: "Sync league standings"
+      inputs:
+        update_frequency: "daily"
+      outputs:
+        sync-league-standings-status: "$.get('workflow-status', False)"
 
-    # # sync-matchup-results
-    # - name: "sync-matchup-results"
-    #   description: "Sync matchup results"
-    #   inputs:
-    #     update_frequency: "daily"
-    #   outputs:
-    #     sync-matchup-results-status: "$.get('workflow-status', False)"
+    # sync-matchup-results
+    - name: "sync-matchup-results"
+      description: "Sync matchup results"
+      inputs:
+        update_frequency: "daily"
+      outputs:
+        sync-matchup-results-status: "$.get('workflow-status', False)"
 
-    # # generate-team-recommendations
-    # - name: "generate-team-recommendations"
-    #   description: "Generate team recommendations"
-    #   inputs:
-    #     update_frequency: "weekly"
-    #   outputs:
-    #     generate-team-recommendations-status: "$.get('workflow-status', False)"
+    # generate-team-recommendations
+    - name: "generate-team-recommendations"
+      description: "Generate team recommendations"
+      inputs:
+        update_frequency: "weekly"
+      outputs:
+        generate-team-recommendations-status: "$.get('workflow-status', False)"
 
-    # # generate-player-analysis
-    # - name: "generate-player-analysis"
-    #   description: "Generate player analysis"
-    #   inputs:
-    #     update_frequency: "daily"
-    #     player_limit: 20
-    #   outputs:
-    #     generate-player-analysis-status: "$.get('workflow-status', False)"
+    # generate-player-analysis
+    - name: "generate-player-analysis"
+      description: "Generate player analysis"
+      inputs:
+        update_frequency: "daily"
+        player_limit: 20
+      outputs:
+        generate-player-analysis-status: "$.get('workflow-status', False)"
 
-    # # generate-matchup-predictions
-    # - name: "generate-matchup-predictions"
-    #   description: "Generate matchup predictions"
-    #   inputs:
-    #     update_frequency: "weekly"
-    #   outputs:
-    #     generate-matchup-predictions-status: "$.get('workflow-status', False)"
+    # generate-matchup-predictions
+    - name: "generate-matchup-predictions"
+      description: "Generate matchup predictions"
+      inputs:
+        update_frequency: "weekly"
+      outputs:
+        generate-matchup-predictions-status: "$.get('workflow-status', False)"
 
     # # generate-waiver-wire-recommendations
     # - name: "generate-waiver-wire-recommendations"
