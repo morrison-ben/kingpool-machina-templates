@@ -33,9 +33,41 @@ datasets:
   - type: "workflow"
     path: "../connector-sportradar-nba/sync-nba-games.yml"
 
+  # reporter-editor
+  - type: "workflow"
+    path: "reporter-article.yml"
+
+  # reporter-image
+  - type: "workflow"
+    path: "reporter-image.yml"
+
+  # research-news
+  - type: "workflow"
+    path: "research-news.yml"
+
+  # research-odds
+  - type: "workflow"
+    path: "research-odds.yml"
+
+  # research-stats-nba
+  - type: "workflow"
+    path: "research-stats-nba.yml"
+
+  # research-stats-soccer
+  - type: "workflow"
+    path: "research-stats-soccer.yml"
+
+  # research-team
+  - type: "workflow"
+    path: "research-team.yml"
+
   # populate-folders
   - type: "workflow"
     path: "_folders.yml"
+
+  # populate-content
+  - type: "agent"
+    path: "agent-producer.yml"
 
   # mappings
   - type: "mappings"
@@ -51,4 +83,4 @@ datasets:
 
   # populate-scheduler
   - type: "agent"
-    path: "_scheduler.yml" 
+    path: "_scheduler.yml"
