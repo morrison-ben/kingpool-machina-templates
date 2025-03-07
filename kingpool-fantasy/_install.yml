@@ -41,17 +41,9 @@ datasets:
   - type: "workflow"
     path: "research-news.yml"
 
-  # research-odds
-  - type: "workflow"
-    path: "research-odds.yml"
-
   # research-stats-nba
   - type: "workflow"
     path: "research-stats-nba.yml"
-
-  # research-stats-soccer
-  - type: "workflow"
-    path: "research-stats-soccer.yml"
 
   # research-team
   - type: "workflow"
