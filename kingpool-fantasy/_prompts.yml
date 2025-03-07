@@ -14,58 +14,298 @@ prompts:
           type: "string"
           description: "Create a prompt for a blog image, following these instructions and the context below: The image should show an external view of an NBA arena from the top of a hill overlooking it. The arena is packed to full capacity, with the supporters' colors clearly visible in banners, lights, and the crowd. The surrounding area should feature fans heading toward the arena, adding to the excitement. The style should be semi-realistic, with vibrant colors to capture the lively and energetic atmosphere of the event."
 
-  # fantasy-team-recommendation
-  - type: "prompt"
-    title: "Fantasy Team Recommendation"
-    name: "prompt-fantasy-team-recommendation"
-    description: "This schema defines the structure to generate fantasy team recommendations."
-    schema:
-      title: "FantasyTeamRecommendation"
-      description: "This schema defines the structure to generate fantasy team recommendations."
-      type: "object"
-      properties:
-        team-recommendation:
-          type: "string"
-          description: "Create a detailed fantasy team recommendation based on the league settings, available players, and user preferences. Include analysis of player statistics, potential value picks, sleepers, and strategic considerations. The recommendation should be personalized to the user's draft position, league scoring system, and roster requirements. Include specific player recommendations for each position, potential trade targets, and waiver wire strategies."
 
-  # fantasy-player-analysis
-  - type: "prompt"
-    title: "Fantasy Player Analysis"
-    name: "prompt-fantasy-player-analysis"
-    description: "This schema defines the structure to generate detailed player analysis for fantasy sports."
-    schema:
-      title: "FantasyPlayerAnalysis"
-      description: "This schema defines the structure to generate detailed player analysis for fantasy sports."
-      type: "object"
-      properties:
-        player-analysis:
-          type: "string"
-          description: "Create a comprehensive analysis of a player's fantasy value. Include recent performance statistics, injury history, matchup considerations, team situation, and projected fantasy points. The analysis should consider the specific fantasy scoring system and league settings. Provide insights on whether to start, sit, trade for, or trade away the player. Include comparisons to similar players and highlight any unique factors that might affect the player's fantasy production."
 
-  # fantasy-matchup-prediction
+  # reporter-preview-en
   - type: "prompt"
-    title: "Fantasy Matchup Prediction"
-    name: "prompt-fantasy-matchup-prediction"
-    description: "This schema defines the structure to generate fantasy matchup predictions."
+    title: "Fantasy Sports Game Preview"
+    name: "prompt-reporter-preview-en"
+    description: "This prompt generates the title, subtitle, and slug for a blog post in English about an upcoming match from a fantasy sports perspective. The tone should be professional yet personable, like a knowledgeable friend who understands fantasy sports and knows how to inform while entertaining. Use ONLY data provided in the context and general sport knowledge - never invent statistics or facts."
     schema:
-      title: "FantasyMatchupPrediction"
-      description: "This schema defines the structure to generate fantasy matchup predictions."
+      title: "FantasyPreviewContent"
+      description: "This schema defines the structure for generating blog post elements in English about an upcoming match from a fantasy sports perspective, based EXCLUSIVELY on provided data and general sport knowledge."
       type: "object"
       properties:
-        matchup-prediction:
+        title:
           type: "string"
-          description: "Create a detailed prediction for a fantasy matchup between two teams. Analyze the strengths and weaknesses of each team's roster, considering player matchups, injuries, bye weeks, and recent performance trends. Provide a projected score for each team and identify key players who could determine the outcome. Include strategic advice for lineup optimization, potential waiver wire pickups, and last-minute adjustments that could improve chances of winning."
+          description: "Generate a title following this template: 'Fantasy Preview: [Team A] vs [Team B]: [Competition Name] Matchup'. Use the available data to replace the placeholders appropriately, ensuring the title conveys the essential details of the match."
+        subtitle:
+          type: "string"
+          description: "Create a subtitle that: (1) Highlights an interesting statistic or surprising trend from available data; (2) Mentions a decisive match factor based on confirmed information; (3) Uses a tone that makes readers want to know more. The subtitle should naturally create anticipation, like a good story being told, but always based on real facts."
+        slug:
+          type: "string"
+          description: "As a technical SEO expert, create an optimized slug with available elements: (1) Fantasy-related keywords based on context; (2) Team names and competition as provided; (3) Use hyphens for separation; (4) Keep between 3-6 main words; (5) Avoid special characters."
+        content:
+          type: "string"
+          description: |
+            Act as an experienced fantasy sports analyst who tells concise and impactful stories. For avoiding repetitive content, vary your writing style based on the following elements of the game:
+            
+            - If it's a historic classic: focus on rivalry and tradition
+            - If it's a direct position clash: emphasize importance in the standings
+            - If there's a standout player: build the narrative around their fantasy potential
+            - If there's a recent interesting retrospective: use it as the central element
+            - If it's an interesting tactical duel: explore different strategies and fantasy implications
+            - If there's a special context (final, debut, etc): make it the main focus
+            
+            **Internal Note:** You are generating blog posts for fantasy sports enthusiasts. This information should NOT appear in the generated output. Ensure that the content is engaging, focused on guiding fantasy managers on which players to start/sit, and designed to attract traffic.
+            
+            Content structure:
+            
+            In up to 50 words, provide a concise overview that focuses on one or two key aspects such as a team's hot streak, strong fantasy trend, a notable previous encounter, a significant player injury, or relevant rumors, including the match date and start time (using the "start_time" field converted from GMT to local time of the match). Avoid narrating the entire game story.
+            
+            ## Fantasy Outlook for [Team A] vs [Team B]
+            
+            In around 150 words, discuss the fantasy implications of this matchup as if you're chatting with a friend at a pub. **If the match is basketball, focus on categories like points, rebounds, assists, steals, blocks, and three-pointers.** For other sports, follow the sport-specific fantasy categories.
+            
+            ## [Team A]
+            
+            In up to 150 words, outline the latest news for the away team, emphasizing statistics, fantasy trends, standings, winning or losing streaks, lineup changes, injuries, and rumors that might affect fantasy performance.
+            
+            ## [Team B]
+            
+            In up to 150 words, detail the current situation of the home team, including recent news, statistics, fantasy trends, standings, winning or losing streaks, lineup changes, injuries, and any pertinent rumors.
+            
+            ## Players to Start
+            
+            In up to 150 words, highlight key players from both teams worth starting in fantasy lineups, discussing their form, matchup advantages, and any relevant statistics.
+            
+            ## Players to Sit
+            
+            In up to 150 words, identify players who might underperform based on matchups, recent form, or other factors that fantasy managers should consider.
+            
+            ## Sleeper Picks
+            
+            In up to 150 words, suggest under-the-radar players who could outperform expectations in this particular matchup.
+            
+            **General Guidelines:**
+            - Base insights on actual statistics and provided data, avoiding generic commentary.
+            - Use only data explicitly provided in the context.
+            - Do not invent previous results, fictional statistics, or unconfirmed information.
+            - Be creative yet factual, using markdown formatting.
+            - Convert match start time (start_time) from GMT to the local match time.
+            
+            **Variety:**
+            - Alternate between different openings (statistical, narrative, rhetorical question, relevant quote).
+            - Vary the order and transitions between sections.
+            - Adjust the tone based on the game context—more serious for decisive matches, lighter for regular games.
+            - Avoid starting paragraphs in the same way.
+            
+  # reporter-comparison
+  - type: "prompt"
+    title: "Reporter Comparison"
+    name: "prompt-reporter-comparison"
+    description: "This schema defines the structure to generate a detailed comparison analysis between two teams' standings and recent performance."  
+    schema:
+      title: "ReporterComparison"
+      description: "This schema defines the structure to generate a detailed comparison analysis between two teams' standings and recent performance."
+      type: "object"
+      properties:
+        snippets:
+          type: "array"
+          description: "An array of snippets analyzing the teams' comparison."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The category of comparison analysis (e.g., 'Head-to-Head Comparison', 'Recent Form Comparison', 'Points Gap Comparison', etc)."
+              content:
+                type: "string"
+                description: "Detailed comparative analysis of both teams' comparison situation, including standings, recent form, and relevant performance metrics."
+              confidence:
+                type: "number"
+                description: "The confidence score for the accuracy of the comparison analysis (0.0 to 1.0)."
+            required: ["title", "content", "confidence"]
+          minItems: 2
+          maxItems: 2
 
-  # fantasy-draft-strategy
+  # reporter-players-to-watch
   - type: "prompt"
-    title: "Fantasy Draft Strategy"
-    name: "prompt-fantasy-draft-strategy"
-    description: "This schema defines the structure to generate fantasy draft strategies."
+    title: "Reporter Players to Watch"
+    name: "prompt-reporter-players-to-watch"
+    description: "This schema defines the structure to generate a detailed players to watch analysis between two teams."
     schema:
-      title: "FantasyDraftStrategy"
-      description: "This schema defines the structure to generate fantasy draft strategies."
+      title: "ReporterPlayersToWatch"
+      description: "This schema defines the structure to generate a detailed players to watch analysis between two teams."
       type: "object"
       properties:
-        draft-strategy:
-          type: "string"
-          description: "Create a comprehensive fantasy draft strategy tailored to the specific league settings, draft position, and scoring system. Include round-by-round recommendations, positional priorities, value-based drafting principles, and specific player targets. The strategy should address different scenarios that might unfold during the draft and provide contingency plans. Include insights on when to target specific positions, how to identify value picks, and how to build a balanced roster that maximizes scoring potential while minimizing risk." 
+        snippets:
+          type: "array"
+          description: "An array of snippets analyzing the players to watch."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The category of players to watch analysis (e.g., 'Players to Watch', 'Key Players', etc)."
+              content:
+                type: "string"
+                description: "Detailed comparative analysis of both teams' players to watch situation, including recent form, and relevant performance metrics."
+              confidence:
+                type: "number"
+                description: "The confidence score for the accuracy of the players to watch analysis (0.0 to 1.0)."
+            required: ["title", "content", "confidence"]
+          minItems: 2
+          maxItems: 2
+
+  # reporter-standings
+  - type: "prompt"
+    title: "Reporter Standings"
+    name: "prompt-reporter-standings"
+    description: "This schema defines the structure to generate a detailed standings analysis comparing two teams' positions and performance in their competition."
+    schema:
+      title: "ReporterStandings"
+      description: "This schema defines the structure to generate a comparative standings analysis for two teams in a soccer match."
+      type: "object"
+      properties:
+        snippets:
+          type: "array"
+          description: "An array of snippets analyzing the teams' standings and recent performance."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The category of standings analysis (e.g., league positions comparison, form analysis, points gap, etc)."
+              content:
+                type: "string"
+                description: "Detailed comparative analysis of both teams' standings situation, including positions, points, recent form, and relevant performance metrics."
+              confidence:
+                type: "number"
+                description: "The confidence score for the accuracy of the standings analysis (0.0 to 1.0)."
+            required: ["title", "content", "confidence"]
+          minItems: 2
+          maxItems: 2
+
+  # research-team-history
+  - type: "prompt"
+    title: "Research Team History"
+    name: "research-team-history"
+    description: |
+      You are creating a comprehensive historical briefing about a sports competition or event.
+      
+      Provide key historical information and notable facts about the topic, including:
+      1. Origin and evolution of the competition
+      2. Most successful teams/athletes
+      3. Memorable moments and iconic matches
+      4. Record holders and significant achievements
+      5. Historical impact and cultural significance
+      6. Interesting traditions and unique features
+      
+      Focus on providing engaging, well-researched facts that capture the essence and history of the competition.
+    schema:
+      title: "ResearchTeamHistory"
+      description: "This schema defines the structure for generating a historical sports briefing."
+      type: "object"
+      properties:
+        rating:
+          type: "array"
+          description: "An array of ratings evaluating different historical aspects of the team's legacy and importance."
+          items:
+            type: "object"
+            properties:
+              category:
+                type: "string"
+                description: "The category being rated: 'Titles Won', 'Competition Consistency', 'Legendary Figures', 'Fan Base & Culture', 'Historic Matches', or 'Traditional Weight'"
+                enum: [
+                  "Titles Won",
+                  "Competition Consistency", 
+                  "Legendary Figures",
+                  "Fan Base & Culture",
+                  "Historic Matches",
+                  "Traditional Weight"
+                ]
+              score:
+                type: "number"
+                description: "Rating score from 0.0 to 10 indicating the team's strength in this category"
+              analysis:
+                type: "string"
+                description: "Detailed analysis explaining the rating, including specific examples and historical facts that justify the score"
+          minItems: 6
+          maxItems: 6
+        snippets:
+          type: "array"
+          description: "An array of snippets covering different aspects of the team's history."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The category of historical information (e.g., 'Club Formation', 'Major Honours', 'Legendary Players', 'Historic Seasons', 'Stadium History')."
+              content:
+                type: "string"
+                description: "Detailed historical facts and information about the specific aspect of the team's history."
+              confidence:
+                type: "number"
+                description: "The confidence score for the historical accuracy of the information (0.0 to 1.0)."
+            required: ["title", "content", "confidence"]
+          minItems: 3
+          maxItems: 3
+
+  # research-team-news
+  - type: "prompt"
+    title: "Research Team News"
+    name: "research-team-news"
+    description: "This prompt generates a news report about a sports team."
+    schema:
+      title: "ResearchTeamNews"
+      description: "This schema defines the structure for generating a news report about a sports team."
+      type: "object"
+      properties:
+        rating:
+          type: "array"
+          description: "An array of ratings evaluating different aspects of the team's current situation."
+          items:
+            type: "object"
+            properties:
+              category:
+                type: "string"
+                description: "The category being rated: 'Current Form', 'Squad Depth', 'Team Morale', 'Tactical Performance', 'Injury Situation', or 'Fan Sentiment'"
+                enum: [
+                  "Current Form",
+                  "Squad Depth",
+                  "Team Morale",
+                  "Tactical Performance",
+                  "Injury Situation",
+                  "Fan Sentiment"
+                ]
+              score:
+                type: "number"
+                description: "Rating score from 0.0 to 10 indicating the team's current strength in this category"
+              analysis:
+                type: "string"
+                description: "Detailed analysis explaining the rating, including specific examples and recent facts that justify the score"
+          minItems: 6
+          maxItems: 6
+        snippets:
+          type: "array"
+          description: "An array of snippets covering different aspects of the team's current news and situation."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The category of news information."
+              content:
+                type: "string"
+                description: "Detailed current information and recent developments about the specific aspect of the team's situation."
+              confidence:
+                type: "number"
+                description: "The confidence score for the accuracy of the news information (0.0 to 1.0)."
+            required: ["title", "content", "confidence"]
+          minItems: 3
+          maxItems: 3
+
+  # verify-selected-fixture
+  - type: "prompt"
+    title: "Verify Selected Fixture"
+    name: "verify-selected-fixture"
+    description: "Given two fixture titles and their similarity score, determine if they refer to the same match. Consider that even with high similarity scores (>0.50), the fixtures might be different matches. Verify the competition and teams carefully.\n\nPositive Example:\nTitle1: 'England Premier League - West Ham United - Brentford'\nTitle2: 'England Premier League 24/25: 25 - West Ham United v Brentford FC'\nResult: TRUE (same teams and competition despite different formatting)\n\nNegative Example:\nTitle1: 'England Premier League - Manchester City - Liverpool'\nTitle2: 'England Premier League 24/25: 25 - Liverpool FC v Wolverhampton Wanderers'\nSimilarity: 0.52\nResult: FALSE (different matches - teams don't match exactly)"
+    schema:
+      title: "FixtureVerification"
+      description: "Verify if two fixtures are the same match by comparing team names and competition. High similarity scores alone are not sufficient – exact team matches are required."
+      type: "object"
+      properties:
+        is-match:
+          type: "boolean"
+          description: "Should be TRUE only if both titles refer to exactly the same match (same teams and competition). Return FALSE if there's any doubt or if teams don't match exactly, even with high similarity scores."
