@@ -1,0 +1,81 @@
+agent:
+  name: populate-content
+  title: "Populate Content"
+  description: "Populate Content from Sync Workflows"
+  context:
+    config-frequency: 99999999
+  workflows:
+
+    # populate-folders
+    - name: "populate-folders"
+      description: "Setup Folders"
+      condition: "$.get('setup-register') is not True"
+      outputs:
+        setup-register: "$.get('setup-register')"
+
+    ## nba games
+
+    # sync nba schedules
+    - name: "sportradar-nba-sync-games"
+      description: "sync-nba-games"
+      condition: "$.get('setup-register') is not True"
+      inputs:
+        season_year: "'2024'"
+        season_type: "'REG'"
+      outputs:
+        sync-nba-games-status: "$.get('workflow-status', False)"
+
+    # Fantasy-specific workflows (kept for reference but commented out)
+    # # sample-leagues
+    # - name: "sample-leagues"
+    #   description: "Create sample leagues"
+    #   condition: "$.get('setup-register') is not True"
+    #   inputs:
+    #     sample_count: 5
+    #   outputs:
+    #     sample-leagues-status: "$.get('workflow-status', False)"
+
+    # # sample-players
+    # - name: "sample-players"
+    #   description: "Create sample players"
+    #   condition: "$.get('setup-register') is not True"
+    #   inputs:
+    #     sample_count: 100
+    #   outputs:
+    #     sample-players-status: "$.get('workflow-status', False)"
+
+    # # sample-teams
+    # - name: "sample-teams"
+    #   description: "Create sample teams"
+    #   condition: "$.get('setup-register') is not True"
+    #   inputs:
+    #     sample_count: 20
+    #   outputs:
+    #     sample-teams-status: "$.get('workflow-status', False)"
+
+    # # sample-fantasy-teams
+    # - name: "sample-fantasy-teams"
+    #   description: "Create sample fantasy teams"
+    #   condition: "$.get('setup-register') is not True"
+    #   inputs:
+    #     sample_count: 10
+    #   outputs:
+    #     sample-fantasy-teams-status: "$.get('workflow-status', False)"
+
+    # # sample-fantasy-drafts
+    # - name: "sample-fantasy-drafts"
+    #   description: "Create sample fantasy drafts"
+    #   condition: "$.get('setup-register') is not True"
+    #   inputs:
+    #     sample_count: 3
+    #   outputs:
+    #     sample-fantasy-drafts-status: "$.get('workflow-status', False)"
+
+    # # sample-fantasy-matchups
+    # - name: "sample-fantasy-matchups"
+    #   description: "Create sample fantasy matchups"
+    #   condition: "$.get('setup-register') is not True"
+    #   inputs:
+    #     sample_count: 15
+    #   outputs:
+    #     sample-fantasy-matchups-status: "$.get('workflow-status', False)" 

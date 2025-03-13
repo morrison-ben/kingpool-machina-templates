@@ -1,5 +1,0 @@
-connector:
-  name: "api-perplexity"
-  description: "This API allows you to use Perplexity API."
-  filename: "api-perplexity.json"
-  filetype: "restapi"

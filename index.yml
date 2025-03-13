@@ -1,9 +1,0 @@
-templates:
-  - name: "api-exchange"
-    path: "api-exchange"
-    title: "API Exchange"
-    description: "This template contains the API Exchange connector and workflows."
-  - name: "dazn-moderator"
-    path: "dazn-moderator"
-    title: "Dazn Moderator"
-    description: "This template contains the Dazn Moderator connector and workflows."

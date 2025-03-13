@@ -1,0 +1,26 @@
+setup:
+  title: Sportradar NFL v7
+  description: Connect to the SportRadar NFL API to get live and historical data.
+  category:
+    - data-acquisition
+    - football
+    - football-nfl
+  estimatedTime: 1 minute
+  features:
+    - Comprehensive suite of game and seasonal stats
+    - Fastest gameday updates
+    - Favorite players season stats
+    - In-depth subjective statistics
+    - All game data feeds update in real-time as games are played
+    - All NFL games - including preseason - feature full play-by-play coverage
+  integrations:
+    - sportradar
+  status: available
+  value: sportradar-nfl
+  version: 7.0.0
+
+datasets:
+  - type: "connector"
+    path: "sportradar-nfl.yml"
+
+
