@@ -162,6 +162,88 @@
         }
       }
     },
+    "/competitors/{competitor_id}/summaries.json": {
+      "get": {
+        "summary": "Get summaries for a specific competitor",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "competitor_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the competitor (e.g. sr:competitor:44)"
+          },
+          {
+            "in": "query",
+            "name": "api_key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Your API key for authentication"
+          }
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/competitors/{competitor_id}/{data_type}": {
       "get": {
         "summary": "Get a competitor data",
