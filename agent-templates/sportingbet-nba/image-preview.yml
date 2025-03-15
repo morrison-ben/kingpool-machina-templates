@@ -1,0 +1,151 @@
+workflow:
+  name: "workflow-reporter-image-preview"
+  title: "Reporter Image Preview"
+  description: "Workflow to create image preview."
+  context-variables:
+    openai:
+      api_key: "$MACHINA_CONTEXT_VARIABLE_OPENAI_API_KEY"
+    stability:
+      api_key: "$MACHINA_CONTEXT_VARIABLE_STABILITY_API_KEY"
+    storage:
+      api_key: "$MACHINA_CONTEXT_VARIABLE_AZURE_BLOB_STRING"
+  inputs:
+    event_code: "$.get('event_code') or None"
+  outputs:
+    events: "$.get('events')"
+    workflow-status: "$.get('event_exists') is True and 'executed' or 'skipped'"
+  tasks:
+    # 0 load-event-by-code
+    - type: "document"
+      name: "load-event-by-code"
+      description: "Search for events in the database."
+      condition: "$.get('event_code') is not None"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+        search-sorters: ["updated", 1]
+      filters:
+        metadata.event_code: "$.get('event_code')"
+      inputs:
+        name: "'game'"
+      outputs:
+        event_exists: "len($.get('documents', [])) > 0"
+        event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        image_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('image_count', 0) if $.get('documents') else None"
+        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+    # 1 load-event
+    - type: "document"
+      name: "load-event-prelive"
+      description: "Search for events in the database."
+      condition: "$.get('event_exists') is not True"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      filters:
+        value.status: "{'$in': ['soccer-game']}"
+        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=24)}"
+        value.version_control.processing: "{'$ne': True}"
+        value.version_control.reporter_image_preview: "{'$exists': False}"
+        value.version_control.reporter_summary_status: "'processed'"
+      inputs:
+        name: "'game'"
+      outputs:
+        event_code: "$.get('documents')[0].get('metadata').get('event_code') if $.get('documents') else None"
+        event_exists: "len($.get('documents', [])) > 0"
+        event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        image_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('image_count', 0) if $.get('documents') else None"
+        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+    # 1 update-event-status
+    - type: "document"
+      name: "update-event-preevent-start"
+      description: "Update the events document preevent."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        game: |
+          {
+            **$.get('event_selected'),
+            'version_control': {
+              **$.get('event_selected').get('version_control', {}),
+              'processing': True,
+              'reporter_image_preview': 'processing'
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+    # 2 prompt-image-generation
+    - type: "prompt"
+      name: "prompt-image-generation"
+      description: "Generate an image for the event."
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "stability"
+        command: "generate_image"
+      inputs:
+        configuration: "$.get('configuration')"
+        image_id: "$.get('event_code')"
+      outputs:
+        final_filename: f"image-preview-{$.get('final_filename')}"
+        full_filepath: "$.get('full_filepath')"
+    # 4 store image
+    - type: "connector"
+      name: "store image"
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "storage"
+        command: "store_image"
+      inputs:
+        final_filename: "$.get('final_filename')"
+        full_filepath: "$.get('full_filepath')"
+      outputs:
+        image_path: "$.get('data')"
+    # 5 update-image-preview
+    - type: "document"
+      name: "update-image-preview"
+      description: "Update the document."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        image-preview: |
+          {
+            "briefing": $.get('image-briefing'),
+            "execution": datetime.utcnow(),
+            "path": $.get('image_path'),
+            "title": f"{$.get('title')} - Image Preview",
+            "status": 'active'
+          }
+      metadata:
+        document_type: "'image-preview'"
+        event_code: "$.get('event_code')"
+        language: "'en'"
+    # 6 update-event-preevent
+    - type: "document"
+      name: "update-event-preevent-end"
+      description: "Update the events document preevent."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        game: |
+          {
+            **$.get('event_selected'),
+            'version_control': {
+              **$.get('event_selected').get('version_control', {}),
+              'processing': False,
+              'image_count': $.get('image_count', 0) + 1,
+              'reporter_image_preview': 'processed',
+              'updated': datetime.utcnow()
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"

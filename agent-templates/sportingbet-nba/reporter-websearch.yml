@@ -1,0 +1,162 @@
+workflow:
+  name: "workflow-reporter-websearch"
+  title: "Reporter Websearch"
+  description: "Workflow to produce web content."
+  context-variables:
+    perplexity:
+      basicAuth: "$MACHINA_CONTEXT_VARIABLE_PERPLEXITY_API_KEY"
+  inputs:
+    event_code: "$.get('event_code') or None"
+    perplexity_model: "$.get('perplexity_model', 'sonar')"
+    perplexity_max_tokens: "$.get('perplexity_max_tokens', 10000)"
+    perplexity_top_p: "$.get('perplexity_top_p', 0.9)"
+    perplexity_temperature: "$.get('perplexity_temperature', 0.2)"
+    system_message: |
+      I already have match officials, agenda, team information and standings from my structured data API. 
+      Please focus only on additional context like historical head-to-head data, key statistics from previous encounters,
+      notable matches between these teams, significant records, and interesting facts that could be used to create a news article.
+      Include details about memorable goals, dramatic moments, and unique achievements from past meetings between these teams.
+      Do not repeat information I already have about current team standings, match officials, or basic match details.
+  outputs:
+    events: "$.get('events')"
+    workflow-status: "$.get('event_exists') is not True and 'skipped' or 'executed'"
+  tasks:
+    # 0 load-event-by-code
+    - type: "document"
+      name: "load-event-by-code"
+      description: "Search for events in the database."
+      condition: "$.get('event_code') is not None"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+        search-sorters: ["updated", 1]
+      filters:
+        metadata.event_code: "$.get('event_code')"
+      inputs:
+        name: "'game'"
+      outputs:
+        event_exists: "len($.get('documents', [])) > 0"
+        event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        reporter_web_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_web_count', 0) if $.get('documents') else None"
+        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+    # 1 load-event
+    - type: "document"
+      name: "load-event-prelive"
+      description: "Search for events in the database."
+      condition: "$.get('event_exists') is not True"
+      config:
+        action: "search"
+        search-limit: 1
+        search-vector: false
+      filters:
+        value.status: "{'$in': ['soccer-game']}"
+        value.start_time: "{'$lt': datetime.utcnow() + timedelta(hours=24)}"
+        value.version_control.processing: "{'$ne': True}"
+        value.version_control.reporter_web_status: "{'$exists': False}"
+      inputs:
+        name: "'game'"
+      outputs:
+        event_code: "$.get('documents')[0].get('metadata').get('event_code') if $.get('documents') else None"
+        event_exists: "len($.get('documents', [])) > 0"
+        event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
+        reporter_web_count: "$.get('documents')[0].get('value', {}).get('version_control', {}).get('reporter_web_count', 0) if $.get('documents') else None"
+        title: "$.get('documents')[0].get('value').get('title') if $.get('documents') else None"
+    # 1 update-event-status
+    - type: "document"
+      name: "update-event-preevent-start"
+      description: "Update the events document preevent."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        game: |
+          {
+            **$.get('event_selected'),
+            'version_control': {
+              **$.get('event_selected').get('version_control', {}),
+              'processing': True,
+              'reporter_web_status': 'processing'
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"
+    # 2 fetch-perplexity-api
+    - type: "connector"
+      name: "fetch-perplexity-api"
+      condition: "$.get('event_exists') is True"
+      connector:
+        name: "perplexity"
+        command: "post-chat/completions"
+      inputs:
+        body: |
+          {
+            'model': $.get('perplexity_model'),
+            'messages': [
+              {
+                'role': 'system',
+                'content': $.get('system_message')
+              },{
+                'role': 'user',
+                'content': $.get('title')
+              }
+            ],
+            'max_tokens': $.get('perplexity_max_tokens'),
+            'temperature': $.get('perplexity_temperature'),
+            'top_p': $.get('perplexity_top_p'),
+            'return_citations': $.get('return_citations', True),
+            'return_images': $.get('return_images', False),
+            'return_related_questions': $.get('return_related_questions', True),
+            'search_recency_filter': $.get('search_recency_filter', 'week'),
+            'top_k': $.get('top_k', 0),
+            'stream': $.get('stream', False),
+            'presence_penalty': $.get('presence_penalty', 0),
+            'frequency_penalty': $.get('frequency_penalty', 1)
+          }
+      outputs:
+        search-results: "$.get('choices')[0].get('message').get('content')"
+    # 3 save search results
+    - type: "document"
+      name: "save-search-results"
+      description: "Save the search results."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "save"
+        embed-vector: false
+      documents:
+        websearch-result: |
+          {
+            "execution": datetime.utcnow(),
+            "results": $.get('search-results', {}),
+            "title": f"{$.get('title')} - Web Search",
+            "status": 'active'
+          }
+      metadata:
+        document_type: "'websearch-result'"
+        event_code: "$.get('event_code')"
+        language: "'en'"
+    # 4 update-event-preevent
+    - type: "document"
+      name: "update-event-preevent-end"
+      description: "Update the events document preevent."
+      condition: "$.get('event_exists') is True"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        game: |
+          {
+            **$.get('event_selected'),
+            'version_control': {
+              **$.get('event_selected').get('version_control', {}),
+              'processing': False,
+              'reporter_web_count': $.get('reporter_web_count', 0) + 1,
+              'reporter_web_status': 'processed',
+              'updated': datetime.utcnow()
+            }
+          }
+      metadata:
+        event_code: "$.get('event_code')"

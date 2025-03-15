@@ -1,0 +1,79 @@
+setup:
+  title: "Sportingbet NBA"
+  description: AI-powered NBA reporter with personalized recommendations based on betting history.
+  category:
+    - special-templates
+  estimatedTime: 15 minutes
+  features:
+    - Real-time Odds Analysis
+    - Historical Performance
+    - AI Insights
+    - Custom Models
+    - Personalized Recommendations
+    - Betting Pattern Analysis
+    - Risk Profile Assessment
+  integrations:
+    - sportradar
+  status: available
+  value: "agent-templates/sportingbet-nba"
+  version: 1.0.0
+
+datasets:
+
+  # connectors & workflows
+  - type: "connector"
+    path: "../connectors/openai/openai.yml"
+  - type: "connector"
+    path: "../connectors/perplexity/perplexity.yml"
+  - type: "connector"
+    path: "../connectors/sportradar-nba/sportradar-nba.yml"
+  - type: "connector"
+    path: "../connectors/stability/stability.yml"
+  - type: "connector"
+    path: "../connectors/storage/storage.yml"
+
+  # prompts
+  - type: "prompts"
+    path: "image-prompts.yml"
+  - type: "prompts"
+    path: "reporter-prompts-br.yml"
+  - type: "prompts"
+    path: "reporter-prompts-en.yml"
+  - type: "prompts"
+    path: "reporter-prompts.yml"
+
+  # workflows
+  - type: "workflow"
+    path: "image-preview.yml"
+  - type: "workflow"
+    path: "reporter-briefing.yml"
+  - type: "workflow"
+    path: "reporter-polls-br.yml"
+  - type: "workflow"
+    path: "agent-templates/reporter-polls-en.yml"
+  - type: "workflow"
+    path: "agent-templates/reporter-preview-br.yml"
+  - type: "workflow"
+    path: "reporter-preview-en.yml"
+  - type: "workflow"
+    path: "reporter-quizzes-br.yml"
+  - type: "workflow"
+    path: "agent-templates/reporter-quizzes-en.yml"
+  - type: "workflow"
+    path: "agent-templates/reporter-summary.yml"
+  - type: "workflow"
+    path: "agent-templates/reporter-websearch.yml"
+  - type: "workflow"
+    path: "sync-games.yml"
+  
+  # agents & documents setup
+  - type: "workflow"
+    path: "_folders.yml"
+
+  # agents & schedules
+  - type: "agent"
+    path: "_scheduler.yml"
+  - type: "agent"
+    path: "_setup.yml"
+
+
