@@ -37,7 +37,13 @@ workflow:
             "setup": True
           }
         site-structure: |
-          []
+          [
+            {
+              "title": "Onboarding",
+              "url": "{onboarding_url}",
+              "icon": "globe"
+            }
+          ]
         doc-structure: |
           [
             {
@@ -52,6 +58,24 @@ workflow:
                   "category": "Catalogue",
                   "metadata": {
                     "name": ["nba-game", "nba-games", "schedules", "schedule", "soccer-game"]
+                  },
+                  "sorters": ['_id', -1],
+                  "view": "list"
+                }
+              ]
+            },
+            {
+              "title": "Chat Threads",
+              "isActive": True,
+              "icon": "folder",
+              "items": [
+                {
+                  "name": "chat-threads",
+                  "title": "Messages",
+                  "description": "The chat messages synced from the Chat API.",
+                  "category": "Chat",
+                  "metadata": {
+                    "name": ["chat-message", "chat-messages", "message"]
                   },
                   "sorters": ['_id', -1],
                   "view": "list"
