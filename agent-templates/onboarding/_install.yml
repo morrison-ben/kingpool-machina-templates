@@ -23,13 +23,39 @@ datasets:
   - type: "connector"
     path: "../../connectors/sportradar-soccer/sportradar-soccer.yml"
   - type: "connector"
+    path: "../../connectors/sportradar-mlb/sportradar-mlb.yml"
+  - type: "connector"
     path: "../../connectors/sportradar-nba/sportradar-nba.yml"
+  - type: "connector"
+    path: "../../connectors/sportradar-nfl/sportradar-nfl.yml"
+  - type: "connector"
+    path: "../../connectors/sportradar-nhl/sportradar-nhl.yml"
 
-  # workflows
+  # workflow to sync soccer team
   - type: "workflow"
-    path: "sync-team-id.yml"
+    path: "sync-soccer-team.yml"
 
-  # workflows
+  # workflow to sync nba team
+  - type: "workflow"
+    path: "sync-nba-embeds.yml"
+  - type: "workflow"
+    path: "sync-nba-games.yml"
+  - type: "workflow"
+    path: "sync-nba-team.yml"
+
+  # workflow to sync nfl team
+  - type: "workflow"
+    path: "sync-nfl-team.yml"
+
+  # workflow to sync mlb team 
+  - type: "workflow"
+    path: "sync-mlb-team.yml"
+
+  # workflow to sync nhl team
+  - type: "workflow"
+    path: "sync-nhl-team.yml"
+    
+  # workflow to generate embeddings
   - type: "workflow"
     path: "soccer-embeddings.yml"
 

@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Sportradar NFL v7",
-    "description": "This API allows you to retrieve information about NFL.",
+    "title": "Sportradar NHL v7",
+    "description": "This API allows you to retrieve information about NHL.",
     "version": "7"
   },
   "servers": [
     {
-      "url": "https://api.sportradar.com/nfl/official/production/v7/en"
+      "url": "https://api.sportradar.com/nhl/production/v7/en"
     }
   ],
   "paths": {

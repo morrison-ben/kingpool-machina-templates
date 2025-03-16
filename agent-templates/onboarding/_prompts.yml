@@ -164,3 +164,63 @@ prompts:
         object:
           type: "string"
           description: "The object of the chat completion."
+
+  # nba-team-summary-prompt
+  - type: "prompt"
+    title: "NBA Team Summary Prompt"
+    name: "nba-team-summary-prompt"
+    description: "This prompt generates a comprehensive NBA team summary with focus on championship history and achievements."
+    schema:
+      title: "NBATeamSummary"
+      description: "This schema defines the structure for generating comprehensive NBA team summaries with focus on championship history."
+      type: "object"
+      properties:
+        snippets:
+          type: "array"
+          description: "An array of snippets providing detailed analysis of the NBA team."
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The category of team analysis (e.g., 'Team Overview', 'Championship History', 'Notable Achievements', 'Current Season Outlook')."
+              content:
+                type: "string"
+                description: "Detailed analysis of the team, including history, championships won, championship seasons, conference titles, division titles, playoff appearances, key players, and other notable achievements."
+              confidence:
+                type: "number"
+                description: "The confidence score for the accuracy of the team analysis (0.0 to 1.0)."
+            required: ["title", "content", "confidence"]
+          minItems: 3
+          maxItems: 5
+      required: ["snippets"]
+
+  # nba-event-details-prompt
+  - type: "prompt"
+    title: "NBA Event Details Prompt"
+    name: "nba-event-details-prompt"
+    description: "This prompt generates a comprehensive event details with focus on event details."
+    schema:
+      title: "NBATeamSummary" 
+      description: "This schema defines the structure for generating comprehensive NBA team summaries with focus on championship history."
+      type: "object"
+      properties:
+        snippets:
+          type: "array"
+          description: "An array of snippets providing detailed analysis of the NBA team."  
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The category of event details analysis (e.g., 'Event Overview', 'Event Details', 'Event Statistics')."
+              content:
+                type: "string"
+                description: "Detailed analysis of the event, including event details, statistics, and other relevant information."
+              confidence:
+                type: "number"
+                description: "The confidence score for the accuracy of the event details analysis (0.0 to 1.0)."
+            required: ["title", "content", "confidence"]
+          minItems: 3
+          maxItems: 5
+      required: ["snippets"]

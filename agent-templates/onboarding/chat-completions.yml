@@ -56,5 +56,6 @@ workflow:
         documents: "$.get('documents')"
         messages: "$.get('messages')"
       outputs:
-        choices: "$"
-        object: "$"
+        message: "$.get('choices')[0].get('message').get('content')"
+
+    

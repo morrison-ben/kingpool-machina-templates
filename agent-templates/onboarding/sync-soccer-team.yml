@@ -1,7 +1,7 @@
 workflow:
-  name: "sync-team-id"
-  title: "Sync Team ID"
-  description: "Workflow to sync team id."
+  name: "sync-soccer-team"
+  title: "Sync Soccer Team"
+  description: "Workflow to sync soccer team."
   context-variables:
     debugger:
       enabled: true
