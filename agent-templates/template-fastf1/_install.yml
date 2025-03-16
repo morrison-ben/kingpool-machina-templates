@@ -20,6 +20,8 @@ datasets:
   # connectors
   - type: "connector"
     path: "../../connectors/fastf1/fastf1.yml"
+  - type: "connector"
+    path: "../../connectors/machina-ai/machina-ai.yml"
 
   # workflows
   - type: "workflow"
