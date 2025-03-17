@@ -20,6 +20,6 @@ workflow:
         command_attributes:
           seasonId: "$.get('seasonId')"
       inputs:
-        seasonId: "'1'"
+        seasonId: 1
       outputs:
         seasons: "$"
