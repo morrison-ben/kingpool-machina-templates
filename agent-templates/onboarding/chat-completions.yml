@@ -22,7 +22,7 @@ workflow:
       description: "Load similar documents"
       config:
         action: "search"
-        threshold-docs: 10
+        threshold-docs: 5
         threshold-similarity: 0.01
         search-limit: 1000
         search-vector: true

@@ -64,7 +64,7 @@ workflow:
       description: "Load the games."
       config:
         action: "search"
-        search-limit: 5
+        search-limit: 3
       filters:
         metadata.team_ids: |
           {
@@ -73,7 +73,7 @@ workflow:
       inputs:
         name: "'nba-game'"
       outputs:
-        games: "$.get('documents')[:5]"
+        games: "$.get('documents')[:3]"
         games_parsed: |
           [
             {
@@ -83,7 +83,7 @@ workflow:
               },
               'processed': 'idle'
             }
-            for c in $.get('documents', [])[:5]
+            for c in $.get('documents', [])[:3]
           ]
 
     # bulk-save-games
