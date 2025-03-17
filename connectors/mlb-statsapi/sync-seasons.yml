@@ -16,7 +16,7 @@ workflow:
       description: "Get Seasons from MLB Stats API"
       connector:
         name: "mlb-statsapi"
-        command: "get-v1-seasons-{seasonId}"
+        command: "get-api/v1/seasons/{seasonId}"
         command_attributes:
           seasonId: "$.get('seasonId')"
       outputs:
