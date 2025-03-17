@@ -4,6 +4,8 @@ workflow:
   description: "Workflow to synchronize seasons from MLB Stats API to Machina."
   context-variables:
     mlb-statsapi: {}
+  inputs:
+    seasonId: "$.get('seasonId')"
   outputs:
     seasons: "$.get('seasons')"
     workflow-status: "'executed'"
@@ -14,8 +16,8 @@ workflow:
       description: "Get Seasons from MLB Stats API"
       connector:
         name: "mlb-statsapi"
-        command: "get-v1-seasons"
-      inputs:
-        sportId: "1"  # MLB
+        command: "get-v1-seasons-{seasonId}"
+        command_attributes:
+          seasonId: "$.get('seasonId')"
       outputs:
         seasons: "$"
