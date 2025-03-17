@@ -19,5 +19,7 @@ workflow:
         command: "get-api/v1/seasons/{seasonId}"
         command_attributes:
           seasonId: "$.get('seasonId')"
+      inputs:
+        seasonId: "'1'"
       outputs:
         seasons: "$"
