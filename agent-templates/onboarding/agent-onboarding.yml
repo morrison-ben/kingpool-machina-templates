@@ -3,7 +3,7 @@ agent:
   title: "Agent Onboarding"
   description: "Agent responsible for onboarding."
   context:
-    config-frequency: 0.5
+    config-frequency: 0.04
   workflows:
         
     # sync-nba-embeds

@@ -6,7 +6,7 @@ agent:
     config-frequency: 99999999
   workflows:
 
-    - name: "_folders"
+    - name: "populate-folders"
       description: "Setup Folders"
       condition: "$.get('setup-register') is not True"
       outputs:

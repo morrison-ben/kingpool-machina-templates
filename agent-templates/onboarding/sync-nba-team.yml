@@ -13,6 +13,7 @@ workflow:
     team_id: "$.get('team_id') or None"
   outputs:
     events: "$.get('events')"
+    games_parsed: "$.get('games_parsed')"
     team-profile: "$.get('team-profile')"
     team-summary: "$.get('team-summary')"
     workflow-status: "$.get('team-profile', []) is None and 'skipped' or 'executed'"
@@ -55,6 +56,52 @@ workflow:
         division_titles: "$.get('division_titles')"
         playoff_appearances: "$.get('playoff_appearances')"
         owner: "$.get('owner')"
+
+    # load games
+    - type: "document"
+      name: "load-games"
+      condition: "$.get('team_id') is not None"
+      description: "Load the games."
+      config:
+        action: "search"
+        search-limit: 5
+      filters:
+        metadata.team_ids: |
+          {
+            '$in': [$.get('team_id')]
+          }
+      inputs:
+        name: "'nba-game'"
+      outputs:
+        games: "$.get('documents')[:5]"
+        games_parsed: |
+          [
+            {
+              **c.get('value', {}),
+              'metadata': {
+                'event_code': c.get('value', {}).get('id', ''),
+              },
+              'processed': 'idle'
+            }
+            for c in $.get('documents', [])[:5]
+          ]
+
+    # bulk-save-games
+    - type: "document"
+      name: "bulk-save-games"
+      condition: "$.get('games_parsed') is not None"
+      description: "Bulk save the games."
+      config:
+        action: "bulk-save"
+        embed-vector: false
+        force-update: true
+      document_name: "sync-nba-game"
+      documents:
+        items: "$.get('games_parsed')"
+      inputs:
+        games_parsed: "$.get('games_parsed')"
+      metadata:
+        event_code: "$.get('event_code')"
 
     # task-nba-team-summary
     - type: "prompt"
@@ -105,49 +152,3 @@ workflow:
         items: "$.get('snippets_list')"
       inputs:
         snippets_list: "$.get('snippets')"
-
-    # load games
-    - type: "document"
-      name: "load-games"
-      condition: "$.get('team_id') is not None"
-      description: "Load the games."
-      config:
-        action: "search"
-        search-limit: 10
-      filters:
-        metadata.team_ids: |
-          {
-            '$in': [$.get('team_id')]
-          }
-      inputs:
-        name: "'nba-game'"
-      outputs:
-        games: "$.get('documents')[:2]"
-        games_parsed: |
-          [
-            {
-              **c.get('value', {}),
-              'metadata': {
-                'event_code': c.get('value', {}).get('id', ''),
-              },
-              'processed': 'idle'
-            }
-            for c in $.get('documents', [])[:2]
-          ]
-
-    # bulk-save-games
-    - type: "document"
-      name: "bulk-save-games"
-      condition: "$.get('games_parsed') is not None"
-      description: "Bulk save the games."
-      config:
-        action: "bulk-save"
-        embed-vector: false
-        force-update: true
-      document_name: "sync-nba-game"
-      documents:
-        items: "$.get('games_parsed')"
-      inputs:
-        games_parsed: "$.get('games_parsed')"
-      metadata:
-        event_code: "$.get('event_code')"
