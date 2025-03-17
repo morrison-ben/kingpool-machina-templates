@@ -6,29 +6,8 @@ workflow:
     mlb-statsapi: {}
   outputs:
     seasons: "$.get('seasons')"
-    workflow-status: "$.get('should_update') is not True and 'skipped' or 'executed'"
+    workflow-status: "'executed'"
   tasks:
-    # task-check-document-timedelta
-    - type: "document"
-      name: "task-check-document-timedelta"
-      description: "Check if the seasons document has expired."
-      config:
-        action: "search"
-        search-limit: 1
-        search-vector: false
-      connector:
-        name: "openai"
-        command: "invoke_embedding"
-        model: "text-embedding-3-small"
-      filters:
-        value.execution: "{'$gte': datetime.utcnow() - timedelta(days=30)}"
-        value.status: "'active'"
-      inputs:
-        name: "'seasons'"
-      outputs:
-        documents: "$.get('documents')"
-        should_update: "len($.get('documents')) == 0"
-
     # task-load-seasons
     - type: "connector"
       name: "task-load-seasons"
@@ -36,65 +15,7 @@ workflow:
       connector:
         name: "mlb-statsapi"
         command: "get-v1-seasons"
-      condition: "$.get('should_update') == True"
       inputs:
         sportId: "1"  # MLB
       outputs:
-        seasons: "$.get('seasons')"
-
-    # task-update-seasons
-    - type: "document"
-      name: "task-update-seasons"
-      description: "Update the seasons document."
-      config:
-        action: "update"
-        embed-vector: false
-        force-update: true
-      condition: "$.get('should_update') == True"
-      connector:
-        name: "openai"
-        command: "invoke_embedding"
-        model: "text-embedding-3-small"
-      documents:
-        seasons: |
-          {
-            'data': $.get('seasons'),
-            'title': 'All Seasons',
-            'execution': datetime.utcnow(),
-            'status': 'active'
-          }
-      metadata:
-        document_type: "'synchronization'"
-
-    # task-bulk-save-seasons
-    - type: "document"
-      name: "task-bulk-save-seasons"
-      description: "Bulk save the seasons."
-      config:
-        action: "bulk-save"
-        embed-vector: false
-        force-update: true
-      connector:
-        name: "openai"
-        command: "invoke_embedding"
-        model: "text-embedding-3-small"
-      document_name: "season"
-      documents:
-        items: |
-          [
-            {
-              'seasonId': season.get('seasonId', ''),
-              'seasonYear': season.get('seasonYear', ''),
-              'regularSeasonStartDate': season.get('regularSeasonStartDate', ''),
-              'regularSeasonEndDate': season.get('regularSeasonEndDate', ''),
-              'preSeasonStartDate': season.get('preSeasonStartDate', ''),
-              'preSeasonEndDate': season.get('preSeasonEndDate', ''),
-              'postSeasonStartDate': season.get('postSeasonStartDate', ''),
-              'postSeasonEndDate': season.get('postSeasonEndDate', ''),
-              'title': 'MLB ' + str(season.get('seasonYear', '')),
-              'selected': False
-            }
-            for season in $.get('seasons')
-          ]
-      metadata:
-        document_type: "'season'" 
+        seasons: "$"

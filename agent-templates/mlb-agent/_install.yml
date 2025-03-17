@@ -24,3 +24,7 @@ datasets:
     path: "../../connectors/machina-ai/machina-ai.yml"
 
 
+  # workflows
+  - type: "workflow"
+    path: "../../connectors/mlb-statsapi/sync-seasons.yml"
+
