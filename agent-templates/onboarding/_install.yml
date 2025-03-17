@@ -45,13 +45,19 @@ datasets:
 
   # workflow to sync nfl team
   - type: "workflow"
+    path: "sync-nfl-games.yml"
+  - type: "workflow"
     path: "sync-nfl-team.yml"
 
   # workflow to sync mlb team 
   - type: "workflow"
+    path: "sync-mlb-games.yml"
+  - type: "workflow"
     path: "sync-mlb-team.yml"
 
   # workflow to sync nhl team
+  - type: "workflow"
+    path: "sync-nhl-games.yml"
   - type: "workflow"
     path: "sync-nhl-team.yml"
     
@@ -86,3 +92,10 @@ datasets:
   # populate-folders
   - type: "workflow"
     path: "_folders.yml"
+
+  # agents & schedules
+  - type: "agent"
+    path: "_setup.yml"
+
+  - type: "agent"
+    path: "agent-onboarding.yml"

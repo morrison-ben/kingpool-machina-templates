@@ -82,12 +82,7 @@ workflow:
             {
               'subject': '$.(team_full_name)', 
               'text': c.get('content', ''),
-              'title': f"$.(team_full_name) - {c.get('title', '')}",
-              'metadata': {
-                'team_id': '$.(team_id)',
-                'team_name': '$.(team_full_name)',
-                'language': 'en'
-              } 
+              'title': f"$.(team_full_name) - {c.get('title', '')}"
             }
             for c in $.get('snippets', [])
           ]
@@ -133,9 +128,9 @@ workflow:
             {
               **c.get('value', {}),
               'metadata': {
-                **c.get('metadata', {}),
-                'processed': 'idle'
-              }
+                'event_code': c.get('value', {}).get('id', ''),
+              },
+              'processed': 'idle'
             }
             for c in $.get('documents', [])[:2]
           ]
@@ -146,12 +141,13 @@ workflow:
       condition: "$.get('games_parsed') is not None"
       description: "Bulk save the games."
       config:
-        action: "bulk-update"
+        action: "bulk-save"
         embed-vector: false
         force-update: true
-      document_name: "nba-game"
+      document_name: "sync-nba-game"
       documents:
         items: "$.get('games_parsed')"
       inputs:
         games_parsed: "$.get('games_parsed')"
-
+      metadata:
+        event_code: "$.get('event_code')"

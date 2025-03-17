@@ -52,12 +52,56 @@ workflow:
               "icon": "folder",
               "items": [
                 {
-                  "name": "schedules",
-                  "title": "Game Schedule",
-                  "description": "The schedules synced from the Sportradar API.",
+                  "name": "nhl-schedules",
+                  "title": "NHL Games",
+                  "description": "NHL game schedules synced from the Sportradar API.",
                   "category": "Catalogue",
                   "metadata": {
-                    "name": ["nba-game", "nba-games", "schedules", "schedule", "soccer-game"]
+                    "name": ["nhl-game", "nhl-games", "hockey"]
+                  },
+                  "sorters": ['_id', -1],
+                  "view": "list"
+                },
+                {
+                  "name": "nba-schedules",
+                  "title": "NBA Games",
+                  "description": "NBA game schedules synced from the Sportradar API.",
+                  "category": "Catalogue",
+                  "metadata": {
+                    "name": ["nba-game", "nba-games", "basketball"]
+                  },
+                  "sorters": ['_id', -1],
+                  "view": "list"
+                },
+                {
+                  "name": "nfl-schedules",
+                  "title": "NFL Games",
+                  "description": "NFL game schedules synced from the Sportradar API.",
+                  "category": "Catalogue",
+                  "metadata": {
+                    "name": ["nfl-game", "nfl-games", "football"]
+                  },
+                  "sorters": ['_id', -1],
+                  "view": "list"
+                },
+                {
+                  "name": "mlb-schedules",
+                  "title": "MLB Games",
+                  "description": "MLB game schedules synced from the Sportradar API.",
+                  "category": "Catalogue",
+                  "metadata": {
+                    "name": ["mlb-game", "mlb-games", "baseball"]
+                  },
+                  "sorters": ['_id', -1],
+                  "view": "list"
+                },
+                {
+                  "name": "soccer-schedules",
+                  "title": "Soccer Games",
+                  "description": "Soccer game schedules synced from the Sportradar API.",
+                  "category": "Catalogue",
+                  "metadata": {
+                    "name": ["soccer-game", "soccer-games", "football"]
                   },
                   "sorters": ['_id', -1],
                   "view": "list"

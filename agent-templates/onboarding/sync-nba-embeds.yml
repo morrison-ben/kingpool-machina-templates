@@ -30,7 +30,7 @@ workflow:
       filters:
         metadata.event_code: "$.get('event_code')"
       inputs:
-        name: "{'$in': ['nba-game']}"
+        name: "{'$in': ['sync-nba-game']}"
       outputs:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
@@ -47,9 +47,9 @@ workflow:
         search-vector: false
         search-sorters: ["start_time", 1]
       filters:
-        metadata.processed: "'idle'"
+        value.processed: "'idle'"
       inputs:
-        name: "{'$in': ['nba-game']}"
+        name: "{'$in': ['sync-nba-game']}"
       outputs:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
@@ -83,13 +83,10 @@ workflow:
         embed-vector: false
         force-update: true
       documents:
-        nba-game: |
+        sync-nba-game: |
           {
             **$.get('event_selected'),
-            'metadata': {
-              **$.get('event_selected').get('metadata', {}),
-              'processed': 'processing'
-            }
+            'processed': 'processing'
           }
       metadata:
         event_code: "$.get('event_code')"
@@ -188,13 +185,10 @@ workflow:
         embed-vector: false
         force-update: true
       documents:
-        nba-game: |
+        sync-nba-game: |
           {
             **$.get('event_selected'),
-            'metadata': {
-              **$.get('event_selected').get('metadata', {}),
-              'processed': 'processing'
-            }
+            'processed': 'processed'
           }
       metadata:
         event_code: "$.get('event_code')"
