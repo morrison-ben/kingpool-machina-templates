@@ -45,6 +45,8 @@ datasets:
 
   # workflow to sync nfl team
   - type: "workflow"
+    path: "sync-nfl-embeds.yml"
+  - type: "workflow"
     path: "sync-nfl-games.yml"
   - type: "workflow"
     path: "sync-nfl-team.yml"

@@ -224,3 +224,33 @@ prompts:
           minItems: 3
           maxItems: 5
       required: ["snippets"]
+
+  # nfl-event-details-prompt
+  - type: "prompt"
+    title: "NFL Event Details Prompt"
+    name: "nfl-event-details-prompt"
+    description: "This prompt generates a comprehensive event details with focus on event details."
+    schema:
+      title: "NFLTeamSummary" 
+      description: "This schema defines the structure for generating comprehensive NFL team summaries with focus on championship history."
+      type: "object"
+      properties:
+        snippets:
+          type: "array"
+          description: "An array of snippets providing detailed analysis of the NFL team."  
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The category of event details analysis (e.g., 'Event Overview', 'Event Details', 'Event Statistics')."
+              content:
+                type: "string"
+                description: "Detailed analysis of the event, including event details, statistics, and other relevant information."
+              confidence:
+                type: "number"
+                description: "The confidence score for the accuracy of the event details analysis (0.0 to 1.0)."
+            required: ["title", "content", "confidence"]
+          minItems: 3
+          maxItems: 5
+      required: ["snippets"]
