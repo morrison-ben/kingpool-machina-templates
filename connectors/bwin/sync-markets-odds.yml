@@ -1,11 +1,11 @@
 workflow:
-  name: "sportingbet-sync-markets-odds"
+  name: "bwin-sync-markets-odds"
   title: "Sync Markets & Odds"
-  description: "Workflow to synchronize a season schedules from Sportingbet API to Machina."
+  description: "Workflow to synchronize a season schedules from Bwin API to Machina."
   context-variables:
     debugger:
       enabled: true
-    sportingbet:
+    bwin:
       Bwin-AccessId: "$MACHINA_CONTEXT_VARIABLE_BWIN_ACCESS_ID"
       Bwin-AccessIdToken: "$MACHINA_CONTEXT_VARIABLE_BWIN_ACCESS_ID_TOKEN"
     openai:
@@ -42,10 +42,10 @@ workflow:
     # 1 load-fixtures
     - type: "connector"
       name: "load-fixtures"
-      description: "Get a season fixtures from Sportingbet"
+      description: "Get a season fixtures from Bwin"
       condition: "($.get('competitionIds') is not None and $.get('is_updated') is not True) or $.get('force-update') is True"
       connector:
-        name: "sportingbet"
+        name: "bwin"
         command: "get-offer/api/{sportId}/{country}/fixtureIndex"
         command_attribute:
           country: "$.get('country')"

@@ -1,6 +1,6 @@
 setup:
-  title: Sportingbet API
-  description: Connect to the SportingBet Sports API to access fixtures, competitions, odds and live data across multiple sports and countries.
+  title: Bwin API
+  description: Connect to the Bwin Sports API to access fixtures, competitions, odds and live data across multiple sports and countries.
   category:
     - data-acquisition
     - sports-betting
@@ -16,15 +16,15 @@ setup:
     - Sport Categories
     - Participant Information
   integrations:
-    - sportingbet
+    - bwin
   requirements:
     - Bwin-AccessId
     - Bwin-AccessIdToken
   status: available
-  value: sportingbet
+  value: bwin
   version: 1.0.0
 
 datasets:
   - type: "connector"
-    path: "sportingbet.yml" 
+    path: "bwin.yml" 
 
