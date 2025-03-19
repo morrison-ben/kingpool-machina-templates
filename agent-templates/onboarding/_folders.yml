@@ -32,6 +32,13 @@ workflow:
         embed-vector: false
         force-update: true
       documents:
+        setup-playground: |
+          [
+            {
+              "title": "Chat Completions",
+              "name": "chat-completions",
+            }
+          ]
         setup-register: |
           {
             "setup": True
