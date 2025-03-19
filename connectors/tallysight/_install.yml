@@ -27,3 +27,9 @@ setup:
 datasets:
   - type: "connector"
     path: "tallysight.yml" 
+
+workflows:
+  - type: "workflow"
+    path: "sync-widgets.yml"
+
+
