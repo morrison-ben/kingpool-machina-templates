@@ -1,0 +1,53 @@
+setup:
+  title: "KingPool Main Template"
+  description: AI-powered moderator for KingPool.
+  category:
+    - special-templates
+  estimatedTime: 5 minutes
+  features:
+    - AI Agent to generate content.
+  integrations:
+    - sportradar
+  status: available
+  value: "agent-templates/main-kingpool"
+  version: 1.0.0
+
+datasets:
+
+  # connectors
+  - type: "connector"
+    path: "../../connectors/machina-ai/machina-ai.yml"
+  - type: "connector"
+    path: "../../connectors/machina-ai-fast/machina-ai-fast.yml"
+  - type: "connector"
+    path: "../../connectors/sportradar-nba/sportradar-nba.yml"
+
+  - type: "workflow"
+    path: "chat-completions.yml"
+
+  # workflow to sync nba team
+  - type: "workflow"
+    path: "nba-embeds.yml"
+  - type: "workflow"
+    path: "nba-games.yml"
+  - type: "workflow"
+    path: "nba-team.yml"
+
+  # mappings
+  - type: "mappings"
+    path: "_mappings.yml"
+  
+  # prompts
+  - type: "prompts"
+    path: "_prompts.yml"
+
+  # populate-folders
+  - type: "workflow"
+    path: "_folders.yml"
+
+  # agents & schedules
+  - type: "agent"
+    path: "_setup.yml"
+
+  - type: "agent"
+    path: "agent-kingpool.yml"

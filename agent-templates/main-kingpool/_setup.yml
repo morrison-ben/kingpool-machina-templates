@@ -1,0 +1,13 @@
+agent:
+  name: "setup-kingpool"
+  title: "Setup KingPool"
+  description: "Setup KingPool"
+  context-variables:
+    config-frequency: 99999999
+  workflows:
+
+    - name: "populate-folders"
+      description: "Setup Folders"
+      condition: "$.get('setup-register') is not True"
+      outputs:
+        setup-register-status: "$.get('workflow-status', False)"

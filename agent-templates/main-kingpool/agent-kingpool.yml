@@ -1,0 +1,12 @@
+agent:
+  name: "agent-kingpool"
+  title: "Agent KingPool"
+  description: "Agent responsible for generating content for KingPool."
+  context-variables:
+    config-frequency: 1
+  workflows:
+
+    - name: "workflow-nba-embeds"
+      description: "Workflow to generate content for NBA embeds"
+      outputs:
+        workflow-nba-embeds-status: "$.get('workflow-status', False)"

@@ -1,4 +1,0 @@
-datasets:
-  - type: "connector"
-    path: "perplexity.yml"
-
