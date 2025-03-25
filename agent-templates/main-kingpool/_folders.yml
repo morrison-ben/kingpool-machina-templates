@@ -37,6 +37,10 @@ workflow:
             {
               "title": "Chat Completions",
               "name": "chat-completions",
+            },
+            {
+              "title": "Content Generation",
+              "name": "content-generation",
             }
           ]
         setup-register: |

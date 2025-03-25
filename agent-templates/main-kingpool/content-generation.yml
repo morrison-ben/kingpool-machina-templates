@@ -1,0 +1,71 @@
+workflow:
+  name: "content-generation"
+  title: "Content Generation"
+  description: "Workflow to execute a content generation."
+  context-variables:
+    debugger:
+      enabled: true
+    machina-ai:
+      api_key: "$TEMP_CONTEXT_VARIABLE_SDK_OPENAI_API_KEY"
+    machina-ai-fast:
+      api_key: "$TEMP_CONTEXT_VARIABLE_SDK_GROQ_API_KEY"
+  inputs:
+    messages: "$.get('messages', [])"
+  outputs:
+    message: "$.get('message')"
+    workflow-status: "$.get('message') is not None and 'executed' or 'skipped'"
+  tasks:
+
+    # Load similar documents
+    - type: "document"
+      name: "load-similar-documents"
+      description: "Load similar documents"
+      config:
+        action: "search"
+        threshold-docs: 5
+        threshold-similarity: 0.01
+        search-limit: 1000
+        search-vector: true
+      connector:
+        name: "machina-ai"
+        command: "invoke_embedding"
+        model: "text-embedding-3-small"
+      inputs:
+        name: "'content-snippet'"
+        search-limit: "'1000'"
+        search-query: "$.get('messages')"
+      outputs:
+        documents: "$.get('documents')"
+
+    # content-generation-prompt
+    - type: "prompt"
+      name: "content-generation-prompt"
+      description: "Content Generation."
+      connector:
+        name: "machina-ai"
+        command: "invoke_prompt"
+        model: "gpt-4o"
+      inputs:
+        documents: "$.get('documents')"
+        messages: "$.get('messages')"
+      outputs:
+        content-preview: "$"
+
+    # save content generated
+    - type: "document"
+      name: "save-content-generated"
+      description: "Save the content generated."
+      condition: "$.get('content-preview') is not None"
+      config:
+        action: "update"
+        embed-vector: false
+        force-update: true
+      documents:
+        content-preview: |
+          {
+            **$.get('content-preview', {}),
+            'execution': datetime.utcnow(),
+            'status': 'active'
+          }
+      metadata:
+        document_type: "'content-preview'"

@@ -1,6 +1,5 @@
 prompts:
 
-  # chat-completions-prompt
   - type: "prompt"
     title: "Chat Completions Prompt"
     name: "chat-completions-prompt"
@@ -30,8 +29,61 @@ prompts:
         object:
           type: "string"
           description: "The object of the chat completion."
-          
-  # nba-team-summary-prompt
+
+  - type: "prompt"
+    title: "Content Generation Prompt"
+    name: "content-generation-prompt"
+    description: "Generates a professional yet engaging blog post preview for an upcoming match, using only provided data and general sport knowledge."
+    schema:
+      title: "BlogPreviewContent"
+      description: "Structure for generating blog post elements about an upcoming match."
+      type: "object"
+      properties:
+        title:
+          type: "string"
+          description: "Format: 'Betting Tips for [Team A] vs [Team B]: odds from [Competition Name]'"
+        subtitle:
+          type: "string"
+          description: "Engaging subtitle highlighting key statistics, trends, or match factors from available data."
+        slug:
+          type: "string"
+          description: "SEO-optimized slug using team names, competition, and betting keywords. Use hyphens, 3-6 words, no special characters."
+        content:
+          type: "string"
+          description: |
+            Structure your content in the following sections, using only provided data:
+
+            1. Overview (50 words)
+            - Key match details, date, and local start time
+            - One compelling focus point (team form, key matchup, or significant context)
+
+            2. NBA Context (150 words)
+            - Playoff/standings implications
+            - Division/Conference impact
+            - Season series status
+            - Historical matchup significance
+
+            3. Team Analysis (150 words per team)
+            - Recent form and last 10 games record
+            - Home/Away performance stats
+            - Key injuries or roster updates
+            - Team-specific trends (scoring, defense, pace)
+
+            4. Key Players (150 words)
+            - Notable performers and matchups
+            - Recent statistics (points, rebounds, assists)
+            - Head-to-head performance history
+
+            5. Prediction
+            - Clear prediction with score
+            - Data-backed reasoning
+
+            Guidelines:
+            - Use only provided data
+            - Vary writing style based on match context
+            - Use markdown formatting
+            - Convert GMT to local match time
+
   - type: "prompt"
     title: "NBA Team Summary Prompt"
     name: "nba-team-summary-prompt"
@@ -61,7 +113,6 @@ prompts:
           maxItems: 2
       required: ["snippets"]
 
-  # nba-event-details-prompt
   - type: "prompt"
     title: "NBA Event Details Prompt"
     name: "nba-event-details-prompt"

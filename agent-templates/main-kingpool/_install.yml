@@ -25,6 +25,9 @@ datasets:
   - type: "workflow"
     path: "chat-completions.yml"
 
+  - type: "workflow"
+    path: "content-generation.yml"
+
   # workflow to sync nba team
   - type: "workflow"
     path: "nba-embeds.yml"
