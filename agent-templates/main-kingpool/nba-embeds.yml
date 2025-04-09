@@ -30,7 +30,7 @@ workflow:
       filters:
         metadata.event_code: "$.get('event_code')"
       inputs:
-        name: "{'$in': ['sync-nba-game']}"
+        name: "{'$in': ['nba-game']}"
       outputs:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
@@ -49,7 +49,7 @@ workflow:
       filters:
         value.processed: "'idle'"
       inputs:
-        name: "{'$in': ['sync-nba-game']}"
+        name: "{'$in': ['nba-game']}"
       outputs:
         event_exists: "len($.get('documents', [])) > 0"
         event_selected: "$.get('documents')[0].get('value', {}) if $.get('documents') else None"
@@ -83,7 +83,7 @@ workflow:
         embed-vector: false
         force-update: true
       documents:
-        sync-nba-game: |
+        nba-game: |
           {
             **$.get('event_selected'),
             'processed': 'processing'
@@ -185,7 +185,7 @@ workflow:
         embed-vector: false
         force-update: true
       documents:
-        sync-nba-game: |
+        nba-game: |
           {
             **$.get('event_selected'),
             'processed': 'processed'
